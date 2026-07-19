@@ -43,4 +43,11 @@ class CompositionNormalizerTest {
                 composition.signature()
         );
     }
+
+    @Test
+    void countsTotalUnitsAfterGroupingDuplicates() {
+        var composition = CompositionNormalizer.normalize(List.of(APPLE, APPLE, CARROT, WHEAT));
+
+        assertEquals(4, composition.totalUnits());
+    }
 }

@@ -15,4 +15,10 @@ public record CanonicalComposition(List<IngredientCount> ingredients) {
                 .map(ingredient -> ingredient.ingredient() + "*" + ingredient.count())
                 .collect(Collectors.joining("|"));
     }
+
+    public int totalUnits() {
+        return ingredients.stream()
+                .mapToInt(IngredientCount::count)
+                .sum();
+    }
 }
