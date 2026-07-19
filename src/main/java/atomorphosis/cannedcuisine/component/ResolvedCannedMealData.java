@@ -1,5 +1,6 @@
 package atomorphosis.cannedcuisine.component;
 
+import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.engine.effect.ResolvedEffect;
 import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluation;
@@ -33,9 +34,11 @@ public record ResolvedCannedMealData(
         double nutritionPoints,
         double saturationPoints,
         List<ResolvedEffect> effects,
+        int labelColor,
+        Optional<Integer> effectColor,
         MealNameTokens name
 ) {
-    public static final int CURRENT_DATA_VERSION = 1;
+    public static final int CURRENT_DATA_VERSION = 2;
 
     private static final Codec<IngredientId> INGREDIENT_ID_CODEC = ResourceLocation.CODEC.xmap(
             id -> new IngredientId(id.getNamespace(), id.getPath()),
@@ -91,6 +94,11 @@ public record ResolvedCannedMealData(
             Codec.DOUBLE.fieldOf("nutrition").forGetter(ResolvedCannedMealData::nutritionPoints),
             Codec.DOUBLE.fieldOf("saturation").forGetter(ResolvedCannedMealData::saturationPoints),
             EFFECT_CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(ResolvedCannedMealData::effects),
+            Codec.intRange(0, 0xFFFFFF).optionalFieldOf(
+                    "label_color",
+                    MealAppearanceResolver.NEUTRAL_LABEL_COLOR
+            ).forGetter(ResolvedCannedMealData::labelColor),
+            Codec.intRange(0, 0xFFFFFF).optionalFieldOf("effect_color").forGetter(ResolvedCannedMealData::effectColor),
             NAME_CODEC.fieldOf("name").forGetter(ResolvedCannedMealData::name)
     ).apply(instance, ResolvedCannedMealData::new));
     public static final StreamCodec<ByteBuf, ResolvedCannedMealData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
@@ -99,6 +107,7 @@ public record ResolvedCannedMealData(
         Objects.requireNonNull(composition, "composition");
         Objects.requireNonNull(failureReasons, "failureReasons");
         Objects.requireNonNull(effects, "effects");
+        Objects.requireNonNull(effectColor, "effectColor");
         Objects.requireNonNull(name, "name");
         failureReasons = Set.copyOf(failureReasons);
         effects = List.copyOf(effects);
@@ -138,10 +147,48 @@ public record ResolvedCannedMealData(
         if (!failureReasons.isEmpty() && !effects.isEmpty()) {
             throw new IllegalArgumentException("A failed canned meal cannot contain positive effects");
         }
+        if (labelColor < 0 || labelColor > 0xFFFFFF) {
+            throw new IllegalArgumentException("Label color must be a 24-bit RGB value");
+        }
+        effectColor.ifPresent(color -> {
+            if (color < 0 || color > 0xFFFFFF) {
+                throw new IllegalArgumentException("Effect color must be a 24-bit RGB value");
+            }
+        });
+        if (dataVersion >= 2 && effects.isEmpty() != effectColor.isEmpty()) {
+            throw new IllegalArgumentException("Effect color must exist exactly when an effect exists");
+        }
+    }
+
+    public ResolvedCannedMealData(
+            int dataVersion,
+            CanonicalComposition composition,
+            int qualityScore,
+            Set<MixtureFailureReason> failureReasons,
+            double nutritionPoints,
+            double saturationPoints,
+            List<ResolvedEffect> effects,
+            MealNameTokens name
+    ) {
+        this(
+                dataVersion,
+                composition,
+                qualityScore,
+                failureReasons,
+                nutritionPoints,
+                saturationPoints,
+                effects,
+                MealAppearanceResolver.NEUTRAL_LABEL_COLOR,
+                effects.isEmpty()
+                        ? Optional.empty()
+                        : Optional.of(MealAppearanceResolver.effectColor(effects.getFirst().effect())),
+                name
+        );
     }
 
     public static ResolvedCannedMealData from(CanonicalComposition composition, MealEvaluation evaluation) {
         Objects.requireNonNull(evaluation, "evaluation");
+        var appearance = MealAppearanceResolver.resolve(evaluation.metrics(), evaluation.effectsPerCan());
         return new ResolvedCannedMealData(
                 CURRENT_DATA_VERSION,
                 composition,
@@ -150,6 +197,8 @@ public record ResolvedCannedMealData(
                 evaluation.nutritionPointsPerCan(),
                 evaluation.saturationPointsPerCan(),
                 evaluation.effectsPerCan(),
+                appearance.labelColor(),
+                appearance.effectColor(),
                 evaluation.name()
         );
     }

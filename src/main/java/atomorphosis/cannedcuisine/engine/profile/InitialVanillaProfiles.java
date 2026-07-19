@@ -226,6 +226,10 @@ public final class InitialVanillaProfiles {
         return Optional.ofNullable(PROFILES.get(ingredient));
     }
 
+    public static IngredientProfileLookup lookup() {
+        return InitialVanillaProfiles::find;
+    }
+
     private static IngredientId id(String path) {
         return new IngredientId("minecraft", path);
     }

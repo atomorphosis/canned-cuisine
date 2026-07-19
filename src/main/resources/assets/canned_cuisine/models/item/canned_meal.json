@@ -1,6 +1,8 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "canned_cuisine:item/empty_can"
+    "layer0": "canned_cuisine:item/empty_can",
+    "layer1": "canned_cuisine:item/canned_meal_label",
+    "layer2": "canned_cuisine:item/canned_meal_effect_seal"
   }
 }

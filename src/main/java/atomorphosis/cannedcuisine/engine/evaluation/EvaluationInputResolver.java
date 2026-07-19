@@ -3,6 +3,7 @@ package atomorphosis.cannedcuisine.engine.evaluation;
 import atomorphosis.cannedcuisine.engine.model.CanonicalComposition;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import atomorphosis.cannedcuisine.engine.profile.IngredientProfile;
+import atomorphosis.cannedcuisine.engine.profile.IngredientProfileLookup;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -16,6 +17,14 @@ public final class EvaluationInputResolver {
             CanonicalComposition composition,
             Map<IngredientId, IngredientProfile> profiles
     ) {
+        Objects.requireNonNull(profiles, "profiles");
+        return resolve(composition, IngredientProfileLookup.fromMap(profiles));
+    }
+
+    public static EvaluationInputResolution resolve(
+            CanonicalComposition composition,
+            IngredientProfileLookup profiles
+    ) {
         Objects.requireNonNull(composition, "composition");
         Objects.requireNonNull(profiles, "profiles");
 
@@ -23,14 +32,14 @@ public final class EvaluationInputResolver {
         var profiledIngredients = new ArrayList<ProfiledIngredient>();
 
         for (var ingredient : composition.ingredients()) {
-            var profile = profiles.get(ingredient.ingredient());
-            if (profile == null) {
+            var profile = profiles.find(ingredient.ingredient());
+            if (profile.isEmpty()) {
                 missingProfiles.add(ingredient.ingredient());
             } else {
                 profiledIngredients.add(new ProfiledIngredient(
                         ingredient.ingredient(),
                         ingredient.count(),
-                        profile
+                        profile.orElseThrow()
                 ));
             }
         }

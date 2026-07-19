@@ -1,6 +1,7 @@
 package atomorphosis.cannedcuisine.component;
 
 import atomorphosis.cannedcuisine.engine.composition.CompositionNormalizer;
+import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
 import atomorphosis.cannedcuisine.engine.evaluation.EvaluationInput;
 import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluator;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
@@ -34,6 +35,8 @@ class ResolvedCannedMealDataTest {
         assertEquals(data, decoded);
         assertEquals(4, decoded.composition().totalUnits());
         assertEquals(1, decoded.effects().size());
+        assertEquals(data.labelColor(), decoded.labelColor());
+        assertEquals(data.effectColor(), decoded.effectColor());
         assertTrue(encoded.getAsJsonObject().has("data_version"));
     }
 
@@ -70,6 +73,28 @@ class ResolvedCannedMealDataTest {
                         ResolvedCannedMealData.CODEC.encodeStart(JsonOps.INSTANCE, data).getOrThrow()
                 ).getOrThrow()
         );
+    }
+
+    @Test
+    void loadsVersionOneMealsWithSafeAppearanceDefaults() {
+        var data = resolve(
+                InitialVanillaProfiles.BEEF,
+                InitialVanillaProfiles.PORKCHOP,
+                InitialVanillaProfiles.MUTTON,
+                InitialVanillaProfiles.WHEAT
+        );
+        var encoded = ResolvedCannedMealData.CODEC.encodeStart(JsonOps.INSTANCE, data)
+                .getOrThrow()
+                .getAsJsonObject();
+        encoded.addProperty("data_version", 1);
+        encoded.remove("label_color");
+        encoded.remove("effect_color");
+
+        var decoded = ResolvedCannedMealData.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow();
+
+        assertEquals(MealAppearanceResolver.NEUTRAL_LABEL_COLOR, decoded.labelColor());
+        assertTrue(decoded.effectColor().isEmpty());
+        assertEquals(data.effects(), decoded.effects());
     }
 
     @Test
