@@ -1,6 +1,7 @@
 package atomorphosis.cannedcuisine;
 
 import atomorphosis.cannedcuisine.registry.ModItems;
+import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
@@ -14,6 +15,7 @@ public final class CannedCuisine {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CannedCuisine(IEventBus modEventBus) {
+        ModDataComponents.register(modEventBus);
         ModItems.register(modEventBus);
         modEventBus.addListener(CannedCuisine::addCreativeTabItems);
         LOGGER.info("Loading Canned Cuisine");

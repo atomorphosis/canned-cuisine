@@ -107,6 +107,11 @@ neoForge {
             sourceSet(sourceSets.main)
         }
     }
+
+    unitTest {
+        testedMod = mods.getByName(mod_id)
+        enable()
+    }
 }
 
 // Sets up a dependency configuration called 'localRuntime'.
