@@ -33,4 +33,14 @@ class CompositionNormalizerTest {
 
         assertEquals(expected, composition);
     }
+
+    @Test
+    void createsStableSignature() {
+        var composition = CompositionNormalizer.normalize(List.of(WHEAT, APPLE, CARROT, APPLE));
+
+        assertEquals(
+                "minecraft:apple*2|minecraft:carrot*1|minecraft:wheat*1",
+                composition.signature()
+        );
+    }
 }
