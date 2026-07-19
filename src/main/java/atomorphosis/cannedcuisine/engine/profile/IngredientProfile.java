@@ -12,19 +12,36 @@ public record IngredientProfile(
         double nutritionPoints,
         double saturationPoints,
         Map<CulinaryCategory, Double> categoryWeights,
-        Map<EffectId, Double> effectAffinities
+        Map<EffectId, Double> effectAffinities,
+        double rarity,
+        int technologyTier
 ) {
     public IngredientProfile(
             double nutritionPoints,
             double saturationPoints,
             Map<CulinaryCategory, Double> categoryWeights
     ) {
-        this(nutritionPoints, saturationPoints, categoryWeights, Map.of());
+        this(nutritionPoints, saturationPoints, categoryWeights, Map.of(), 0.0, 0);
+    }
+
+    public IngredientProfile(
+            double nutritionPoints,
+            double saturationPoints,
+            Map<CulinaryCategory, Double> categoryWeights,
+            Map<EffectId, Double> effectAffinities
+    ) {
+        this(nutritionPoints, saturationPoints, categoryWeights, effectAffinities, 0.0, 0);
     }
 
     public IngredientProfile {
         nutritionPoints = requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         saturationPoints = requireNonNegativeFinite("saturationPoints", saturationPoints);
+        if (!Double.isFinite(rarity) || rarity < 0.0 || rarity > 1.0) {
+            throw new IllegalArgumentException("Rarity must be finite and in the range [0, 1]");
+        }
+        if (technologyTier < 0) {
+            throw new IllegalArgumentException("Technology tier must be non-negative");
+        }
         Objects.requireNonNull(categoryWeights, "categoryWeights");
 
         if (categoryWeights.isEmpty()) {

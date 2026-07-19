@@ -30,19 +30,17 @@ class FarmersDelightBalanceComparisonTest {
         var cannedCuisineNourishmentSeconds = 0;
 
         assertEquals(2, cannedCuisineResult.canCount());
-        assertEquals(QualityBand.STANDARD, cannedCuisineResult.qualityBand());
-        assertEquals(59, cannedCuisineResult.qualityScore());
-        assertEquals(6.0, cannedCuisineResult.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(9.6, cannedCuisineResult.saturationPointsPerCan(), 0.0000001);
-        assertEquals(
-                farmersDelightNutrition,
-                cannedCuisineResult.nutritionPointsPerCan() * cannedCuisineResult.canCount(),
-                0.0000001
+        assertEquals(QualityBand.GOOD, cannedCuisineResult.qualityBand());
+        assertEquals(79, cannedCuisineResult.qualityScore());
+        assertEquals(6.6, cannedCuisineResult.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(10.56, cannedCuisineResult.saturationPointsPerCan(), 0.0000001);
+        assertTrue(
+                cannedCuisineResult.nutritionPointsPerCan() * cannedCuisineResult.canCount()
+                        > farmersDelightNutrition
         );
-        assertEquals(
-                farmersDelightEffectiveSaturation,
-                cannedCuisineResult.saturationPointsPerCan() * cannedCuisineResult.canCount(),
-                0.0000001
+        assertTrue(
+                cannedCuisineResult.saturationPointsPerCan() * cannedCuisineResult.canCount()
+                        > farmersDelightEffectiveSaturation
         );
         assertTrue(cannedCuisineNourishmentSeconds < farmersDelightNourishmentSeconds);
     }

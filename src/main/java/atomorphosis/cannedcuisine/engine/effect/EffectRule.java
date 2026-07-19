@@ -1,6 +1,7 @@
 package atomorphosis.cannedcuisine.engine.effect;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public record EffectRule(
@@ -11,11 +12,36 @@ public record EffectRule(
         int maximumDurationTicks,
         int priority,
         boolean eligibleAsSecondary,
-        Set<EffectId> incompatibleEffects
+        Set<EffectId> incompatibleEffects,
+        Optional<LevelTwoRequirements> levelTwoRequirements
 ) {
+    public EffectRule(
+            EffectId effect,
+            double minimumAffinity,
+            int minimumQualityScore,
+            int minimumDurationTicks,
+            int maximumDurationTicks,
+            int priority,
+            boolean eligibleAsSecondary,
+            Set<EffectId> incompatibleEffects
+    ) {
+        this(
+                effect,
+                minimumAffinity,
+                minimumQualityScore,
+                minimumDurationTicks,
+                maximumDurationTicks,
+                priority,
+                eligibleAsSecondary,
+                incompatibleEffects,
+                Optional.empty()
+        );
+    }
+
     public EffectRule {
         Objects.requireNonNull(effect, "effect");
         Objects.requireNonNull(incompatibleEffects, "incompatibleEffects");
+        Objects.requireNonNull(levelTwoRequirements, "levelTwoRequirements");
         incompatibleEffects = Set.copyOf(incompatibleEffects);
 
         if (!Double.isFinite(minimumAffinity) || minimumAffinity <= 0.0 || minimumAffinity > 1.0) {

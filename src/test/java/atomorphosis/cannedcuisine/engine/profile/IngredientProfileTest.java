@@ -113,4 +113,45 @@ class IngredientProfileTest {
                 )
         );
     }
+
+    @Test
+    void storesRarityAndTechnologyTierWithSafeDefaults() {
+        var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
+        var defaults = new IngredientProfile(4.0, 2.0, categories);
+        var advanced = new IngredientProfile(
+                4.0,
+                2.0,
+                categories,
+                Map.of(new EffectId("minecraft", "strength"), 0.75),
+                0.8,
+                2
+        );
+
+        assertEquals(0.0, defaults.rarity());
+        assertEquals(0, defaults.technologyTier());
+        assertEquals(0.8, advanced.rarity());
+        assertEquals(2, advanced.technologyTier());
+    }
+
+    @Test
+    void rejectsInvalidRarityAndTechnologyTier() {
+        var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), -0.01, 0)
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), 1.01, 0)
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), Double.NaN, 0)
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), 0.5, -1)
+        );
+    }
 }

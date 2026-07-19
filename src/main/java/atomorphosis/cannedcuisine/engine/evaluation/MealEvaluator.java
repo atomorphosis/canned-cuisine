@@ -1,12 +1,15 @@
 package atomorphosis.cannedcuisine.engine.evaluation;
 
 import atomorphosis.cannedcuisine.engine.archetype.ArchetypeDefinition;
+import atomorphosis.cannedcuisine.engine.archetype.ArchetypeBonus;
+import atomorphosis.cannedcuisine.engine.archetype.ArchetypeBonusCalculator;
 import atomorphosis.cannedcuisine.engine.archetype.ArchetypeMatcher;
 import atomorphosis.cannedcuisine.engine.archetype.InitialArchetypes;
 import atomorphosis.cannedcuisine.engine.effect.EffectDistributor;
 import atomorphosis.cannedcuisine.engine.effect.EffectRule;
 import atomorphosis.cannedcuisine.engine.effect.EffectSelector;
 import atomorphosis.cannedcuisine.engine.effect.InitialEffectRules;
+import atomorphosis.cannedcuisine.engine.naming.MealNameResolver;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -47,12 +50,23 @@ public final class MealEvaluator {
         }
 
         var archetypeMatch = ArchetypeMatcher.findBest(metrics, archetypes);
-        var qualityScore = calculateQualityScore(metrics);
+        var failureAssessment = FailedMixtureEvaluator.evaluate(metrics);
+        var archetypeBonus = failureAssessment.failed()
+                ? ArchetypeBonus.neutral()
+                : ArchetypeBonusCalculator.calculate(archetypeMatch);
+        var qualityScore = Math.min(
+                calculateQualityScore(metrics) + archetypeBonus.qualityPoints(),
+                100
+        );
+        if (failureAssessment.failed()) {
+            qualityScore = Math.min(qualityScore, 19);
+        }
         var balancedDiversity = clamp(
                 (metrics.effectiveDiversity() - 1.0) / (metrics.totalUnits() - 1.0)
         );
-        var processingMultiplier = 1.0
-                + metrics.totalUnits() * PROCESSING_BONUS_PER_UNIT * balancedDiversity;
+        var processingMultiplier = failureAssessment.failed()
+                ? 1.0
+                : 1.0 + metrics.totalUnits() * PROCESSING_BONUS_PER_UNIT * balancedDiversity;
         var processedNutrition = metrics.totalNutritionPoints() * processingMultiplier;
         var processedSaturation = metrics.totalSaturationPoints() * processingMultiplier;
 
@@ -67,9 +81,12 @@ public final class MealEvaluator {
             );
         }
 
+        processedNutrition *= archetypeBonus.foodValueMultiplier();
+        processedSaturation *= archetypeBonus.foodValueMultiplier();
+
         var dominanceEfficiency = 1.0 - dominanceLevel(metrics) * 0.25;
-        processedNutrition *= dominanceEfficiency;
-        processedSaturation *= dominanceEfficiency;
+        processedNutrition *= dominanceEfficiency * failureAssessment.foodValueMultiplier();
+        processedSaturation *= dominanceEfficiency * failureAssessment.foodValueMultiplier();
 
         var canCount = calculateCanCount(processedNutrition, processedSaturation);
         var nutritionPerCan = Math.min(processedNutrition / canCount, MAX_NUTRITION_POINTS_PER_CAN);
@@ -78,16 +95,26 @@ public final class MealEvaluator {
                 EffectSelector.select(metrics, qualityScore, effectRules),
                 canCount
         );
+        var qualityBand = QualityBand.fromScore(qualityScore);
+        var name = MealNameResolver.resolve(
+                input,
+                archetypeMatch,
+                failureAssessment,
+                qualityBand,
+                effectsPerCan
+        );
 
         return new MealEvaluation(
                 metrics,
                 archetypeMatch,
+                failureAssessment,
                 qualityScore,
-                QualityBand.fromScore(qualityScore),
+                qualityBand,
                 canCount,
                 nutritionPerCan,
                 saturationPerCan,
-                effectsPerCan
+                effectsPerCan,
+                name
         );
     }
 

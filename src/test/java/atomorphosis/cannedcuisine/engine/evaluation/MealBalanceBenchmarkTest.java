@@ -23,8 +23,8 @@ class MealBalanceBenchmarkTest {
 
         assertEquals(1, result.canCount());
         assertEquals(QualityBand.STANDARD, result.qualityBand());
-        assertEquals(9.75, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(15.6, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(10.312301587301588, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(16.499682539682542, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -57,14 +57,14 @@ class MealBalanceBenchmarkTest {
         var separatelyPreparedNutrition = 16.0;
         var separatelyPreparedEffectiveSaturation = 22.4;
 
-        assertEquals(QualityBand.STANDARD, result.qualityBand());
+        assertEquals(QualityBand.GOOD, result.qualityBand());
         assertEquals(
                 InitialArchetypes.PROTEIN_RATION,
                 result.archetypeMatch().orElseThrow().definition().id()
         );
         assertEquals(2, result.canCount());
-        assertEquals(8.24, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(11.536, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(8.826633744855968, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(12.357287242798355, result.saturationPointsPerCan(), 0.0000001);
         assertTrue(totalNutrition(result) > separatelyPreparedNutrition);
         assertTrue(totalSaturation(result) > separatelyPreparedEffectiveSaturation);
     }
@@ -102,17 +102,35 @@ class MealBalanceBenchmarkTest {
     }
 
     @Test
-    void doesNotRescueAQuestionableNonFoodMixture() {
+    void marksAValuelessCompositionAsFailedWithoutBlockingProduction() {
         var result = evaluate(
                 ingredient("water", 0.0, 0.0, CulinaryCategory.LIQUID),
                 ingredient("sugar", 0.0, 0.0, CulinaryCategory.SWEETENER),
                 ingredient("pepper", 0.0, 0.0, CulinaryCategory.SPICE)
         );
 
-        assertEquals(QualityBand.QUESTIONABLE, result.qualityBand());
+        assertEquals(QualityBand.FAILED, result.qualityBand());
+        assertEquals(19, result.qualityScore());
+        assertTrue(result.failureAssessment().has(MixtureFailureReason.INSUFFICIENT_FOOD_VALUE));
         assertEquals(1, result.canCount());
         assertEquals(0.0, result.nutritionPointsPerCan());
         assertEquals(0.0, result.saturationPointsPerCan());
+    }
+
+    @Test
+    void halvesFoodValueWhenToxicCoverageMakesTheMixtureFail() {
+        var result = evaluate(
+                ingredient("beef", 4.0, 2.0, CulinaryCategory.PROTEIN),
+                ingredient("carrot", 4.0, 2.0, CulinaryCategory.VEGETABLE),
+                ingredient("toxic_mushroom", 4.0, 2.0, CulinaryCategory.TOXIC)
+        );
+
+        assertEquals(QualityBand.FAILED, result.qualityBand());
+        assertTrue(result.failureAssessment().has(MixtureFailureReason.EXCESSIVE_TOXICITY));
+        assertEquals(1, result.canCount());
+        assertEquals(6.0, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(3.0, result.saturationPointsPerCan(), 0.0000001);
+        assertTrue(result.effectsPerCan().isEmpty());
     }
 
     @Test

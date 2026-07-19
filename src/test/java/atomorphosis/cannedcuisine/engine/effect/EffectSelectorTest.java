@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,6 +112,55 @@ class EffectSelectorTest {
         );
     }
 
+    @Test
+    void awardsLevelTwoFromRarityThatContributesToTheSameEffect() {
+        var selection = EffectSelector.select(
+                advancedMetrics(true, 1.0, 0),
+                90,
+                List.of(advancedRule(HASTE))
+        );
+
+        assertEquals(1, selection.effects().getFirst().amplifier());
+    }
+
+    @Test
+    void awardsLevelTwoFromTechnologyThatContributesToTheSameEffect() {
+        var selection = EffectSelector.select(
+                advancedMetrics(true, 0.0, 1),
+                90,
+                List.of(advancedRule(HASTE))
+        );
+
+        assertEquals(1, selection.effects().getFirst().amplifier());
+    }
+
+    @Test
+    void unrelatedRarityCannotUpgradeAnotherEffect() {
+        var selection = EffectSelector.select(
+                advancedMetrics(false, 1.0, 3),
+                90,
+                List.of(advancedRule(HASTE))
+        );
+
+        assertEquals(0, selection.effects().getFirst().amplifier());
+    }
+
+    @Test
+    void levelTwoStillRequiresHighQualityAndAffinity() {
+        var rule = advancedRule(HASTE);
+
+        assertEquals(0, EffectSelector.select(
+                advancedMetrics(true, 1.0, 1),
+                79,
+                List.of(rule)
+        ).effects().getFirst().amplifier());
+        assertEquals(0, EffectSelector.select(
+                metrics(Map.of(HASTE, 0.55)),
+                90,
+                List.of(rule)
+        ).effects().getFirst().amplifier());
+    }
+
     private static EvaluationMetrics metrics(Map<EffectId, Double> affinities) {
         return EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
                 new ProfiledIngredient(
@@ -145,6 +195,55 @@ class EffectSelectorTest {
                 priority,
                 secondary,
                 incompatible
+        );
+    }
+
+    private static EffectRule advancedRule(EffectId effect) {
+        return new EffectRule(
+                effect,
+                0.5,
+                40,
+                1200,
+                3600,
+                0,
+                true,
+                Set.of(),
+                Optional.of(new LevelTwoRequirements(80, 0.6, 0.15, 0.15))
+        );
+    }
+
+    private static EvaluationMetrics advancedMetrics(
+            boolean advancedIngredientSupportsHaste,
+            double rarity,
+            int technologyTier
+    ) {
+        var advancedAffinities = advancedIngredientSupportsHaste
+                ? Map.of(HASTE, 1.0)
+                : Map.of(SPEED, 1.0);
+        return EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
+                advancedIngredient("advanced", advancedAffinities, rarity, technologyTier),
+                advancedIngredient("common_one", Map.of(HASTE, 1.0), 0.0, 0),
+                advancedIngredient("common_two", Map.of(HASTE, 1.0), 0.0, 0)
+        )));
+    }
+
+    private static ProfiledIngredient advancedIngredient(
+            String path,
+            Map<EffectId, Double> affinities,
+            double rarity,
+            int technologyTier
+    ) {
+        return new ProfiledIngredient(
+                new IngredientId("canned_cuisine", path),
+                1,
+                new IngredientProfile(
+                        4.0,
+                        2.0,
+                        Map.of(CulinaryCategory.EXOTIC, 1.0),
+                        affinities,
+                        rarity,
+                        technologyTier
+                )
         );
     }
 }

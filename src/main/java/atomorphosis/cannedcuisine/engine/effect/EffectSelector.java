@@ -35,7 +35,15 @@ public final class EffectSelector {
             Objects.requireNonNull(rule, "rule");
             var affinity = Math.min(metrics.effectAffinityTotal(rule.effect()) / metrics.totalUnits(), 1.0);
             if (qualityScore >= rule.minimumQualityScore() && affinity >= rule.minimumAffinity()) {
-                candidates.add(new Candidate(rule, affinity));
+                var levelTwo = rule.levelTwoRequirements()
+                        .filter(requirements -> requirements.qualifies(
+                                metrics,
+                                rule.effect(),
+                                qualityScore,
+                                affinity
+                        ))
+                        .isPresent();
+                candidates.add(new Candidate(rule, affinity, levelTwo));
             }
         }
 
@@ -78,7 +86,7 @@ public final class EffectSelector {
         if (secondary) {
             duration = Math.max(1, duration / 2);
         }
-        return new ResolvedEffect(rule.effect(), candidate.affinity(), 0, duration);
+        return new ResolvedEffect(rule.effect(), candidate.affinity(), candidate.levelTwo() ? 1 : 0, duration);
     }
 
     private static boolean compatible(EffectRule first, EffectRule second) {
@@ -86,6 +94,6 @@ public final class EffectSelector {
                 && !second.incompatibleEffects().contains(first.effect());
     }
 
-    private record Candidate(EffectRule rule, double affinity) {
+    private record Candidate(EffectRule rule, double affinity, boolean levelTwo) {
     }
 }

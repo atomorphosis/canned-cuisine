@@ -17,7 +17,9 @@ public record EvaluationMetrics(
         double totalNutritionPoints,
         double totalSaturationPoints,
         Map<CulinaryCategory, Double> categoryTotals,
-        Map<EffectId, Double> effectAffinityTotals
+        Map<EffectId, Double> effectAffinityTotals,
+        Map<EffectId, Double> effectRarityContributionTotals,
+        Map<EffectId, Double> effectTechnologyContributionTotals
 ) {
     public EvaluationMetrics {
         if (totalUnits < 0) {
@@ -46,15 +48,30 @@ public record EvaluationMetrics(
         });
         categoryTotals = Collections.unmodifiableMap(immutableTotals);
 
-        Objects.requireNonNull(effectAffinityTotals, "effectAffinityTotals");
-        var immutableAffinityTotals = new TreeMap<EffectId, Double>();
-        effectAffinityTotals.forEach((effect, total) -> {
+        effectAffinityTotals = immutableEffectTotals("effect affinity total", effectAffinityTotals);
+        effectRarityContributionTotals = immutableEffectTotals(
+                "effect rarity contribution total",
+                effectRarityContributionTotals
+        );
+        effectTechnologyContributionTotals = immutableEffectTotals(
+                "effect technology contribution total",
+                effectTechnologyContributionTotals
+        );
+    }
+
+    private static Map<EffectId, Double> immutableEffectTotals(
+            String name,
+            Map<EffectId, Double> source
+    ) {
+        Objects.requireNonNull(source, name);
+        var immutableTotals = new TreeMap<EffectId, Double>();
+        source.forEach((effect, total) -> {
             Objects.requireNonNull(effect, "effect");
             Objects.requireNonNull(total, "total");
-            requireNonNegativeFinite("effect affinity total", total);
-            immutableAffinityTotals.put(effect, total);
+            requireNonNegativeFinite(name, total);
+            immutableTotals.put(effect, total);
         });
-        effectAffinityTotals = Collections.unmodifiableMap(immutableAffinityTotals);
+        return Collections.unmodifiableMap(immutableTotals);
     }
 
     public double categoryTotal(CulinaryCategory category) {
@@ -69,6 +86,16 @@ public record EvaluationMetrics(
     public double effectAffinityTotal(EffectId effect) {
         Objects.requireNonNull(effect, "effect");
         return effectAffinityTotals.getOrDefault(effect, 0.0);
+    }
+
+    public double effectRarityContributionTotal(EffectId effect) {
+        Objects.requireNonNull(effect, "effect");
+        return effectRarityContributionTotals.getOrDefault(effect, 0.0);
+    }
+
+    public double effectTechnologyContributionTotal(EffectId effect) {
+        Objects.requireNonNull(effect, "effect");
+        return effectTechnologyContributionTotals.getOrDefault(effect, 0.0);
     }
 
     private static void requireNonNegativeFinite(String name, double value) {

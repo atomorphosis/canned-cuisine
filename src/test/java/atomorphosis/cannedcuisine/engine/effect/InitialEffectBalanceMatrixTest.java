@@ -69,6 +69,7 @@ class InitialEffectBalanceMatrixTest {
                 InitialEffectRules.STRENGTH, new DurationRange(2400, 6000),
                 InitialEffectRules.REGENERATION, new DurationRange(200, 600),
                 InitialEffectRules.RESISTANCE, new DurationRange(2400, 6000),
+                InitialEffectRules.FIRE_RESISTANCE, new DurationRange(2400, 6000),
                 InitialEffectRules.SPEED, new DurationRange(6000, 12000),
                 InitialEffectRules.NIGHT_VISION, new DurationRange(9600, 18000),
                 InitialEffectRules.NOURISHMENT, new DurationRange(1200, 6000)

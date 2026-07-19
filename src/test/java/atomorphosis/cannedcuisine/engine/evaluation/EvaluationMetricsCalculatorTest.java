@@ -117,6 +117,45 @@ class EvaluationMetricsCalculatorTest {
         );
     }
 
+    @Test
+    void associatesRarityAndTechnologyOnlyWithEffectsTheIngredientSupports() {
+        var strength = new EffectId("minecraft", "strength");
+        var nightVision = new EffectId("minecraft", "night_vision");
+        var metrics = EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
+                new ProfiledIngredient(
+                        new IngredientId("canned_cuisine", "advanced_protein"),
+                        2,
+                        new IngredientProfile(
+                                4.0,
+                                2.0,
+                                Map.of(CulinaryCategory.PROTEIN, 1.0),
+                                Map.of(strength, 0.5),
+                                0.8,
+                                2
+                        )
+                ),
+                new ProfiledIngredient(
+                        new IngredientId("canned_cuisine", "rare_carrot"),
+                        1,
+                        new IngredientProfile(
+                                4.0,
+                                2.0,
+                                Map.of(CulinaryCategory.VEGETABLE, 1.0),
+                                Map.of(nightVision, 1.0),
+                                1.0,
+                                3
+                        )
+                )
+        )));
+
+        assertEquals(1.0, metrics.effectAffinityTotal(strength));
+        assertEquals(0.8, metrics.effectRarityContributionTotal(strength));
+        assertEquals(2.0, metrics.effectTechnologyContributionTotal(strength));
+        assertEquals(1.0, metrics.effectAffinityTotal(nightVision));
+        assertEquals(1.0, metrics.effectRarityContributionTotal(nightVision));
+        assertEquals(3.0, metrics.effectTechnologyContributionTotal(nightVision));
+    }
+
     private static ProfiledIngredient ingredient(String path, int count, CulinaryCategory category) {
         return ingredient(path, count, 1.0, 0.5, Map.of(category, 1.0));
     }

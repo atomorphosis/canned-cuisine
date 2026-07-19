@@ -16,6 +16,8 @@ public final class EvaluationMetricsCalculator {
 
         var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
         var effectAffinityTotals = new TreeMap<EffectId, Double>();
+        var effectRarityContributionTotals = new TreeMap<EffectId, Double>();
+        var effectTechnologyContributionTotals = new TreeMap<EffectId, Double>();
         var totalUnits = 0;
         var dominantIngredientUnits = 0;
         var totalNutritionPoints = 0.0;
@@ -35,9 +37,19 @@ public final class EvaluationMetricsCalculator {
             profile.categoryWeights().forEach((category, weight) ->
                     categoryTotals.merge(category, weight * count, Double::sum)
             );
-            profile.effectAffinities().forEach((effect, affinity) ->
-                    effectAffinityTotals.merge(effect, affinity * count, Double::sum)
-            );
+            profile.effectAffinities().forEach((effect, affinity) -> {
+                effectAffinityTotals.merge(effect, affinity * count, Double::sum);
+                effectRarityContributionTotals.merge(
+                        effect,
+                        affinity * profile.rarity() * count,
+                        Double::sum
+                );
+                effectTechnologyContributionTotals.merge(
+                        effect,
+                        affinity * profile.technologyTier() * count,
+                        Double::sum
+                );
+            });
         }
 
         var effectiveDiversity = totalUnits == 0
@@ -52,7 +64,9 @@ public final class EvaluationMetricsCalculator {
                 totalNutritionPoints,
                 totalSaturationPoints,
                 categoryTotals,
-                effectAffinityTotals
+                effectAffinityTotals,
+                effectRarityContributionTotals,
+                effectTechnologyContributionTotals
         );
     }
 }
