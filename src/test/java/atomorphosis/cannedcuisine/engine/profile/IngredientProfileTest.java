@@ -1,8 +1,10 @@
 package atomorphosis.cannedcuisine.engine.profile;
 
+import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,6 +64,53 @@ class IngredientProfileTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new IngredientProfile(1.0, 0.0, Map.of(CulinaryCategory.FRUIT, 1.01))
+        );
+    }
+
+    @Test
+    void storesIndependentImmutableEffectAffinities() {
+        var nourishment = new EffectId("farmersdelight", "nourishment");
+        var regeneration = new EffectId("minecraft", "regeneration");
+        var sourceAffinities = new HashMap<EffectId, Double>();
+        sourceAffinities.put(nourishment, 0.75);
+        var profile = new IngredientProfile(
+                4.0,
+                2.4,
+                Map.of(CulinaryCategory.FRUIT, 1.0),
+                sourceAffinities
+        );
+
+        sourceAffinities.put(regeneration, 1.0);
+
+        assertEquals(0.75, profile.effectAffinity(nourishment));
+        assertEquals(0.0, profile.effectAffinity(regeneration));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> profile.effectAffinities().put(regeneration, 1.0)
+        );
+    }
+
+    @Test
+    void rejectsInvalidEffectAffinities() {
+        var nourishment = new EffectId("farmersdelight", "nourishment");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(
+                        1.0,
+                        1.0,
+                        Map.of(CulinaryCategory.FRUIT, 1.0),
+                        Map.of(nourishment, 0.0)
+                )
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new IngredientProfile(
+                        1.0,
+                        1.0,
+                        Map.of(CulinaryCategory.FRUIT, 1.0),
+                        Map.of(nourishment, Double.NaN)
+                )
         );
     }
 }
