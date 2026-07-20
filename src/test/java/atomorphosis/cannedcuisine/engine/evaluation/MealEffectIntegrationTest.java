@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MealEffectIntegrationTest {
     @Test
     void resolvesFullNourishmentDurationForEveryCompoteCan() {
-        var evaluation = MealEvaluator.evaluate(new EvaluationInput(List.of(
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(List.of(
                 ingredient("apple", 5.0, CulinaryCategory.FRUIT),
                 ingredient("berries", 5.0, CulinaryCategory.FRUIT),
                 ingredient("melon", 5.0, CulinaryCategory.FRUIT),

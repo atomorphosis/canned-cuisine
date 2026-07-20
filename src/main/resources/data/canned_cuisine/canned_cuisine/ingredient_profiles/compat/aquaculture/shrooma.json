@@ -1,0 +1,18 @@
+{
+  "ingredients": [
+    "aquaculture:brown_shrooma",
+    "aquaculture:red_shrooma"
+  ],
+  "nutrition": 2,
+  "saturation": 1,
+  "categories": {
+    "mushroom": 1,
+    "protein": 0.25,
+    "exotic": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.6,
+    "minecraft:night_vision": 0.5
+  },
+  "rarity": 0.45
+}

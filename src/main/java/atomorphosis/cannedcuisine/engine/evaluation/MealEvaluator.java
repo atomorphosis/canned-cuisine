@@ -4,11 +4,9 @@ import atomorphosis.cannedcuisine.engine.archetype.ArchetypeDefinition;
 import atomorphosis.cannedcuisine.engine.archetype.ArchetypeBonus;
 import atomorphosis.cannedcuisine.engine.archetype.ArchetypeBonusCalculator;
 import atomorphosis.cannedcuisine.engine.archetype.ArchetypeMatcher;
-import atomorphosis.cannedcuisine.engine.archetype.InitialArchetypes;
 import atomorphosis.cannedcuisine.engine.effect.EffectDistributor;
 import atomorphosis.cannedcuisine.engine.effect.EffectRule;
 import atomorphosis.cannedcuisine.engine.effect.EffectSelector;
-import atomorphosis.cannedcuisine.engine.effect.InitialEffectRules;
 import atomorphosis.cannedcuisine.engine.naming.MealNameResolver;
 
 import java.util.Collection;
@@ -22,17 +20,6 @@ public final class MealEvaluator {
     private static final int MAX_BASE_QUALITY_SCORE = 79;
 
     private MealEvaluator() {
-    }
-
-    public static MealEvaluation evaluate(EvaluationInput input) {
-        return evaluate(input, InitialArchetypes.definitions(), InitialEffectRules.rules());
-    }
-
-    public static MealEvaluation evaluate(
-            EvaluationInput input,
-            Collection<ArchetypeDefinition> archetypes
-    ) {
-        return evaluate(input, archetypes, InitialEffectRules.rules());
     }
 
     public static MealEvaluation evaluate(

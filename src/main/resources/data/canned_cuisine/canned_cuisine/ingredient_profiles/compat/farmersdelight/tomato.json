@@ -1,0 +1,12 @@
+{
+  "ingredient": "farmersdelight:tomato",
+  "nutrition": 1,
+  "saturation": 0.6,
+  "categories": {
+    "vegetable": 1
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.2,
+    "farmersdelight:nourishment": 0.5
+  }
+}

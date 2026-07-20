@@ -1,0 +1,12 @@
+{
+  "id": "canned_cuisine:trail_mix",
+  "criteria": [
+    { "categories": ["fruit"], "minimum_coverage": 0.20, "preferred_coverage": 0.35, "maximum_coverage": 1.0, "score_weight": 1.0 },
+    { "categories": ["grain"], "minimum_coverage": 0.20, "preferred_coverage": 0.35, "maximum_coverage": 1.0, "score_weight": 1.0 },
+    { "categories": ["fat"], "minimum_coverage": 0.10, "preferred_coverage": 0.20, "maximum_coverage": 1.0, "score_weight": 0.75 },
+    { "categories": ["liquid"], "minimum_coverage": 0.0, "preferred_coverage": 0.0, "maximum_coverage": 0.15, "score_weight": 0.0 }
+  ],
+  "minimum_effective_diversity": 3.0,
+  "preferred_effective_diversity": 4.0,
+  "diversity_score_weight": 1.0
+}

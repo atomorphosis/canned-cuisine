@@ -1,0 +1,13 @@
+{
+  "ingredient": "farmersdelight:cod_slice",
+  "nutrition": 3,
+  "saturation": 3,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.3,
+    "minecraft:night_vision": 0.25,
+    "farmersdelight:nourishment": 0.5
+  }
+}

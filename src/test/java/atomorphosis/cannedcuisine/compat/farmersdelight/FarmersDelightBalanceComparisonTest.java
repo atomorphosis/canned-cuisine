@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FarmersDelightBalanceComparisonTest {
     @Test
     void comparesVegetableSoupWithTheSameIngredientComposition() {
-        var cannedCuisineResult = MealEvaluator.evaluate(new EvaluationInput(List.of(
+        var cannedCuisineResult = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(List.of(
                 ingredient("minecraft", "carrot", 3.0, 3.6),
                 ingredient("minecraft", "potato", 5.0, 6.0),
                 ingredient("minecraft", "beetroot", 1.0, 1.2),

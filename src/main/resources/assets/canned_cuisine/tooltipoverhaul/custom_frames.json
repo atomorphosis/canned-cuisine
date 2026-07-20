@@ -1,0 +1,20 @@
+{
+  "frames": [
+    {
+      "items": [
+        "canned_cuisine:canned_meal"
+      ],
+      "texture": "tooltipoverhaul:textures/overlay/silver_frame.png",
+      "gradientType": "custom",
+      "borderType": "gradient",
+      "innerFrameCornerType": "rounded",
+      "backgroundCornerType": "rounded",
+      "dividerLineType": "linear",
+      "dividerLineColor": "match_inner_frame_color",
+      "iconBackgroundType": "glow",
+      "specialEffect": "metal_shining",
+      "showRating": false,
+      "showSecondPanel": false
+    }
+  ]
+}

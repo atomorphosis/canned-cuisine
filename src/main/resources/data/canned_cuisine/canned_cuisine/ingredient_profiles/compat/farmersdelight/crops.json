@@ -1,0 +1,15 @@
+{
+  "ingredients": [
+    "farmersdelight:cabbage",
+    "farmersdelight:onion"
+  ],
+  "nutrition": 2,
+  "saturation": 1.6,
+  "categories": {
+    "vegetable": 1
+  },
+  "effect_affinities": {
+    "minecraft:night_vision": 0.4,
+    "farmersdelight:nourishment": 0.5
+  }
+}

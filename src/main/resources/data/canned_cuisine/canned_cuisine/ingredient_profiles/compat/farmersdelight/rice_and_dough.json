@@ -1,0 +1,17 @@
+{
+  "ingredients": [
+    "farmersdelight:rice",
+    "farmersdelight:wheat_dough",
+    "farmersdelight:raw_pasta"
+  ],
+  "nutrition": 5,
+  "saturation": 6,
+  "categories": {
+    "grain": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.4,
+    "minecraft:resistance": 0.3,
+    "farmersdelight:nourishment": 0.5
+  }
+}

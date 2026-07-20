@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class InitialArchetypesTest {
     @Test
     void recognizesStewWithoutRequiringLiquid() {
-        var stew = InitialArchetypes.definitions().stream()
+        var stew = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
                 .filter(definition -> definition.id().equals(InitialArchetypes.STEW))
                 .findFirst()
                 .orElseThrow();
@@ -68,7 +68,7 @@ class InitialArchetypesTest {
                 ingredient("sugar", 2, CulinaryCategory.SWEETENER)
         );
 
-        assertTrue(ArchetypeMatcher.findBest(metrics, InitialArchetypes.definitions()).isEmpty());
+        assertTrue(ArchetypeMatcher.findBest(metrics, atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()).isEmpty());
     }
 
     @Test
@@ -104,7 +104,7 @@ class InitialArchetypesTest {
 
     @Test
     void recognizesOnlyDenseEmergencyRations() {
-        var emergencyRation = InitialArchetypes.definitions().stream()
+        var emergencyRation = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
                 .filter(definition -> definition.id().equals(InitialArchetypes.EMERGENCY_RATION))
                 .findFirst()
                 .orElseThrow();
@@ -125,7 +125,7 @@ class InitialArchetypesTest {
         assertTrue(ArchetypeMatcher.match(weakMetrics, emergencyRation).isEmpty());
         assertEquals(
                 InitialArchetypes.EMERGENCY_RATION,
-                ArchetypeMatcher.findBest(denseMetrics, InitialArchetypes.definitions())
+                ArchetypeMatcher.findBest(denseMetrics, atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions())
                         .orElseThrow()
                         .definition()
                         .id()
@@ -145,7 +145,7 @@ class InitialArchetypesTest {
     private static void assertBestMatch(ArchetypeId expected, ProfiledIngredient... ingredients) {
         var match = ArchetypeMatcher.findBest(
                 metrics(ingredients),
-                InitialArchetypes.definitions()
+                atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()
         ).orElseThrow();
 
         assertEquals(expected, match.definition().id());

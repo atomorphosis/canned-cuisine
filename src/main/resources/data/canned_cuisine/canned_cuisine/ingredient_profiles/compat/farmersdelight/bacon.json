@@ -1,0 +1,14 @@
+{
+  "ingredient": "farmersdelight:bacon",
+  "nutrition": 4,
+  "saturation": 6.4,
+  "categories": {
+    "protein": 1,
+    "fat": 0.35
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.8,
+    "minecraft:resistance": 0.3,
+    "farmersdelight:nourishment": 0.5
+  }
+}

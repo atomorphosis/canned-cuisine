@@ -53,7 +53,7 @@ class IngredientDominanceTest {
             ));
         }
 
-        return MealEvaluator.evaluate(new EvaluationInput(ingredients));
+        return atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(ingredients));
     }
 
     private static double efficiency(MealEvaluation evaluation) {

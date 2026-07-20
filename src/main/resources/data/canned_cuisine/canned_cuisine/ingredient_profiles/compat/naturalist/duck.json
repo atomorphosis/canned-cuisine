@@ -1,0 +1,14 @@
+{
+  "ingredient": "naturalist:duck",
+  "nutrition": 6,
+  "saturation": 7.2,
+  "categories": {
+    "protein": 1,
+    "fat": 0.2
+  },
+  "effect_affinities": {
+    "minecraft:speed": 0.35,
+    "minecraft:resistance": 0.3
+  },
+  "rarity": 0.2
+}

@@ -1,0 +1,18 @@
+{
+  "ingredients": [
+    "croptopia:barley",
+    "croptopia:corn",
+    "croptopia:oat",
+    "croptopia:rice"
+  ],
+  "nutrition": 5,
+  "saturation": 6,
+  "categories": {
+    "grain": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.45,
+    "minecraft:resistance": 0.35,
+    "minecraft:speed": 0.3
+  }
+}

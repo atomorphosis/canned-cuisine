@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class InitialVanillaProfilesTest {
     @Test
     void shipsRawIngredientsAndExcludesTheirCookedVariants() {
-        var profiles = InitialVanillaProfiles.profiles();
+        var profiles = atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.profiles();
 
         assertEquals(27, profiles.size());
         assertEquals(8.0, profiles.get(InitialVanillaProfiles.BEEF).nutritionPoints());
@@ -35,8 +35,8 @@ class InitialVanillaProfilesTest {
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_salmon")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_rabbit")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "baked_potato")));
-        assertTrue(InitialVanillaProfiles.find(InitialVanillaProfiles.CARROT).isPresent());
-        assertTrue(InitialVanillaProfiles.find(new IngredientId("minecraft", "steak")).isEmpty());
+        assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.CARROT).isPresent());
+        assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(new IngredientId("minecraft", "steak")).isEmpty());
         assertThrows(
                 UnsupportedOperationException.class,
                 () -> profiles.put(
@@ -139,14 +139,14 @@ class InitialVanillaProfilesTest {
 
     @Test
     void separatesCommonFoodFromAdvancedVanillaCatalysts() {
-        assertEquals(0.0, InitialVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().rarity());
-        assertEquals(0, InitialVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().technologyTier());
-        assertTrue(InitialVanillaProfiles.find(InitialVanillaProfiles.BLAZE_POWDER).orElseThrow().rarity() > 0.0);
+        assertEquals(0.0, atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().rarity());
+        assertEquals(0, atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().catalyticPotency());
+        assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BLAZE_POWDER).orElseThrow().rarity() > 0.0);
         assertEquals(
                 2,
-                InitialVanillaProfiles.find(InitialVanillaProfiles.GLOWSTONE_DUST)
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.GLOWSTONE_DUST)
                         .orElseThrow()
-                        .technologyTier()
+                        .catalyticPotency()
         );
     }
 
@@ -195,8 +195,8 @@ class InitialVanillaProfilesTest {
     }
 
     private static MealEvaluation evaluate(IngredientId... ingredients) {
-        var profiles = InitialVanillaProfiles.profiles();
-        return MealEvaluator.evaluate(new EvaluationInput(List.of(ingredients).stream()
+        var profiles = atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.profiles();
+        return atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(List.of(ingredients).stream()
                 .map(ingredient -> new ProfiledIngredient(ingredient, 1, profiles.get(ingredient)))
                 .toList()));
     }

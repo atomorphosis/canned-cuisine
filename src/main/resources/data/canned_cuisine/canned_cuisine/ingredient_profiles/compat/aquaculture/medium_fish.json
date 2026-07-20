@@ -1,0 +1,27 @@
+{
+  "ingredients": [
+    "aquaculture:blackfish",
+    "aquaculture:pink_salmon",
+    "aquaculture:pollock",
+    "aquaculture:rainbow_trout",
+    "aquaculture:bayad",
+    "aquaculture:smallmouth_bass",
+    "aquaculture:brown_trout",
+    "aquaculture:carp",
+    "aquaculture:gar",
+    "aquaculture:muskellunge",
+    "aquaculture:tambaqui",
+    "aquaculture:red_grouper"
+  ],
+  "nutrition": 5,
+  "saturation": 6,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.35,
+    "minecraft:strength": 0.35,
+    "minecraft:night_vision": 0.25
+  },
+  "rarity": 0.25
+}

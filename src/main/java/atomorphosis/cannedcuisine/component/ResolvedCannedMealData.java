@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.component;
 
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
+import atomorphosis.cannedcuisine.engine.effect.IngredientEffectContribution;
 import atomorphosis.cannedcuisine.engine.effect.ResolvedEffect;
 import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluation;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
@@ -34,11 +35,12 @@ public record ResolvedCannedMealData(
         double nutritionPoints,
         double saturationPoints,
         List<ResolvedEffect> effects,
+        List<IngredientEffectContribution> effectContributions,
         int labelColor,
         Optional<Integer> effectColor,
         MealNameTokens name
 ) {
-    public static final int CURRENT_DATA_VERSION = 2;
+    public static final int CURRENT_DATA_VERSION = 3;
 
     private static final Codec<IngredientId> INGREDIENT_ID_CODEC = ResourceLocation.CODEC.xmap(
             id -> new IngredientId(id.getNamespace(), id.getPath()),
@@ -60,6 +62,15 @@ public record ResolvedCannedMealData(
             Codec.intRange(0, 1).fieldOf("amplifier").forGetter(ResolvedEffect::amplifier),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("duration_ticks").forGetter(ResolvedEffect::durationTicks)
     ).apply(instance, ResolvedEffect::new));
+    private static final Codec<IngredientEffectContribution> EFFECT_CONTRIBUTION_CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    INGREDIENT_ID_CODEC.fieldOf("ingredient").forGetter(IngredientEffectContribution::ingredient),
+                    EFFECT_ID_CODEC.fieldOf("effect").forGetter(IngredientEffectContribution::effect),
+                    Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE)
+                            .fieldOf("strength")
+                            .forGetter(IngredientEffectContribution::strength)
+            ).apply(instance, IngredientEffectContribution::new)
+    );
     private static final Codec<NameTokenId> NAME_TOKEN_CODEC = ResourceLocation.CODEC.xmap(
             id -> new NameTokenId(id.getNamespace(), id.getPath()),
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
@@ -94,6 +105,9 @@ public record ResolvedCannedMealData(
             Codec.DOUBLE.fieldOf("nutrition").forGetter(ResolvedCannedMealData::nutritionPoints),
             Codec.DOUBLE.fieldOf("saturation").forGetter(ResolvedCannedMealData::saturationPoints),
             EFFECT_CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(ResolvedCannedMealData::effects),
+            EFFECT_CONTRIBUTION_CODEC.listOf()
+                    .optionalFieldOf("effect_contributions", List.of())
+                    .forGetter(ResolvedCannedMealData::effectContributions),
             Codec.intRange(0, 0xFFFFFF).optionalFieldOf(
                     "label_color",
                     MealAppearanceResolver.NEUTRAL_LABEL_COLOR
@@ -107,10 +121,12 @@ public record ResolvedCannedMealData(
         Objects.requireNonNull(composition, "composition");
         Objects.requireNonNull(failureReasons, "failureReasons");
         Objects.requireNonNull(effects, "effects");
+        Objects.requireNonNull(effectContributions, "effectContributions");
         Objects.requireNonNull(effectColor, "effectColor");
         Objects.requireNonNull(name, "name");
         failureReasons = Set.copyOf(failureReasons);
         effects = List.copyOf(effects);
+        effectContributions = List.copyOf(effectContributions);
 
         if (dataVersion < 1) {
             throw new IllegalArgumentException("Data version must be positive");
@@ -142,6 +158,19 @@ public record ResolvedCannedMealData(
         for (var effect : effects) {
             if (!distinctEffects.add(effect.effect())) {
                 throw new IllegalArgumentException("A canned meal cannot contain duplicate effects");
+            }
+        }
+        if (effectContributions.size() > 12) {
+            throw new IllegalArgumentException("A canned meal supports at most twelve effect contributions");
+        }
+        var contributionKeys = new HashSet<String>();
+        for (var contribution : effectContributions) {
+            if (!distinctIngredients.contains(contribution.ingredient())) {
+                throw new IllegalArgumentException("Effect contribution ingredient is absent from the composition");
+            }
+            var key = contribution.ingredient() + "->" + contribution.effect();
+            if (!contributionKeys.add(key)) {
+                throw new IllegalArgumentException("A canned meal cannot contain duplicate effect contributions");
             }
         }
         if (!failureReasons.isEmpty() && !effects.isEmpty()) {
@@ -178,6 +207,7 @@ public record ResolvedCannedMealData(
                 nutritionPoints,
                 saturationPoints,
                 effects,
+                List.of(),
                 MealAppearanceResolver.NEUTRAL_LABEL_COLOR,
                 effects.isEmpty()
                         ? Optional.empty()
@@ -187,7 +217,16 @@ public record ResolvedCannedMealData(
     }
 
     public static ResolvedCannedMealData from(CanonicalComposition composition, MealEvaluation evaluation) {
+        return from(composition, evaluation, List.of());
+    }
+
+    public static ResolvedCannedMealData from(
+            CanonicalComposition composition,
+            MealEvaluation evaluation,
+            List<IngredientEffectContribution> effectContributions
+    ) {
         Objects.requireNonNull(evaluation, "evaluation");
+        Objects.requireNonNull(effectContributions, "effectContributions");
         var appearance = MealAppearanceResolver.resolve(evaluation.metrics(), evaluation.effectsPerCan());
         return new ResolvedCannedMealData(
                 CURRENT_DATA_VERSION,
@@ -197,6 +236,7 @@ public record ResolvedCannedMealData(
                 evaluation.nutritionPointsPerCan(),
                 evaluation.saturationPointsPerCan(),
                 evaluation.effectsPerCan(),
+                effectContributions,
                 appearance.labelColor(),
                 appearance.effectColor(),
                 evaluation.name()

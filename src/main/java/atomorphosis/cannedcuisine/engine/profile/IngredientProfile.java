@@ -14,7 +14,7 @@ public record IngredientProfile(
         Map<CulinaryCategory, Double> categoryWeights,
         Map<EffectId, Double> effectAffinities,
         double rarity,
-        int technologyTier
+        int catalyticPotency
 ) {
     public IngredientProfile(
             double nutritionPoints,
@@ -39,8 +39,8 @@ public record IngredientProfile(
         if (!Double.isFinite(rarity) || rarity < 0.0 || rarity > 1.0) {
             throw new IllegalArgumentException("Rarity must be finite and in the range [0, 1]");
         }
-        if (technologyTier < 0) {
-            throw new IllegalArgumentException("Technology tier must be non-negative");
+        if (catalyticPotency < 0) {
+            throw new IllegalArgumentException("Catalytic potency must be non-negative");
         }
         Objects.requireNonNull(categoryWeights, "categoryWeights");
 

@@ -1,0 +1,14 @@
+{
+  "ingredient": "farmersdelight:mutton_chops",
+  "nutrition": 3,
+  "saturation": 4.8,
+  "categories": {
+    "protein": 1,
+    "fat": 0.2
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.75,
+    "minecraft:haste": 0.25,
+    "farmersdelight:nourishment": 0.5
+  }
+}

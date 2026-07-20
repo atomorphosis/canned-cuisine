@@ -36,7 +36,7 @@ class MinecraftEvaluationResolverTest {
                         new ItemStack(Items.CARROT, 64),
                         new ItemStack(Items.APPLE, 3)
                 ),
-                InitialVanillaProfiles.lookup()
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );
 
         var success = assertInstanceOf(EvaluationInputResolution.Success.class, resolution);
@@ -57,7 +57,7 @@ class MinecraftEvaluationResolverTest {
                         new ItemStack(Items.CARROT),
                         new ItemStack(Items.WHEAT)
                 ),
-                InitialVanillaProfiles.lookup()
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );
 
         var missing = assertInstanceOf(EvaluationInputResolution.MissingProfiles.class, resolution);
@@ -70,7 +70,7 @@ class MinecraftEvaluationResolverTest {
         var overlay = IngredientProfileLookup.fromMap(Map.of(
                 bakedPotato,
                 new IngredientProfile(5.0, 6.0, Map.of(CulinaryCategory.VEGETABLE, 1.0))
-        )).withFallback(InitialVanillaProfiles.lookup());
+        )).withFallback(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup());
         var resolution = MinecraftEvaluationResolver.resolve(
                 List.of(
                         new ItemStack(Items.BAKED_POTATO),

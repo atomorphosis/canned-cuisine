@@ -8,7 +8,7 @@ public record LevelTwoRequirements(
         int minimumQualityScore,
         double minimumAffinity,
         double minimumRarityContributionPerUnit,
-        double minimumTechnologyContributionPerUnit
+        double minimumCatalyticContributionPerUnit
 ) {
     public LevelTwoRequirements {
         if (minimumQualityScore < 0 || minimumQualityScore > 100) {
@@ -21,9 +21,9 @@ public record LevelTwoRequirements(
                 || minimumRarityContributionPerUnit <= 0.0) {
             throw new IllegalArgumentException("Minimum rarity contribution must be finite and positive");
         }
-        if (!Double.isFinite(minimumTechnologyContributionPerUnit)
-                || minimumTechnologyContributionPerUnit <= 0.0) {
-            throw new IllegalArgumentException("Minimum technology contribution must be finite and positive");
+        if (!Double.isFinite(minimumCatalyticContributionPerUnit)
+                || minimumCatalyticContributionPerUnit <= 0.0) {
+            throw new IllegalArgumentException("Minimum catalytic contribution must be finite and positive");
         }
     }
 
@@ -43,8 +43,8 @@ public record LevelTwoRequirements(
         }
 
         var rarityContribution = metrics.effectRarityContributionTotal(effect) / metrics.totalUnits();
-        var technologyContribution = metrics.effectTechnologyContributionTotal(effect) / metrics.totalUnits();
+        var catalyticContribution = metrics.effectCatalyticContributionTotal(effect) / metrics.totalUnits();
         return rarityContribution >= minimumRarityContributionPerUnit
-                || technologyContribution >= minimumTechnologyContributionPerUnit;
+                || catalyticContribution >= minimumCatalyticContributionPerUnit;
     }
 }

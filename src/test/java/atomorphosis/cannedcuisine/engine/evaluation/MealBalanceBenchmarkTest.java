@@ -29,7 +29,7 @@ class MealBalanceBenchmarkTest {
 
     @Test
     void repeatedRawBeefDoesNotBeatCookingThreeSteaks() {
-        var result = MealEvaluator.evaluate(new EvaluationInput(List.of(
+        var result = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(List.of(
                 new ProfiledIngredient(
                         new IngredientId("minecraft", "beef"),
                         3,
@@ -153,7 +153,7 @@ class MealBalanceBenchmarkTest {
     }
 
     private static MealEvaluation evaluate(ProfiledIngredient... ingredients) {
-        return MealEvaluator.evaluate(new EvaluationInput(List.of(ingredients)));
+        return atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(List.of(ingredients)));
     }
 
     private static double totalNutrition(MealEvaluation evaluation) {

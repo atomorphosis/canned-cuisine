@@ -17,7 +17,7 @@ public final class EvaluationMetricsCalculator {
         var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
         var effectAffinityTotals = new TreeMap<EffectId, Double>();
         var effectRarityContributionTotals = new TreeMap<EffectId, Double>();
-        var effectTechnologyContributionTotals = new TreeMap<EffectId, Double>();
+        var effectCatalyticContributionTotals = new TreeMap<EffectId, Double>();
         var totalUnits = 0;
         var dominantIngredientUnits = 0;
         var totalNutritionPoints = 0.0;
@@ -44,9 +44,9 @@ public final class EvaluationMetricsCalculator {
                         affinity * profile.rarity() * count,
                         Double::sum
                 );
-                effectTechnologyContributionTotals.merge(
+                effectCatalyticContributionTotals.merge(
                         effect,
-                        affinity * profile.technologyTier() * count,
+                        affinity * profile.catalyticPotency() * count,
                         Double::sum
                 );
             });
@@ -66,7 +66,7 @@ public final class EvaluationMetricsCalculator {
                 categoryTotals,
                 effectAffinityTotals,
                 effectRarityContributionTotals,
-                effectTechnologyContributionTotals
+                effectCatalyticContributionTotals
         );
     }
 }

@@ -1,0 +1,15 @@
+{
+  "ingredient": "farmersdelight:ham",
+  "nutrition": 10,
+  "saturation": 16,
+  "categories": {
+    "protein": 1,
+    "fat": 0.3
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.9,
+    "minecraft:resistance": 0.4,
+    "farmersdelight:nourishment": 0.6
+  },
+  "rarity": 0.25
+}

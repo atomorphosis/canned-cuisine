@@ -21,7 +21,7 @@ class MealAppearanceResolverTest {
                 CulinaryCategory.GRAIN, 1.0
         ));
 
-        assertEquals(0xA58A4E, MealAppearanceResolver.labelColor(metrics));
+        assertEquals(0xAE8A39, MealAppearanceResolver.labelColor(metrics));
     }
 
     @Test

@@ -1,0 +1,44 @@
+{
+  "ingredients": [
+    "croptopia:blackberry",
+    "croptopia:blueberry",
+    "croptopia:cantaloupe",
+    "croptopia:cranberry",
+    "croptopia:currant",
+    "croptopia:elderberry",
+    "croptopia:grape",
+    "croptopia:honeydew",
+    "croptopia:kiwi",
+    "croptopia:pineapple",
+    "croptopia:raspberry",
+    "croptopia:saguaro",
+    "croptopia:strawberry",
+    "croptopia:apricot",
+    "croptopia:banana",
+    "croptopia:cherry",
+    "croptopia:date",
+    "croptopia:dragonfruit",
+    "croptopia:fig",
+    "croptopia:grapefruit",
+    "croptopia:kumquat",
+    "croptopia:lemon",
+    "croptopia:lime",
+    "croptopia:mango",
+    "croptopia:nectarine",
+    "croptopia:orange",
+    "croptopia:peach",
+    "croptopia:pear",
+    "croptopia:persimmon",
+    "croptopia:plum",
+    "croptopia:starfruit"
+  ],
+  "nutrition": 1,
+  "saturation": 0.2,
+  "categories": {
+    "fruit": 1
+  },
+  "effect_affinities": {
+    "minecraft:speed": 0.55,
+    "minecraft:regeneration": 0.2
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "ingredients": [
+    "croptopia:basil",
+    "croptopia:chile_pepper",
+    "croptopia:coffee_beans",
+    "croptopia:ginger",
+    "croptopia:hops",
+    "croptopia:mustard",
+    "croptopia:nutmeg",
+    "croptopia:pepper",
+    "croptopia:tea_leaves",
+    "croptopia:turmeric",
+    "croptopia:vanilla",
+    "croptopia:cinnamon"
+  ],
+  "nutrition": 0,
+  "saturation": 0,
+  "categories": {
+    "spice": 1,
+    "medicinal": 0.2
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.35,
+    "minecraft:speed": 0.3,
+    "minecraft:regeneration": 0.2
+  }
+}

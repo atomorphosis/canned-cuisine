@@ -124,7 +124,7 @@ class EffectSelectorTest {
     }
 
     @Test
-    void awardsLevelTwoFromTechnologyThatContributesToTheSameEffect() {
+    void awardsLevelTwoFromCatalyticPotencyThatContributesToTheSameEffect() {
         var selection = EffectSelector.select(
                 advancedMetrics(true, 0.0, 1),
                 90,
@@ -215,13 +215,13 @@ class EffectSelectorTest {
     private static EvaluationMetrics advancedMetrics(
             boolean advancedIngredientSupportsHaste,
             double rarity,
-            int technologyTier
+            int catalyticPotency
     ) {
         var advancedAffinities = advancedIngredientSupportsHaste
                 ? Map.of(HASTE, 1.0)
                 : Map.of(SPEED, 1.0);
         return EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
-                advancedIngredient("advanced", advancedAffinities, rarity, technologyTier),
+                advancedIngredient("advanced", advancedAffinities, rarity, catalyticPotency),
                 advancedIngredient("common_one", Map.of(HASTE, 1.0), 0.0, 0),
                 advancedIngredient("common_two", Map.of(HASTE, 1.0), 0.0, 0)
         )));
@@ -231,7 +231,7 @@ class EffectSelectorTest {
             String path,
             Map<EffectId, Double> affinities,
             double rarity,
-            int technologyTier
+            int catalyticPotency
     ) {
         return new ProfiledIngredient(
                 new IngredientId("canned_cuisine", path),
@@ -242,7 +242,7 @@ class EffectSelectorTest {
                         Map.of(CulinaryCategory.EXOTIC, 1.0),
                         affinities,
                         rarity,
-                        technologyTier
+                        catalyticPotency
                 )
         );
     }

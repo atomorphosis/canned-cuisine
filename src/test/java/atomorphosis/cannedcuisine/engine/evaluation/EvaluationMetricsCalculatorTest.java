@@ -118,7 +118,7 @@ class EvaluationMetricsCalculatorTest {
     }
 
     @Test
-    void associatesRarityAndTechnologyOnlyWithEffectsTheIngredientSupports() {
+    void associatesRarityAndCatalyticPotencyOnlyWithEffectsTheIngredientSupports() {
         var strength = new EffectId("minecraft", "strength");
         var nightVision = new EffectId("minecraft", "night_vision");
         var metrics = EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
@@ -150,10 +150,10 @@ class EvaluationMetricsCalculatorTest {
 
         assertEquals(1.0, metrics.effectAffinityTotal(strength));
         assertEquals(0.8, metrics.effectRarityContributionTotal(strength));
-        assertEquals(2.0, metrics.effectTechnologyContributionTotal(strength));
+        assertEquals(2.0, metrics.effectCatalyticContributionTotal(strength));
         assertEquals(1.0, metrics.effectAffinityTotal(nightVision));
         assertEquals(1.0, metrics.effectRarityContributionTotal(nightVision));
-        assertEquals(3.0, metrics.effectTechnologyContributionTotal(nightVision));
+        assertEquals(3.0, metrics.effectCatalyticContributionTotal(nightVision));
     }
 
     private static ProfiledIngredient ingredient(String path, int count, CulinaryCategory category) {

@@ -19,7 +19,7 @@ public record EvaluationMetrics(
         Map<CulinaryCategory, Double> categoryTotals,
         Map<EffectId, Double> effectAffinityTotals,
         Map<EffectId, Double> effectRarityContributionTotals,
-        Map<EffectId, Double> effectTechnologyContributionTotals
+        Map<EffectId, Double> effectCatalyticContributionTotals
 ) {
     public EvaluationMetrics {
         if (totalUnits < 0) {
@@ -53,9 +53,9 @@ public record EvaluationMetrics(
                 "effect rarity contribution total",
                 effectRarityContributionTotals
         );
-        effectTechnologyContributionTotals = immutableEffectTotals(
-                "effect technology contribution total",
-                effectTechnologyContributionTotals
+        effectCatalyticContributionTotals = immutableEffectTotals(
+                "effect catalytic contribution total",
+                effectCatalyticContributionTotals
         );
     }
 
@@ -93,9 +93,9 @@ public record EvaluationMetrics(
         return effectRarityContributionTotals.getOrDefault(effect, 0.0);
     }
 
-    public double effectTechnologyContributionTotal(EffectId effect) {
+    public double effectCatalyticContributionTotal(EffectId effect) {
         Objects.requireNonNull(effect, "effect");
-        return effectTechnologyContributionTotals.getOrDefault(effect, 0.0);
+        return effectCatalyticContributionTotals.getOrDefault(effect, 0.0);
     }
 
     private static void requireNonNegativeFinite(String name, double value) {

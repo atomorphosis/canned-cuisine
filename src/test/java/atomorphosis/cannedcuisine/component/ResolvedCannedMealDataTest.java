@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.component;
 
 import atomorphosis.cannedcuisine.engine.composition.CompositionNormalizer;
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
+import atomorphosis.cannedcuisine.engine.effect.EffectContributionResolver;
 import atomorphosis.cannedcuisine.engine.evaluation.EvaluationInput;
 import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluator;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
@@ -37,6 +38,7 @@ class ResolvedCannedMealDataTest {
         assertEquals(1, decoded.effects().size());
         assertEquals(data.labelColor(), decoded.labelColor());
         assertEquals(data.effectColor(), decoded.effectColor());
+        assertEquals(data.effectContributions(), decoded.effectContributions());
         assertTrue(encoded.getAsJsonObject().has("data_version"));
     }
 
@@ -89,11 +91,13 @@ class ResolvedCannedMealDataTest {
         encoded.addProperty("data_version", 1);
         encoded.remove("label_color");
         encoded.remove("effect_color");
+        encoded.remove("effect_contributions");
 
         var decoded = ResolvedCannedMealData.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow();
 
         assertEquals(MealAppearanceResolver.NEUTRAL_LABEL_COLOR, decoded.labelColor());
         assertTrue(decoded.effectColor().isEmpty());
+        assertTrue(decoded.effectContributions().isEmpty());
         assertEquals(data.effects(), decoded.effects());
     }
 
@@ -123,13 +127,15 @@ class ResolvedCannedMealDataTest {
 
     private static ResolvedCannedMealData resolve(IngredientId... ingredients) {
         var ingredientList = List.of(ingredients);
-        var profiles = InitialVanillaProfiles.profiles();
-        var evaluation = MealEvaluator.evaluate(new EvaluationInput(ingredientList.stream()
+        var profiles = atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.profiles();
+        var input = new EvaluationInput(ingredientList.stream()
                 .map(ingredient -> new ProfiledIngredient(ingredient, 1, profiles.get(ingredient)))
-                .toList()));
+                .toList());
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input);
         return ResolvedCannedMealData.from(
                 CompositionNormalizer.normalize(ingredientList),
-                evaluation
+                evaluation,
+                EffectContributionResolver.resolve(input, evaluation)
         );
     }
 }

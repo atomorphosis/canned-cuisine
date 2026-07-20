@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MealEvaluatorTest {
     @Test
     void producesOneUsefulButNotOptimalCanFromThreeCheapIngredients() {
-        var evaluation = MealEvaluator.evaluate(input(
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                 ingredient("apple", 1, 2.0, 1.0, CulinaryCategory.FRUIT),
                 ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE),
                 ingredient("wheat", 1, 2.0, 1.0, CulinaryCategory.GRAIN)
@@ -40,7 +40,7 @@ class MealEvaluatorTest {
             ));
         }
 
-        var evaluation = MealEvaluator.evaluate(new EvaluationInput(ingredients));
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(ingredients));
 
         assertEquals(2, evaluation.canCount());
         assertEquals(QualityBand.GOOD, evaluation.qualityBand());
@@ -50,7 +50,7 @@ class MealEvaluatorTest {
 
     @Test
     void denseCompleteCompositionCanProduceThreeCans() {
-        var evaluation = MealEvaluator.evaluate(input(
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                 ingredient("beef", 1, 4.0, 2.0, CulinaryCategory.PROTEIN),
                 ingredient("potato", 1, 4.0, 2.0, CulinaryCategory.VEGETABLE),
                 ingredient("wheat", 1, 4.0, 2.0, CulinaryCategory.GRAIN),
@@ -65,12 +65,12 @@ class MealEvaluatorTest {
 
     @Test
     void repetitionLowersQualityWithoutChangingRawNutrition() {
-        var diverse = MealEvaluator.evaluate(input(
+        var diverse = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                 ingredient("apple", 1, 2.0, 1.0, CulinaryCategory.FRUIT),
                 ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE),
                 ingredient("wheat", 1, 2.0, 1.0, CulinaryCategory.GRAIN)
         ));
-        var repeated = MealEvaluator.evaluate(input(
+        var repeated = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                 ingredient("apple", 2, 2.0, 1.0, CulinaryCategory.FRUIT),
                 ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE)
         ));
@@ -85,7 +85,7 @@ class MealEvaluatorTest {
 
     @Test
     void capsExtremePerCanFoodValues() {
-        var evaluation = MealEvaluator.evaluate(input(
+        var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                 ingredient("external_food", 3, 100.0, 100.0, CulinaryCategory.EXOTIC)
         ));
 
@@ -97,14 +97,14 @@ class MealEvaluatorTest {
     void rejectsInputsOutsideTheThreeToSixUnitRange() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> MealEvaluator.evaluate(input(
+                () -> atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                         ingredient("apple", 1, 2.0, 1.0, CulinaryCategory.FRUIT),
                         ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE)
                 ))
         );
         assertThrows(
                 IllegalArgumentException.class,
-                () -> MealEvaluator.evaluate(input(
+                () -> atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
                         ingredient("apple", 7, 2.0, 1.0, CulinaryCategory.FRUIT)
                 ))
         );

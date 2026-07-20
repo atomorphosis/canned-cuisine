@@ -1,0 +1,11 @@
+{
+  "ingredient": "croptopia:olive_oil",
+  "nutrition": 2,
+  "saturation": 3.2,
+  "categories": {
+    "fat": 1
+  },
+  "effect_affinities": {
+    "minecraft:resistance": 0.45
+  }
+}

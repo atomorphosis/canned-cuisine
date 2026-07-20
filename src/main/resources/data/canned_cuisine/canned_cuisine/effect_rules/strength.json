@@ -1,0 +1,14 @@
+{
+  "effect": "minecraft:strength",
+  "minimum_affinity": 0.40,
+  "minimum_quality_score": 60,
+  "minimum_duration_ticks": 2400,
+  "maximum_duration_ticks": 6000,
+  "priority": 2,
+  "level_two": {
+    "minimum_quality_score": 85,
+    "minimum_affinity": 0.60,
+    "minimum_rarity_contribution_per_unit": 0.15,
+    "minimum_catalytic_contribution_per_unit": 0.15
+  }
+}

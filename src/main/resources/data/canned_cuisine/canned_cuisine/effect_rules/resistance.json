@@ -1,0 +1,14 @@
+{
+  "effect": "minecraft:resistance",
+  "minimum_affinity": 0.30,
+  "minimum_quality_score": 60,
+  "minimum_duration_ticks": 2400,
+  "maximum_duration_ticks": 6000,
+  "priority": 3,
+  "level_two": {
+    "minimum_quality_score": 85,
+    "minimum_affinity": 0.45,
+    "minimum_rarity_contribution_per_unit": 0.15,
+    "minimum_catalytic_contribution_per_unit": 0.15
+  }
+}

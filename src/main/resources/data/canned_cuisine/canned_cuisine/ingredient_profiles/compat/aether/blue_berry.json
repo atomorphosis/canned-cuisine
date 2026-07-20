@@ -1,0 +1,12 @@
+{
+  "ingredient": "aether:blue_berry",
+  "nutrition": 2,
+  "saturation": 1.2,
+  "categories": {
+    "fruit": 1
+  },
+  "effect_affinities": {
+    "minecraft:speed": 0.65,
+    "minecraft:regeneration": 0.2
+  }
+}

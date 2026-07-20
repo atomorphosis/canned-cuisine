@@ -1,0 +1,13 @@
+{
+  "ingredient": "farmersdelight:chicken_cuts",
+  "nutrition": 3,
+  "saturation": 3.6,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.6,
+    "minecraft:haste": 0.35,
+    "farmersdelight:nourishment": 0.5
+  }
+}

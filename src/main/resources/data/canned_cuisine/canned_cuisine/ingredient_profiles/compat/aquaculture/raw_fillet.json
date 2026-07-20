@@ -1,0 +1,13 @@
+{
+  "ingredient": "aquaculture:fish_fillet_raw",
+  "nutrition": 3,
+  "saturation": 3.6,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.35,
+    "minecraft:night_vision": 0.25
+  },
+  "rarity": 0.15
+}

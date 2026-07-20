@@ -1,0 +1,17 @@
+{
+  "ingredients": [
+    "croptopia:blackbean",
+    "croptopia:peanut",
+    "croptopia:soybean"
+  ],
+  "nutrition": 4,
+  "saturation": 4.8,
+  "categories": {
+    "protein": 0.75,
+    "vegetable": 0.5
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.55,
+    "minecraft:resistance": 0.35
+  }
+}

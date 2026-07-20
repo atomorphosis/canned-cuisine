@@ -1,0 +1,12 @@
+{
+  "ingredient": "croptopia:salt",
+  "nutrition": 0,
+  "saturation": 0,
+  "categories": {
+    "preservative": 1,
+    "spice": 0.4
+  },
+  "effect_affinities": {
+    "minecraft:resistance": 0.25
+  }
+}

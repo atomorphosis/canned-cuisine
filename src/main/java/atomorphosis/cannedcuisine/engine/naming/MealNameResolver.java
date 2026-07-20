@@ -35,8 +35,7 @@ public final class MealNameResolver {
         Objects.requireNonNull(qualityBand, "qualityBand");
         Objects.requireNonNull(effects, "effects");
 
-        var profile = resolveProfile(qualityBand, effects);
-        var archetype = qualityBand == QualityBand.FAILED
+        var resolvedArchetype = qualityBand == QualityBand.FAILED
                 ? InitialMealNames.FAILED_MIXTURE
                 : archetypeMatch
                         .map(match -> new NameTokenId(
@@ -47,16 +46,77 @@ public final class MealNameResolver {
         var subject = failureAssessment.has(MixtureFailureReason.EXCESSIVE_TOXICITY)
                 ? MealNameSubject.category(CulinaryCategory.TOXIC)
                 : resolveSubject(input);
+        var archetype = simplifyRationArchetype(resolvedArchetype, subject, input);
+        var profile = qualityBand == QualityBand.FAILED
+                ? Optional.<NameTokenId>empty()
+                : resolveProfile(qualityBand, effects);
+        var includeSubject = !isRedundantSubject(archetype, subject);
 
         return new MealNameTokens(
                 1,
-                profile.isPresent()
-                        ? InitialMealNames.PROFILE_SUBJECT_ARCHETYPE
-                        : InitialMealNames.SUBJECT_ARCHETYPE,
+                resolveTemplate(profile.isPresent(), includeSubject),
                 archetype,
                 subject,
                 profile
         );
+    }
+
+    private static NameTokenId simplifyRationArchetype(
+            NameTokenId archetype,
+            MealNameSubject subject,
+            EvaluationInput input
+    ) {
+        if (subject.type() != MealNameSubjectType.INGREDIENT) {
+            return archetype;
+        }
+        var repeatedCategory = rationCategory(archetype);
+        if (repeatedCategory.isEmpty()) {
+            return archetype;
+        }
+        return input.ingredients().stream()
+                .filter(ingredient -> ingredient.ingredient().namespace().equals(subject.id().namespace()))
+                .filter(ingredient -> ingredient.ingredient().path().equals(subject.id().path()))
+                .filter(ingredient -> ingredient.profile().categoryWeight(repeatedCategory.get()) >= 0.5)
+                .findFirst()
+                .map(ingredient -> InitialMealNames.RATION)
+                .orElse(archetype);
+    }
+
+    private static Optional<CulinaryCategory> rationCategory(NameTokenId archetype) {
+        if (!archetype.namespace().equals("canned_cuisine")) {
+            return Optional.empty();
+        }
+        return switch (archetype.path()) {
+            case "protein_ration" -> Optional.of(CulinaryCategory.PROTEIN);
+            case "vegetable_ration" -> Optional.of(CulinaryCategory.VEGETABLE);
+            case "exotic_ration" -> Optional.of(CulinaryCategory.EXOTIC);
+            default -> Optional.empty();
+        };
+    }
+
+    private static NameTokenId resolveTemplate(boolean hasProfile, boolean hasSubject) {
+        if (hasProfile && hasSubject) {
+            return InitialMealNames.PROFILE_SUBJECT_ARCHETYPE;
+        }
+        if (hasProfile) {
+            return InitialMealNames.PROFILE_ARCHETYPE;
+        }
+        if (hasSubject) {
+            return InitialMealNames.SUBJECT_ARCHETYPE;
+        }
+        return InitialMealNames.ARCHETYPE;
+    }
+
+    private static boolean isRedundantSubject(NameTokenId archetype, MealNameSubject subject) {
+        if (subject.type() != MealNameSubjectType.CATEGORY && subject.type() != MealNameSubjectType.MIXED) {
+            return false;
+        }
+        var repeatsRationCategory = subject.type() == MealNameSubjectType.CATEGORY
+                && archetype.namespace().equals(subject.id().namespace())
+                && archetype.path().equals(subject.id().path() + "_ration");
+        var repeatsMixedMixture = archetype.equals(InitialMealNames.MIXTURE)
+                && subject.id().equals(InitialMealNames.id("mixed"));
+        return repeatsRationCategory || repeatsMixedMixture;
     }
 
     private static MealNameSubject resolveSubject(EvaluationInput input) {

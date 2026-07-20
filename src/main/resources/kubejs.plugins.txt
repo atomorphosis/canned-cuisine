@@ -1,0 +1,1 @@
+atomorphosis.cannedcuisine.compat.kubejs.CannedCuisineKubeJSPlugin canned_cuisine

@@ -1,0 +1,14 @@
+{
+  "ingredient": "naturalist:bushmeat",
+  "nutrition": 8,
+  "saturation": 12.8,
+  "categories": {
+    "protein": 1,
+    "fat": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.5,
+    "minecraft:resistance": 0.25
+  },
+  "rarity": 0.25
+}

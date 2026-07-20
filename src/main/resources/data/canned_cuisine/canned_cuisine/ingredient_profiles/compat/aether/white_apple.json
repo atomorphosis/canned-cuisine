@@ -1,0 +1,16 @@
+{
+  "ingredient": "aether:white_apple",
+  "nutrition": 0,
+  "saturation": 0,
+  "categories": {
+    "fruit": 0.5,
+    "medicinal": 1,
+    "exotic": 0.5
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.7,
+    "minecraft:resistance": 0.6
+  },
+  "rarity": 0.45,
+  "catalytic_potency": 1
+}

@@ -1,0 +1,12 @@
+{
+  "ingredient": "farmersdelight:cabbage_leaf",
+  "nutrition": 1,
+  "saturation": 0.8,
+  "categories": {
+    "vegetable": 1
+  },
+  "effect_affinities": {
+    "minecraft:night_vision": 0.4,
+    "farmersdelight:nourishment": 0.5
+  }
+}

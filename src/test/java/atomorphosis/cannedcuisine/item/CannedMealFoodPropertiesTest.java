@@ -8,12 +8,14 @@ import atomorphosis.cannedcuisine.minecraft.CannedMealFactory;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -71,15 +73,39 @@ class CannedMealFoodPropertiesTest {
         assertTrue(CannedMealFoodProperties.resolveEffect(missing).isEmpty());
     }
 
+    @Test
+    void makesEveryFailedMixtureEdibleAndAppliesNausea() {
+        var output = create(Items.SUGAR, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST);
+        var food = output.getFoodProperties(null);
+
+        assertTrue(food.canAlwaysEat());
+        assertEquals(1, food.effects().size());
+        var nausea = food.effects().getFirst().effect();
+        assertTrue(nausea.is(MobEffects.CONFUSION));
+        assertEquals(CannedMealFoodProperties.FAILED_NAUSEA_DURATION_TICKS, nausea.getDuration());
+    }
+
+    @Test
+    void addsPoisonToFailedMixturesWithExcessiveToxicity() {
+        var output = create(Items.BEEF, Items.CARROT, Items.SPIDER_EYE);
+        var effects = output.getFoodProperties(null).effects().stream()
+                .map(net.minecraft.world.food.FoodProperties.PossibleEffect::effect)
+                .toList();
+
+        assertEquals(2, effects.size());
+        assertTrue(effects.stream().anyMatch(effect -> effect.is(MobEffects.CONFUSION)));
+        var poison = effects.stream().filter(effect -> effect.is(MobEffects.POISON)).findFirst().orElseThrow();
+        assertEquals(CannedMealFoodProperties.TOXIC_POISON_DURATION_TICKS, poison.getDuration());
+    }
+
     private static ItemStack proteinRation() {
-        var result = CannedMealFactory.create(
-                List.of(
-                        new ItemStack(Items.BEEF),
-                        new ItemStack(Items.PORKCHOP),
-                        new ItemStack(Items.MUTTON),
-                        new ItemStack(Items.WHEAT)
-                ),
-                InitialVanillaProfiles.lookup()
+        return create(Items.BEEF, Items.PORKCHOP, Items.MUTTON, Items.WHEAT);
+    }
+
+    private static ItemStack create(Item... ingredients) {
+        var result = atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
+                Arrays.stream(ingredients).map(ItemStack::new).toList(),
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );
         return ((CannedMealCreationResult.Success) result).output();
     }

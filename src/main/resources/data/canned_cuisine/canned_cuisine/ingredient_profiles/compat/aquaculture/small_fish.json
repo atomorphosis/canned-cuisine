@@ -1,0 +1,20 @@
+{
+  "ingredients": [
+    "aquaculture:atlantic_herring",
+    "aquaculture:boulti",
+    "aquaculture:synodontis",
+    "aquaculture:bluegill",
+    "aquaculture:perch"
+  ],
+  "nutrition": 3,
+  "saturation": 3.6,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.35,
+    "minecraft:speed": 0.3,
+    "minecraft:night_vision": 0.3
+  },
+  "rarity": 0.15
+}

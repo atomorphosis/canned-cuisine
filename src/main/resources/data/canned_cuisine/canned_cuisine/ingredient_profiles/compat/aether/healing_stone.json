@@ -1,0 +1,15 @@
+{
+  "ingredient": "aether:healing_stone",
+  "nutrition": 0,
+  "saturation": 0,
+  "categories": {
+    "medicinal": 1,
+    "exotic": 0.8
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 1,
+    "minecraft:resistance": 0.35
+  },
+  "rarity": 0.8,
+  "catalytic_potency": 1
+}

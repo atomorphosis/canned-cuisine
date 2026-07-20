@@ -15,6 +15,7 @@ import java.util.Optional;
 public final class MealAppearanceResolver {
     public static final int NEUTRAL_LABEL_COLOR = 0xA8A29A;
 
+    private static final double LABEL_SATURATION_FACTOR = 1.35;
     private static final Map<CulinaryCategory, Integer> CATEGORY_COLORS = categoryColors();
     private static final Map<EffectId, Integer> EFFECT_COLORS = Map.of(
             InitialEffectRules.HASTE, 0xD9C043,
@@ -24,7 +25,9 @@ public final class MealAppearanceResolver {
             InitialEffectRules.FIRE_RESISTANCE, 0xE49A3A,
             InitialEffectRules.SPEED, 0x7CAFC6,
             InitialEffectRules.NIGHT_VISION, 0x3A3AAE,
-            InitialEffectRules.NOURISHMENT, 0xD7B84B
+            InitialEffectRules.NOURISHMENT, 0xD7B84B,
+            new EffectId("minecraft", "nausea"), 0x7A3F87,
+            new EffectId("minecraft", "poison"), 0x4E9331
     );
 
     private MealAppearanceResolver() {
@@ -61,11 +64,11 @@ public final class MealAppearanceResolver {
         if (totalWeight == 0.0) {
             return NEUTRAL_LABEL_COLOR;
         }
-        return rgb(
+        return saturate(rgb(
                 (int) Math.round(red / totalWeight),
                 (int) Math.round(green / totalWeight),
                 (int) Math.round(blue / totalWeight)
-        );
+        ));
     }
 
     public static int effectColor(EffectId effect) {
@@ -103,5 +106,25 @@ public final class MealAppearanceResolver {
 
     private static int rgb(int red, int green, int blue) {
         return red << 16 | green << 8 | blue;
+    }
+
+    private static int saturate(int color) {
+        var red = (color >> 16) & 0xFF;
+        var green = (color >> 8) & 0xFF;
+        var blue = color & 0xFF;
+        var luminance = red * 0.2126 + green * 0.7152 + blue * 0.0722;
+        return rgb(
+                saturatedChannel(red, luminance),
+                saturatedChannel(green, luminance),
+                saturatedChannel(blue, luminance)
+        );
+    }
+
+    private static int saturatedChannel(int channel, double luminance) {
+        return Math.clamp(
+                (int) Math.round(luminance + (channel - luminance) * LABEL_SATURATION_FACTOR),
+                0,
+                255
+        );
     }
 }

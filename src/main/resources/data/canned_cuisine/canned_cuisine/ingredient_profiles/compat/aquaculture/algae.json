@@ -1,0 +1,14 @@
+{
+  "ingredient": "aquaculture:algae",
+  "nutrition": 1,
+  "saturation": 0,
+  "categories": {
+    "vegetable": 1,
+    "exotic": 0.15
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.2,
+    "minecraft:night_vision": 0.25
+  },
+  "rarity": 0.15
+}

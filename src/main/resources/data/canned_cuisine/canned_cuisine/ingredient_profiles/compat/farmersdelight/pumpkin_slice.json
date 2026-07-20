@@ -1,0 +1,13 @@
+{
+  "ingredient": "farmersdelight:pumpkin_slice",
+  "nutrition": 3,
+  "saturation": 1.8,
+  "categories": {
+    "vegetable": 1,
+    "fruit": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:resistance": 0.3,
+    "farmersdelight:nourishment": 0.5
+  }
+}

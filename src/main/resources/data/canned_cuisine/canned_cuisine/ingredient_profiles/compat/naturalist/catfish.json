@@ -1,0 +1,13 @@
+{
+  "ingredient": "naturalist:catfish",
+  "nutrition": 6,
+  "saturation": 9.6,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:night_vision": 0.35,
+    "minecraft:regeneration": 0.2
+  },
+  "rarity": 0.2
+}

@@ -1,0 +1,18 @@
+{
+  "ingredients": [
+    "croptopia:anchovy",
+    "croptopia:clam",
+    "croptopia:crab",
+    "croptopia:oyster",
+    "croptopia:roe"
+  ],
+  "nutrition": 4,
+  "saturation": 4,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:haste": 0.3,
+    "minecraft:night_vision": 0.25
+  }
+}

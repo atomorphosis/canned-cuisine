@@ -1,0 +1,14 @@
+{
+  "ingredient": "naturalist:lizard_tail",
+  "nutrition": 5,
+  "saturation": 6,
+  "categories": {
+    "protein": 1,
+    "exotic": 0.4
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.45,
+    "minecraft:resistance": 0.25
+  },
+  "rarity": 0.4
+}

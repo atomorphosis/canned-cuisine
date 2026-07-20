@@ -1,0 +1,17 @@
+{
+  "ingredients": [
+    "croptopia:avocado",
+    "croptopia:coconut",
+    "croptopia:olive"
+  ],
+  "nutrition": 2,
+  "saturation": 2.4,
+  "categories": {
+    "fruit": 0.65,
+    "fat": 1
+  },
+  "effect_affinities": {
+    "minecraft:resistance": 0.4,
+    "minecraft:regeneration": 0.2
+  }
+}

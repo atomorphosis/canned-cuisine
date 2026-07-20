@@ -2,6 +2,8 @@ package atomorphosis.cannedcuisine.client;
 
 import atomorphosis.cannedcuisine.minecraft.CannedMealCreationResult;
 import atomorphosis.cannedcuisine.minecraft.CannedMealFactory;
+import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
+import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import atomorphosis.cannedcuisine.engine.profile.InitialVanillaProfiles;
 import net.minecraft.world.item.ItemStack;
@@ -16,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class CannedMealItemColorTest {
     @Test
     void leavesTheMetalUntintedAndTintsBothProceduralOverlays() {
-        var success = (CannedMealCreationResult.Success) CannedMealFactory.create(
+        var success = (CannedMealCreationResult.Success) atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
                 List.of(
                         new ItemStack(Items.BEEF),
                         new ItemStack(Items.PORKCHOP),
                         new ItemStack(Items.MUTTON),
                         new ItemStack(Items.WHEAT)
                 ),
-                InitialVanillaProfiles.lookup()
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );
 
         assertEquals(0xFFFFFFFF, CannedMealItemColor.color(success.output(), 0));
@@ -33,16 +35,33 @@ class CannedMealItemColorTest {
 
     @Test
     void makesTheEffectSealTransparentWhenTheMealHasNoEffect() {
-        var success = (CannedMealCreationResult.Success) CannedMealFactory.create(
+        var success = (CannedMealCreationResult.Success) atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
+                List.of(
+                        new ItemStack(Items.APPLE),
+                        new ItemStack(Items.CARROT),
+                        new ItemStack(Items.BEETROOT)
+                ),
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
+        );
+
+        assertEquals(0x00FFFFFF, CannedMealItemColor.color(success.output(), 2));
+    }
+
+    @Test
+    void colorsTheEffectSealForToxicFailedMeals() {
+        var success = (CannedMealCreationResult.Success) atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
                 List.of(
                         new ItemStack(Items.BEEF),
                         new ItemStack(Items.CARROT),
                         new ItemStack(Items.SPIDER_EYE)
                 ),
-                InitialVanillaProfiles.lookup()
+                atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );
 
-        assertEquals(0x00FFFFFF, CannedMealItemColor.color(success.output(), 2));
+        assertEquals(
+                0xFF000000 | MealAppearanceResolver.effectColor(new EffectId("minecraft", "poison")),
+                CannedMealItemColor.color(success.output(), 2)
+        );
     }
 
     @Test

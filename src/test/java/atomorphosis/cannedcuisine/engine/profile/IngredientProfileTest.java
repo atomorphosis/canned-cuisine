@@ -115,7 +115,7 @@ class IngredientProfileTest {
     }
 
     @Test
-    void storesRarityAndTechnologyTierWithSafeDefaults() {
+    void storesRarityAndCatalyticPotencyWithSafeDefaults() {
         var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
         var defaults = new IngredientProfile(4.0, 2.0, categories);
         var advanced = new IngredientProfile(
@@ -128,13 +128,13 @@ class IngredientProfileTest {
         );
 
         assertEquals(0.0, defaults.rarity());
-        assertEquals(0, defaults.technologyTier());
+        assertEquals(0, defaults.catalyticPotency());
         assertEquals(0.8, advanced.rarity());
-        assertEquals(2, advanced.technologyTier());
+        assertEquals(2, advanced.catalyticPotency());
     }
 
     @Test
-    void rejectsInvalidRarityAndTechnologyTier() {
+    void rejectsInvalidRarityAndCatalyticPotency() {
         var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
 
         assertThrows(

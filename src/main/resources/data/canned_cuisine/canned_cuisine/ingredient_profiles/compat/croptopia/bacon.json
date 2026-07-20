@@ -1,0 +1,13 @@
+{
+  "ingredient": "croptopia:bacon",
+  "nutrition": 7,
+  "saturation": 11.2,
+  "categories": {
+    "protein": 1,
+    "fat": 0.35
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.85,
+    "minecraft:resistance": 0.3
+  }
+}

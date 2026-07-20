@@ -1,0 +1,16 @@
+{
+  "ingredient": "aether:enchanted_berry",
+  "nutrition": 6,
+  "saturation": 9.6,
+  "categories": {
+    "fruit": 1,
+    "medicinal": 0.6,
+    "exotic": 0.5
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.8,
+    "minecraft:speed": 0.65
+  },
+  "rarity": 0.65,
+  "catalytic_potency": 1
+}

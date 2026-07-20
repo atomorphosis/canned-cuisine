@@ -27,7 +27,22 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven { url = 'https://maven.ryanliptak.com/' }
+    maven { url = 'https://api.modrinth.com/maven' }
+    maven { url = 'https://www.cursemaven.com' }
+    maven {
+        url = 'https://maven.latvian.dev/releases'
+        content {
+            includeGroup 'dev.latvian.mods'
+            includeGroup 'dev.latvian.apps'
+        }
+    }
+    maven {
+        url = 'https://jitpack.io'
+        content {
+            includeGroup 'com.github.rtyley'
+        }
+    }
 }
 
 base {
@@ -123,6 +138,21 @@ configurations {
 }
 
 dependencies {
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
+    localRuntime "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
+    localRuntime "maven.modrinth:tooltip-overhaul:${tooltip_overhaul_version_id}"
+    localRuntime "maven.modrinth:Vl1uNAuy:${aquaculture_version_id}"
+    localRuntime "maven.modrinth:R2OftAxM:${farmers_delight_version_id}"
+    localRuntime "curse.maven:croptopia-415438:${croptopia_file_id}"
+    localRuntime "maven.modrinth:DIIgdJzf:${epherolib_version_id}"
+    localRuntime "maven.modrinth:YhmgMVyu:${aether_version_id}"
+    localRuntime "maven.modrinth:ccKDOlHs:${owo_lib_version_id}"
+    localRuntime "maven.modrinth:jtmvUHXj:${accessories_version_id}"
+    localRuntime "maven.modrinth:F8BQNPWX:${naturalist_version_id}"
+    localRuntime "maven.modrinth:8BmcQJ2H:${geckolib_version_id}"
+
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

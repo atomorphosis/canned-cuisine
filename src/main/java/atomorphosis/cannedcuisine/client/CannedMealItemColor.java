@@ -1,6 +1,8 @@
 package atomorphosis.cannedcuisine.client;
 
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
+import atomorphosis.cannedcuisine.engine.effect.EffectId;
+import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,7 +27,20 @@ public final class CannedMealItemColor {
         if (tintIndex == 2) {
             var effectColor = data.effectColor().or(() -> data.effects().stream()
                     .findFirst()
-                    .map(effect -> MealAppearanceResolver.effectColor(effect.effect())));
+                    .map(effect -> MealAppearanceResolver.effectColor(effect.effect())))
+                    .or(() -> {
+                        if (data.failureReasons().contains(MixtureFailureReason.EXCESSIVE_TOXICITY)) {
+                            return java.util.Optional.of(MealAppearanceResolver.effectColor(
+                                    new EffectId("minecraft", "poison")
+                            ));
+                        }
+                        if (!data.failureReasons().isEmpty()) {
+                            return java.util.Optional.of(MealAppearanceResolver.effectColor(
+                                    new EffectId("minecraft", "nausea")
+                            ));
+                        }
+                        return java.util.Optional.empty();
+                    });
             return effectColor.map(color -> 0xFF000000 | color).orElse(TRANSPARENT);
         }
         return WHITE;

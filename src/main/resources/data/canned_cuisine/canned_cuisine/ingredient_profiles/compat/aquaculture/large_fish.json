@@ -1,0 +1,23 @@
+{
+  "ingredients": [
+    "aquaculture:atlantic_cod",
+    "aquaculture:pacific_halibut",
+    "aquaculture:atlantic_halibut",
+    "aquaculture:capitaine",
+    "aquaculture:catfish",
+    "aquaculture:arapaima",
+    "aquaculture:tuna"
+  ],
+  "nutrition": 6,
+  "saturation": 9.6,
+  "categories": {
+    "protein": 1,
+    "fat": 0.2
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.55,
+    "minecraft:resistance": 0.25,
+    "minecraft:night_vision": 0.25
+  },
+  "rarity": 0.35
+}

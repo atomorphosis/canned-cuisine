@@ -1,0 +1,14 @@
+{
+  "ingredient": "aquaculture:piranha",
+  "nutrition": 3,
+  "saturation": 3.6,
+  "categories": {
+    "protein": 1,
+    "exotic": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.5,
+    "minecraft:speed": 0.35
+  },
+  "rarity": 0.35
+}

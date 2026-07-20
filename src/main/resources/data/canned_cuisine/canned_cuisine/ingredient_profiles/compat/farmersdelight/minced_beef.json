@@ -1,0 +1,13 @@
+{
+  "ingredient": "farmersdelight:minced_beef",
+  "nutrition": 4,
+  "saturation": 6.4,
+  "categories": {
+    "protein": 1
+  },
+  "effect_affinities": {
+    "minecraft:strength": 0.9,
+    "minecraft:haste": 0.3,
+    "farmersdelight:nourishment": 0.5
+  }
+}

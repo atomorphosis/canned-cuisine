@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class InitialEffectBalanceMatrixTest {
     @Test
     void verifiesAffinityAndQualityBoundariesForEveryInitialEffect() {
-        for (var rule : InitialEffectRules.rules()) {
+        for (var rule : atomorphosis.cannedcuisine.data.effect.BundledEffectRules.rules()) {
             var acceptedQuality = Math.max(40, rule.minimumQualityScore());
             var belowAffinity = rule.minimumAffinity() - 0.01;
             var middleAffinity = (rule.minimumAffinity() + 1.0) / 2.0;
@@ -75,7 +75,7 @@ class InitialEffectBalanceMatrixTest {
                 InitialEffectRules.NOURISHMENT, new DurationRange(1200, 6000)
         );
 
-        for (var rule : InitialEffectRules.rules()) {
+        for (var rule : atomorphosis.cannedcuisine.data.effect.BundledEffectRules.rules()) {
             var expected = expectedRanges.get(rule.effect());
             assertEquals(expected.minimumTicks(), rule.minimumDurationTicks(), rule.effect().toString());
             assertEquals(expected.maximumTicks(), rule.maximumDurationTicks(), rule.effect().toString());

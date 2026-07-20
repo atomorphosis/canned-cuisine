@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class InitialEffectRulesTest {
     @Test
     void definesEveryInitialAndCompatibilityEffectOnce() {
-        var effectIds = InitialEffectRules.rules().stream()
+        var effectIds = atomorphosis.cannedcuisine.data.effect.BundledEffectRules.rules().stream()
                 .map(EffectRule::effect)
                 .toList();
 
@@ -29,7 +29,7 @@ class InitialEffectRulesTest {
 
     @Test
     void enablesLevelTwoOnlyForEffectsWithMeaningfulAmplifiers() {
-        var levelTwoEffects = InitialEffectRules.rules().stream()
+        var levelTwoEffects = atomorphosis.cannedcuisine.data.effect.BundledEffectRules.rules().stream()
                 .filter(rule -> rule.levelTwoRequirements().isPresent())
                 .map(EffectRule::effect)
                 .collect(Collectors.toSet());

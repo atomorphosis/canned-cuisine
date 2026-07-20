@@ -1,0 +1,14 @@
+{
+  "effect": "minecraft:regeneration",
+  "minimum_affinity": 0.25,
+  "minimum_quality_score": 60,
+  "minimum_duration_ticks": 200,
+  "maximum_duration_ticks": 600,
+  "priority": 5,
+  "level_two": {
+    "minimum_quality_score": 90,
+    "minimum_affinity": 0.35,
+    "minimum_rarity_contribution_per_unit": 0.15,
+    "minimum_catalytic_contribution_per_unit": 0.15
+  }
+}
