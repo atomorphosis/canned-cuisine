@@ -36,6 +36,21 @@ class IngredientDominanceTest {
         assertEquals(19.2, result.saturationPointsPerCan(), 0.0000001);
     }
 
+    @Test
+    void recordsWhyAValidButCollapsedMixtureEntersTheFailedQualityBand() {
+        var result = TestMealEvaluator.evaluate(new EvaluationInput(java.util.List.of(
+                new ProfiledIngredient(
+                        new IngredientId("minecraft", "apple"),
+                        3,
+                        new IngredientProfile(4.0, 4.8, Map.of(CulinaryCategory.FRUIT, 1.0))
+                )
+        )));
+
+        assertTrue(result.failureAssessment().has(MixtureFailureReason.INSUFFICIENT_CULINARY_QUALITY));
+        assertTrue(result.qualityScore() < 20);
+        assertEquals(QualityBand.FAILED, result.qualityBand());
+    }
+
     private static MealEvaluation evaluateBeefAndCarrot(int beefUnits) {
         var ingredients = new ArrayList<ProfiledIngredient>();
         ingredients.add(new ProfiledIngredient(

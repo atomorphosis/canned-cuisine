@@ -30,6 +30,11 @@ repositories {
     maven { url = 'https://maven.ryanliptak.com/' }
     maven { url = 'https://api.modrinth.com/maven' }
     maven { url = 'https://www.cursemaven.com' }
+    maven { url = 'https://maven.blamejared.com/' }
+    maven {
+        url = 'https://maven.terraformersmc.com/releases/'
+        content { includeGroup 'dev.emi' }
+    }
     maven {
         url = 'https://maven.latvian.dev/releases'
         content {
@@ -137,7 +142,21 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+def viewerRuntime = providers.gradleProperty('viewer_runtime').orElse('both').get()
+if (!(viewerRuntime in ['both', 'jei', 'emi', 'none'])) {
+    throw new GradleException("viewer_runtime must be one of: both, jei, emi, none")
+}
+
 dependencies {
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    if (viewerRuntime in ['both', 'jei']) {
+        localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    }
+    if (viewerRuntime in ['both', 'emi']) {
+        localRuntime "maven.modrinth:emi:${emi_version_id}"
+    }
+
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
     localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 

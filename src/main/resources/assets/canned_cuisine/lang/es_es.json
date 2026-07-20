@@ -1,6 +1,8 @@
 {
   "item.canned_cuisine.empty_can": "Lata vacía",
   "item.canned_cuisine.canned_meal": "Comida enlatada",
+  "block.canned_cuisine.pressure_canner": "Enlatadora a presión",
+  "container.canned_cuisine.pressure_canner": "Enlatadora a presión",
   "tooltip.canned_cuisine.quality": "Calidad: %s",
   "tooltip.canned_cuisine.quality.failed": "Fallida",
   "tooltip.canned_cuisine.quality.questionable": "Cuestionable",
@@ -135,5 +137,19 @@
   "name.canned_cuisine.profile.farmersdelight.nourishment": "nutritivo",
   "name.canned_cuisine.profile.farmersdelight.nourishment.masculine_singular": "nutritivo",
   "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_singular": "nutritiva",
-  "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_plural": "nutritivas"
+  "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_plural": "nutritivas",
+  "atlas.canned_cuisine.operation": "Enlatado a presión",
+  "atlas.canned_cuisine.effects": "Afinidades de efectos",
+  "atlas.canned_cuisine.tooltip.affinity": "Afinidad de efecto: %s%%",
+  "atlas.canned_cuisine.tooltip.rare_contribution": "Contribución de rareza para nivel II",
+  "atlas.canned_cuisine.tooltip.catalytic_contribution": "Contribución catalítica para nivel II",
+  "atlas.canned_cuisine.tooltip.minimum_affinity": "Afinidad mínima: %s%%",
+  "atlas.canned_cuisine.tooltip.minimum_quality": "Calidad mínima: %s",
+  "atlas.canned_cuisine.tooltip.duration_range": "Duración: %s - %s",
+  "atlas.canned_cuisine.tooltip.level_two": "Nivel II: calidad %s, afinidad %s%%",
+  "atlas.canned_cuisine.tooltip.level_two_advanced": "Requiere una contribución rara o catalítica relacionada",
+  "atlas.canned_cuisine.tooltip.previous_page": "Ingredientes anteriores",
+  "atlas.canned_cuisine.tooltip.next_page": "Ingredientes siguientes",
+  "emi.category.canned_cuisine.canning_operation": "Enlatado a presión",
+  "emi.category.canned_cuisine.effect_affinities": "Afinidades de efectos"
 }

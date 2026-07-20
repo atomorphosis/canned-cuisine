@@ -72,6 +72,11 @@ class BundledCompatibilityIngredientProfilesTest {
         assertEquals(0.0, profiles.get(new IngredientId("naturalist", "lizard_tail"))
                 .categoryWeight(atomorphosis.cannedcuisine.engine.profile.CulinaryCategory.TOXIC));
         assertFalse(profiles.containsKey(new IngredientId("naturalist", "cooked_venison")));
+        var haste = new EffectId("minecraft", "haste");
+        var hasteProfiles = profiles.entrySet().stream()
+                .filter(entry -> entry.getValue().effectAffinity(haste) > 0.0)
+                .toList();
+        assertEquals(50, hasteProfiles.size());
     }
 
     private static boolean isPrepared(String path) {

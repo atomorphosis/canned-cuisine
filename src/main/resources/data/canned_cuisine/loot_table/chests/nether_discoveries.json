@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "canned_cuisine_discovery",
+      "rolls": 1,
+      "conditions": [{"condition":"minecraft:random_chance","chance":0.16}],
+      "entries": [
+        {"type":"minecraft:item","name":"canned_cuisine:canned_meal","weight":7,"functions":[{"function":"canned_cuisine:resolve_canned_meal","ingredients":["minecraft:potato","minecraft:magma_cream","minecraft:blaze_powder"],"expected_effect":"minecraft:fire_resistance"}]},
+        {"type":"minecraft:item","name":"canned_cuisine:canned_meal","weight":3,"functions":[{"function":"canned_cuisine:resolve_canned_meal","ingredients":["minecraft:beef","minecraft:porkchop","minecraft:mutton","minecraft:wheat"],"expected_effect":"minecraft:strength"}]},
+        {"type":"minecraft:item","name":"canned_cuisine:canned_meal","weight":1,"functions":[{"function":"canned_cuisine:resolve_canned_meal","ingredients":["minecraft:beef","minecraft:porkchop","minecraft:mutton","minecraft:wheat","minecraft:carrot","minecraft:blaze_powder"],"expected_effect":"minecraft:strength","minimum_amplifier":1}]},
+        {"type":"minecraft:item","name":"canned_cuisine:canned_meal","weight":1,"functions":[{"function":"canned_cuisine:resolve_canned_meal","ingredients":["minecraft:beef","minecraft:porkchop","minecraft:potato","minecraft:wheat","minecraft:magma_cream","minecraft:glowstone_dust"],"expected_effect":"minecraft:resistance","minimum_amplifier":1}]}
+      ]
+    }
+  ],
+  "random_sequence": "canned_cuisine:chests/nether_discoveries"
+}

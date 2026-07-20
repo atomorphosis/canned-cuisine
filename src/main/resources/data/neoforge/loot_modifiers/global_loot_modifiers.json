@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "entries": [
+    "canned_cuisine:add_exploration_discoveries",
+    "canned_cuisine:add_stronghold_discoveries",
+    "canned_cuisine:add_nether_discoveries",
+    "canned_cuisine:add_rare_discoveries"
+  ]
+}

@@ -21,6 +21,12 @@ public record MixtureFailureAssessment(Set<MixtureFailureReason> reasons) {
         return has(MixtureFailureReason.EXCESSIVE_TOXICITY) ? 0.5 : 1.0;
     }
 
+    public MixtureFailureAssessment with(MixtureFailureReason reason) {
+        var updated = new java.util.HashSet<>(reasons);
+        updated.add(Objects.requireNonNull(reason, "reason"));
+        return new MixtureFailureAssessment(updated);
+    }
+
     public static MixtureFailureAssessment successful() {
         return new MixtureFailureAssessment(Set.of());
     }

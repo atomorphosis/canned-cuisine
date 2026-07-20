@@ -1,6 +1,8 @@
 {
   "item.canned_cuisine.empty_can": "Empty Can",
   "item.canned_cuisine.canned_meal": "Canned Meal",
+  "block.canned_cuisine.pressure_canner": "Pressure Canner",
+  "container.canned_cuisine.pressure_canner": "Pressure Canner",
   "tooltip.canned_cuisine.quality": "Quality: %s",
   "tooltip.canned_cuisine.quality.failed": "Failed",
   "tooltip.canned_cuisine.quality.questionable": "Questionable",
@@ -135,5 +137,19 @@
   "name.canned_cuisine.profile.farmersdelight.nourishment": "Nourishing",
   "name.canned_cuisine.profile.farmersdelight.nourishment.masculine_singular": "Nourishing",
   "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_singular": "Nourishing",
-  "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_plural": "Nourishing"
+  "name.canned_cuisine.profile.farmersdelight.nourishment.feminine_plural": "Nourishing",
+  "atlas.canned_cuisine.operation": "Pressure Canning",
+  "atlas.canned_cuisine.effects": "Effect Affinities",
+  "atlas.canned_cuisine.tooltip.affinity": "Effect affinity: %s%%",
+  "atlas.canned_cuisine.tooltip.rare_contribution": "Rare contribution toward level II",
+  "atlas.canned_cuisine.tooltip.catalytic_contribution": "Catalytic contribution toward level II",
+  "atlas.canned_cuisine.tooltip.minimum_affinity": "Minimum affinity: %s%%",
+  "atlas.canned_cuisine.tooltip.minimum_quality": "Minimum quality: %s",
+  "atlas.canned_cuisine.tooltip.duration_range": "Duration: %s - %s",
+  "atlas.canned_cuisine.tooltip.level_two": "Level II: quality %s, affinity %s%%",
+  "atlas.canned_cuisine.tooltip.level_two_advanced": "Requires a related rare or catalytic contribution",
+  "atlas.canned_cuisine.tooltip.previous_page": "Previous ingredients",
+  "atlas.canned_cuisine.tooltip.next_page": "Next ingredients",
+  "emi.category.canned_cuisine.canning_operation": "Pressure Canning",
+  "emi.category.canned_cuisine.effect_affinities": "Effect Affinities"
 }

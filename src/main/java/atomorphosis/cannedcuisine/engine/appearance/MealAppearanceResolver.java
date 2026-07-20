@@ -85,6 +85,11 @@ public final class MealAppearanceResolver {
         );
     }
 
+    public static int categoryColor(CulinaryCategory category) {
+        Objects.requireNonNull(category, "category");
+        return CATEGORY_COLORS.get(category);
+    }
+
     private static Map<CulinaryCategory, Integer> categoryColors() {
         var colors = new EnumMap<CulinaryCategory, Integer>(CulinaryCategory.class);
         colors.put(CulinaryCategory.PROTEIN, 0xB85C4B);

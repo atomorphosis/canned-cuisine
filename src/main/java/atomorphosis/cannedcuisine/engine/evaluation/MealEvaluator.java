@@ -41,12 +41,17 @@ public final class MealEvaluator {
         var archetypeBonus = failureAssessment.failed()
                 ? ArchetypeBonus.neutral()
                 : ArchetypeBonusCalculator.calculate(archetypeMatch);
+        int baseQualityScore = calculateQualityScore(metrics);
         var qualityScore = Math.min(
-                calculateQualityScore(metrics) + archetypeBonus.qualityPoints(),
+                baseQualityScore + archetypeBonus.qualityPoints(),
                 100
         );
         if (failureAssessment.failed()) {
             qualityScore = Math.min(qualityScore, 19);
+        } else if (qualityScore < 20) {
+            failureAssessment = failureAssessment.with(MixtureFailureReason.INSUFFICIENT_CULINARY_QUALITY);
+            archetypeBonus = ArchetypeBonus.neutral();
+            qualityScore = Math.min(baseQualityScore, 19);
         }
         var balancedDiversity = clamp(
                 (metrics.effectiveDiversity() - 1.0) / (metrics.totalUnits() - 1.0)

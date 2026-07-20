@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,lit=false": { "model": "canned_cuisine:block/pressure_canner" },
+    "facing=east,lit=false": { "model": "canned_cuisine:block/pressure_canner", "y": 90 },
+    "facing=south,lit=false": { "model": "canned_cuisine:block/pressure_canner", "y": 180 },
+    "facing=west,lit=false": { "model": "canned_cuisine:block/pressure_canner", "y": 270 },
+    "facing=north,lit=true": { "model": "canned_cuisine:block/pressure_canner_on" },
+    "facing=east,lit=true": { "model": "canned_cuisine:block/pressure_canner_on", "y": 90 },
+    "facing=south,lit=true": { "model": "canned_cuisine:block/pressure_canner_on", "y": 180 },
+    "facing=west,lit=true": { "model": "canned_cuisine:block/pressure_canner_on", "y": 270 }
+  }
+}
