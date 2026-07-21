@@ -85,7 +85,13 @@ class CannedMealLocalizationTest {
             "ghast_tear",
             "rabbit_foot",
             "nether_wart",
-            "glowstone_dust"
+            "glowstone_dust",
+            "pumpkin_seeds",
+            "melon_seeds",
+            "cocoa_beans",
+            "golden_carrot",
+            "glistering_melon_slice",
+            "golden_apple"
     );
     private static final Set<String> CANNED_CUISINE_PROFILES = Set.of(
             "failed",

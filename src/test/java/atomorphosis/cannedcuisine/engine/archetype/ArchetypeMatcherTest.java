@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArchetypeMatcherTest {
@@ -21,17 +22,13 @@ class ArchetypeMatcherTest {
     void matchesCombinedCategoryRequirements() {
         var definition = new ArchetypeDefinition(
                 new ArchetypeId("canned_cuisine", "vegetable_or_mushroom"),
-                List.of(new CategoryCriterion(
-                        Set.of(CulinaryCategory.VEGETABLE, CulinaryCategory.MUSHROOM),
-                        0.5,
-                        0.75,
-                        1.0,
-                        1.0
-                )),
-                1.0,
-                2.0,
-                1.0,
-                0
+                 List.of(new CategoryCriterion(
+                         Set.of(CulinaryCategory.VEGETABLE, CulinaryCategory.MUSHROOM),
+                         0.5,
+                         1.0
+                 )),
+                 1.0,
+                 0
         );
         var metrics = metrics(
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
@@ -41,22 +38,20 @@ class ArchetypeMatcherTest {
 
         var match = ArchetypeMatcher.match(metrics, definition);
 
-        assertTrue(match.isPresent());
-        assertEquals(94.4444444, match.orElseThrow().score(), 0.000001);
+         assertTrue(match.isPresent());
+         assertEquals(definition, match.orElseThrow().definition());
     }
 
     @Test
     void rejectsMissingMinimumExcessiveMaximumAndInsufficientDiversity() {
         var definition = new ArchetypeDefinition(
-                new ArchetypeId("canned_cuisine", "strict_fruit"),
-                List.of(
-                        CategoryCriterion.of(CulinaryCategory.FRUIT, 0.4, 0.6, 1.0, 1.0),
-                        CategoryCriterion.of(CulinaryCategory.SWEETENER, 0.0, 0.1, 0.35, 1.0)
-                ),
-                2.0,
-                3.0,
-                1.0,
-                0
+                 new ArchetypeId("canned_cuisine", "strict_fruit"),
+                 List.of(
+                         CategoryCriterion.of(CulinaryCategory.FRUIT, 0.4, 1.0),
+                         CategoryCriterion.of(CulinaryCategory.SWEETENER, 0.0, 0.35)
+                 ),
+                 2.0,
+                 0
         );
 
         assertTrue(ArchetypeMatcher.match(metrics(
@@ -93,14 +88,35 @@ class ArchetypeMatcherTest {
         assertEquals(alphabeticWinner.id(), match.definition().id());
     }
 
+    @Test
+    void recognizesEveryDefinitionWhoseRequirementsPass() {
+         var definition = new ArchetypeDefinition(
+                 new ArchetypeId("canned_cuisine", "fruit_test"),
+                 List.of(CategoryCriterion.of(CulinaryCategory.FRUIT, 0.1, 1.0)),
+                 1.0,
+                 0
+         );
+         var matchingMetrics = metrics(
+                 ingredient("apple", CulinaryCategory.FRUIT),
+                 ingredient("carrot", CulinaryCategory.VEGETABLE),
+                 ingredient("mushroom", CulinaryCategory.MUSHROOM)
+         );
+         var rejectedMetrics = metrics(
+                 ingredient("carrot", CulinaryCategory.VEGETABLE),
+                 ingredient("potato", CulinaryCategory.VEGETABLE),
+                 ingredient("mushroom", CulinaryCategory.MUSHROOM)
+         );
+
+         assertTrue(ArchetypeMatcher.findBest(matchingMetrics, List.of(definition)).isPresent());
+         assertFalse(ArchetypeMatcher.findBest(rejectedMetrics, List.of(definition)).isPresent());
+    }
+
     private static ArchetypeDefinition definition(String path, int priority) {
         return new ArchetypeDefinition(
-                new ArchetypeId("canned_cuisine", path),
-                List.of(CategoryCriterion.of(CulinaryCategory.FRUIT, 0.1, 0.5, 1.0, 1.0)),
-                1.0,
-                2.0,
-                1.0,
-                priority
+                 new ArchetypeId("canned_cuisine", path),
+                 List.of(CategoryCriterion.of(CulinaryCategory.FRUIT, 0.1, 1.0)),
+                 1.0,
+                 priority
         );
     }
 

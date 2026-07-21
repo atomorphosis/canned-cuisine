@@ -14,10 +14,9 @@ public final class EvaluationMetricsCalculator {
     public static EvaluationMetrics calculate(EvaluationInput input) {
         Objects.requireNonNull(input, "input");
 
-        var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
-        var effectAffinityTotals = new TreeMap<EffectId, Double>();
-        var effectRarityContributionTotals = new TreeMap<EffectId, Double>();
-        var effectCatalyticContributionTotals = new TreeMap<EffectId, Double>();
+         var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
+         var effectAffinityTotals = new TreeMap<EffectId, Double>();
+        var effectCatalystContributionTotals = new TreeMap<EffectId, Double>();
         var totalUnits = 0;
         var dominantIngredientUnits = 0;
         var totalNutritionPoints = 0.0;
@@ -39,15 +38,10 @@ public final class EvaluationMetricsCalculator {
             );
             profile.effectAffinities().forEach((effect, affinity) -> {
                 effectAffinityTotals.merge(effect, affinity * count, Double::sum);
-                effectRarityContributionTotals.merge(
-                        effect,
-                        affinity * profile.rarity() * count,
-                        Double::sum
-                );
-                effectCatalyticContributionTotals.merge(
-                        effect,
-                        affinity * profile.catalyticPotency() * count,
-                        Double::sum
+                effectCatalystContributionTotals.merge(
+                         effect,
+                         affinity * profile.catalystStrength() * count,
+                         Double::sum
                 );
             });
         }
@@ -63,10 +57,9 @@ public final class EvaluationMetricsCalculator {
                 effectiveDiversity,
                 totalNutritionPoints,
                 totalSaturationPoints,
-                categoryTotals,
-                effectAffinityTotals,
-                effectRarityContributionTotals,
-                effectCatalyticContributionTotals
+                 categoryTotals,
+                 effectAffinityTotals,
+                 effectCatalystContributionTotals
         );
     }
 }

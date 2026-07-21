@@ -32,6 +32,12 @@ public final class InitialVanillaProfiles {
     public static final IngredientId RABBIT_FOOT = id("rabbit_foot");
     public static final IngredientId NETHER_WART = id("nether_wart");
     public static final IngredientId GLOWSTONE_DUST = id("glowstone_dust");
+    public static final IngredientId PUMPKIN_SEEDS = id("pumpkin_seeds");
+    public static final IngredientId MELON_SEEDS = id("melon_seeds");
+    public static final IngredientId COCOA_BEANS = id("cocoa_beans");
+    public static final IngredientId GOLDEN_CARROT = id("golden_carrot");
+    public static final IngredientId GLISTERING_MELON_SLICE = id("glistering_melon_slice");
+    public static final IngredientId GOLDEN_APPLE = id("golden_apple");
 
     private static final Set<IngredientId> INGREDIENTS = Set.of(
             BEEF,
@@ -60,7 +66,13 @@ public final class InitialVanillaProfiles {
             GHAST_TEAR,
             RABBIT_FOOT,
             NETHER_WART,
-            GLOWSTONE_DUST
+            GLOWSTONE_DUST,
+            PUMPKIN_SEEDS,
+            MELON_SEEDS,
+            COCOA_BEANS,
+            GOLDEN_CARROT,
+            GLISTERING_MELON_SLICE,
+            GOLDEN_APPLE
     );
 
     private InitialVanillaProfiles() {

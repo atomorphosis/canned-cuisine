@@ -5,10 +5,9 @@ import atomorphosis.cannedcuisine.engine.evaluation.EvaluationMetrics;
 import java.util.Objects;
 
 public record LevelTwoRequirements(
-        int minimumQualityScore,
-        double minimumAffinity,
-        double minimumRarityContributionPerUnit,
-        double minimumCatalyticContributionPerUnit
+         int minimumQualityScore,
+         double minimumAffinity,
+         double minimumCatalystContributionPerUnit
 ) {
     public LevelTwoRequirements {
         if (minimumQualityScore < 0 || minimumQualityScore > 100) {
@@ -17,13 +16,9 @@ public record LevelTwoRequirements(
         if (!Double.isFinite(minimumAffinity) || minimumAffinity <= 0.0 || minimumAffinity > 1.0) {
             throw new IllegalArgumentException("Minimum affinity must be finite and in the range (0, 1]");
         }
-        if (!Double.isFinite(minimumRarityContributionPerUnit)
-                || minimumRarityContributionPerUnit <= 0.0) {
-            throw new IllegalArgumentException("Minimum rarity contribution must be finite and positive");
-        }
-        if (!Double.isFinite(minimumCatalyticContributionPerUnit)
-                || minimumCatalyticContributionPerUnit <= 0.0) {
-            throw new IllegalArgumentException("Minimum catalytic contribution must be finite and positive");
+        if (!Double.isFinite(minimumCatalystContributionPerUnit)
+                || minimumCatalystContributionPerUnit <= 0.0) {
+            throw new IllegalArgumentException("Minimum catalyst contribution must be finite and positive");
         }
     }
 
@@ -42,9 +37,7 @@ public record LevelTwoRequirements(
             return false;
         }
 
-        var rarityContribution = metrics.effectRarityContributionTotal(effect) / metrics.totalUnits();
-        var catalyticContribution = metrics.effectCatalyticContributionTotal(effect) / metrics.totalUnits();
-        return rarityContribution >= minimumRarityContributionPerUnit
-                || catalyticContribution >= minimumCatalyticContributionPerUnit;
+        var catalystContribution = metrics.effectCatalystContributionTotal(effect) / metrics.totalUnits();
+        return catalystContribution >= minimumCatalystContributionPerUnit;
     }
 }

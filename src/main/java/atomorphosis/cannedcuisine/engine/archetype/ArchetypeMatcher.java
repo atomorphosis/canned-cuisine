@@ -51,9 +51,6 @@ public final class ArchetypeMatcher {
             return Optional.empty();
         }
 
-        var weightedScore = 0.0;
-        var totalScoreWeight = 0.0;
-
         for (var criterion : definition.criteria()) {
             var coverage = criterion.categories().stream()
                     .mapToDouble(metrics::categoryTotal)
@@ -62,38 +59,14 @@ public final class ArchetypeMatcher {
                     || coverage - EPSILON > criterion.maximumCoverage()) {
                 return Optional.empty();
             }
-
-            if (criterion.scoreWeight() > 0.0) {
-                var fulfillment = criterion.preferredCoverage() == 0.0
-                        ? 1.0
-                        : Math.min(coverage / criterion.preferredCoverage(), 1.0);
-                weightedScore += fulfillment * criterion.scoreWeight();
-                totalScoreWeight += criterion.scoreWeight();
-            }
         }
 
-        if (definition.diversityScoreWeight() > 0.0) {
-            var diversityFulfillment = definition.preferredEffectiveDiversity() == 0.0
-                    ? 1.0
-                    : Math.min(
-                            metrics.effectiveDiversity() / definition.preferredEffectiveDiversity(),
-                            1.0
-                    );
-            weightedScore += diversityFulfillment * definition.diversityScoreWeight();
-            totalScoreWeight += definition.diversityScoreWeight();
-        }
-
-        return Optional.of(new ArchetypeMatch(definition, weightedScore / totalScoreWeight * 100.0));
+        return Optional.of(new ArchetypeMatch(definition));
     }
 
     private static boolean isBetter(ArchetypeMatch candidate, ArchetypeMatch current) {
         if (current == null) {
             return true;
-        }
-
-        var scoreComparison = Double.compare(candidate.score(), current.score());
-        if (scoreComparison != 0) {
-            return scoreComparison > 0;
         }
 
         var priorityComparison = Integer.compare(

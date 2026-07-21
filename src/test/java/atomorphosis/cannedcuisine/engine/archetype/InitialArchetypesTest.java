@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InitialArchetypesTest {
     @Test
-    void recognizesStewWithoutRequiringLiquid() {
+    void recognizesStewFromProteinAndVegetables() {
         var stew = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
                 .filter(definition -> definition.id().equals(InitialArchetypes.STEW))
                 .findFirst()
@@ -32,23 +32,45 @@ class InitialArchetypesTest {
     }
 
     @Test
-    void recognizesSoupFromLiquidAndVegetableOrMushroomSupport() {
+    void recognizesSoupFromVegetablesAndMushrooms() {
         assertBestMatch(
                 InitialArchetypes.SOUP,
-                ingredient("water", CulinaryCategory.LIQUID),
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
+                ingredient("potato", CulinaryCategory.VEGETABLE),
                 ingredient("mushroom", CulinaryCategory.MUSHROOM)
         );
     }
 
     @Test
-    void recognizesPorridgeFromGrainAndLiquid() {
+    void rejectsSoupWithoutMushrooms() {
+        var soup = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.SOUP);
+
+        assertTrue(ArchetypeMatcher.match(metrics(
+                ingredient("carrot", CulinaryCategory.VEGETABLE),
+                ingredient("potato", CulinaryCategory.VEGETABLE),
+                ingredient("beetroot", CulinaryCategory.VEGETABLE)
+        ), soup).isEmpty());
+    }
+
+    @Test
+    void recognizesPorridgeFromDominantGrain() {
         assertBestMatch(
                 InitialArchetypes.PORRIDGE,
-                ingredient("wheat", CulinaryCategory.GRAIN),
-                ingredient("oats", CulinaryCategory.GRAIN),
-                ingredient("milk", CulinaryCategory.LIQUID)
+                ingredient("wheat", 2, CulinaryCategory.GRAIN),
+                ingredient("potato", CulinaryCategory.GRAIN),
+                ingredient("sugar", CulinaryCategory.SWEETENER)
         );
+    }
+
+    @Test
+    void rejectsPorridgeWithoutDominantGrain() {
+        var porridge = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.PORRIDGE);
+
+        assertTrue(ArchetypeMatcher.match(metrics(
+                ingredient("wheat", CulinaryCategory.GRAIN),
+                ingredient("apple", CulinaryCategory.FRUIT),
+                ingredient("sugar", CulinaryCategory.SWEETENER)
+        ), porridge).isEmpty());
     }
 
     @Test
@@ -76,8 +98,9 @@ class InitialArchetypesTest {
         assertBestMatch(
                 InitialArchetypes.PROTEIN_RATION,
                 ingredient("beef", CulinaryCategory.PROTEIN),
+                ingredient("chicken", CulinaryCategory.PROTEIN),
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
-                ingredient("potato", CulinaryCategory.VEGETABLE)
+                ingredient("wheat", CulinaryCategory.GRAIN)
         );
     }
 
@@ -136,7 +159,7 @@ class InitialArchetypesTest {
     void recognizesExoticRationFromSpecialCategories() {
         assertBestMatch(
                 InitialArchetypes.EXOTIC_RATION,
-                ingredient("alien_fruit", CulinaryCategory.EXOTIC),
+                ingredient("alien_fruit", 8.0, 12.8, CulinaryCategory.EXOTIC),
                 ingredient("apple", CulinaryCategory.FRUIT),
                 ingredient("wheat", CulinaryCategory.GRAIN)
         );

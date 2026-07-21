@@ -9,5 +9,5 @@
     "minecraft:speed": 0.45,
     "minecraft:strength": 0.35
   },
-  "rarity": 0.25
+  "catalyst_strength": 0.25
 }

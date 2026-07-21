@@ -8,9 +8,7 @@ import java.util.Set;
 public record CategoryCriterion(
         Set<CulinaryCategory> categories,
         double minimumCoverage,
-        double preferredCoverage,
-        double maximumCoverage,
-        double scoreWeight
+        double maximumCoverage
 ) {
     public CategoryCriterion {
         Objects.requireNonNull(categories, "categories");
@@ -20,11 +18,9 @@ public record CategoryCriterion(
             throw new IllegalArgumentException("A category criterion requires at least one category");
         }
         requireNonNegativeFinite("minimumCoverage", minimumCoverage);
-        requireNonNegativeFinite("preferredCoverage", preferredCoverage);
         requireNonNegativeFinite("maximumCoverage", maximumCoverage);
-        requireNonNegativeFinite("scoreWeight", scoreWeight);
 
-        if (minimumCoverage > preferredCoverage || preferredCoverage > maximumCoverage) {
+        if (minimumCoverage > maximumCoverage) {
             throw new IllegalArgumentException("Category coverage bounds must be ordered");
         }
     }
@@ -32,16 +28,12 @@ public record CategoryCriterion(
     public static CategoryCriterion of(
             CulinaryCategory category,
             double minimumCoverage,
-            double preferredCoverage,
-            double maximumCoverage,
-            double scoreWeight
+            double maximumCoverage
     ) {
         return new CategoryCriterion(
                 Set.of(category),
                 minimumCoverage,
-                preferredCoverage,
-                maximumCoverage,
-                scoreWeight
+                maximumCoverage
         );
     }
 

@@ -17,7 +17,8 @@ public final class MealEvaluator {
     private static final double PROCESSING_BONUS_PER_UNIT = 0.01;
     private static final double MAX_NUTRITION_POINTS_PER_CAN = 20.0;
     private static final double MAX_SATURATION_POINTS_PER_CAN = 20.0;
-    private static final int MAX_BASE_QUALITY_SCORE = 79;
+    private static final int MAX_UNMATCHED_BASE_QUALITY_SCORE = 79;
+    private static final int MAX_RECOGNIZED_BASE_QUALITY_SCORE = 85;
 
     private MealEvaluator() {
     }
@@ -41,7 +42,12 @@ public final class MealEvaluator {
         var archetypeBonus = failureAssessment.failed()
                 ? ArchetypeBonus.neutral()
                 : ArchetypeBonusCalculator.calculate(archetypeMatch);
-        int baseQualityScore = calculateQualityScore(metrics);
+        int baseQualityScore = calculateQualityScore(
+                metrics,
+                archetypeMatch.isPresent()
+                        ? MAX_RECOGNIZED_BASE_QUALITY_SCORE
+                        : MAX_UNMATCHED_BASE_QUALITY_SCORE
+        );
         var qualityScore = Math.min(
                 baseQualityScore + archetypeBonus.qualityPoints(),
                 100
@@ -61,17 +67,6 @@ public final class MealEvaluator {
                 : 1.0 + metrics.totalUnits() * PROCESSING_BONUS_PER_UNIT * balancedDiversity;
         var processedNutrition = metrics.totalNutritionPoints() * processingMultiplier;
         var processedSaturation = metrics.totalSaturationPoints() * processingMultiplier;
-
-        if (qualityScore >= 40) {
-            processedNutrition = Math.max(
-                    processedNutrition,
-                    metrics.totalUnits() * (4.0 - metrics.totalUnits() * 0.25)
-            );
-            processedSaturation = Math.max(
-                    processedSaturation,
-                    metrics.totalUnits() * (6.4 - metrics.totalUnits() * 0.4)
-            );
-        }
 
         processedNutrition *= archetypeBonus.foodValueMultiplier();
         processedSaturation *= archetypeBonus.foodValueMultiplier();
@@ -110,7 +105,7 @@ public final class MealEvaluator {
         );
     }
 
-    private static int calculateQualityScore(EvaluationMetrics metrics) {
+    private static int calculateQualityScore(EvaluationMetrics metrics, int maximumScore) {
         var diversity = clamp((metrics.effectiveDiversity() - 1.0) / 5.0);
         var completeness = clamp((metrics.totalUnits() - 3.0) / 3.0);
         var nutritionalViability = clamp(
@@ -119,11 +114,11 @@ public final class MealEvaluator {
 
         return Math.clamp((int) Math.round(
                 20.0
-                        + diversity * 30.0
+                        + diversity * 35.0
                         + completeness * 10.0
                         + nutritionalViability * 20.0
                         - dominanceLevel(metrics) * 25.0
-        ), 0, MAX_BASE_QUALITY_SCORE);
+        ), 0, maximumScore);
     }
 
     private static int calculateCanCount(double processedNutrition, double processedSaturation) {

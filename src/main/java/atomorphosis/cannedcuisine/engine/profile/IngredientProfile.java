@@ -10,18 +10,17 @@ import java.util.TreeMap;
 
 public record IngredientProfile(
         double nutritionPoints,
-        double saturationPoints,
-        Map<CulinaryCategory, Double> categoryWeights,
-        Map<EffectId, Double> effectAffinities,
-        double rarity,
-        int catalyticPotency
+         double saturationPoints,
+         Map<CulinaryCategory, Double> categoryWeights,
+         Map<EffectId, Double> effectAffinities,
+         double catalystStrength
 ) {
     public IngredientProfile(
             double nutritionPoints,
             double saturationPoints,
             Map<CulinaryCategory, Double> categoryWeights
     ) {
-        this(nutritionPoints, saturationPoints, categoryWeights, Map.of(), 0.0, 0);
+        this(nutritionPoints, saturationPoints, categoryWeights, Map.of(), 0.0);
     }
 
     public IngredientProfile(
@@ -30,18 +29,13 @@ public record IngredientProfile(
             Map<CulinaryCategory, Double> categoryWeights,
             Map<EffectId, Double> effectAffinities
     ) {
-        this(nutritionPoints, saturationPoints, categoryWeights, effectAffinities, 0.0, 0);
+        this(nutritionPoints, saturationPoints, categoryWeights, effectAffinities, 0.0);
     }
 
     public IngredientProfile {
         nutritionPoints = requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         saturationPoints = requireNonNegativeFinite("saturationPoints", saturationPoints);
-        if (!Double.isFinite(rarity) || rarity < 0.0 || rarity > 1.0) {
-            throw new IllegalArgumentException("Rarity must be finite and in the range [0, 1]");
-        }
-        if (catalyticPotency < 0) {
-            throw new IllegalArgumentException("Catalytic potency must be non-negative");
-        }
+        catalystStrength = requireNonNegativeFinite("catalystStrength", catalystStrength);
         Objects.requireNonNull(categoryWeights, "categoryWeights");
 
         if (categoryWeights.isEmpty()) {

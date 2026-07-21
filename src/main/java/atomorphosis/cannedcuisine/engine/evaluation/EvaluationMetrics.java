@@ -16,10 +16,9 @@ public record EvaluationMetrics(
         double effectiveDiversity,
         double totalNutritionPoints,
         double totalSaturationPoints,
-        Map<CulinaryCategory, Double> categoryTotals,
-        Map<EffectId, Double> effectAffinityTotals,
-        Map<EffectId, Double> effectRarityContributionTotals,
-        Map<EffectId, Double> effectCatalyticContributionTotals
+         Map<CulinaryCategory, Double> categoryTotals,
+         Map<EffectId, Double> effectAffinityTotals,
+         Map<EffectId, Double> effectCatalystContributionTotals
 ) {
     public EvaluationMetrics {
         if (totalUnits < 0) {
@@ -49,13 +48,9 @@ public record EvaluationMetrics(
         categoryTotals = Collections.unmodifiableMap(immutableTotals);
 
         effectAffinityTotals = immutableEffectTotals("effect affinity total", effectAffinityTotals);
-        effectRarityContributionTotals = immutableEffectTotals(
-                "effect rarity contribution total",
-                effectRarityContributionTotals
-        );
-        effectCatalyticContributionTotals = immutableEffectTotals(
-                "effect catalytic contribution total",
-                effectCatalyticContributionTotals
+        effectCatalystContributionTotals = immutableEffectTotals(
+                "effect catalyst contribution total",
+                effectCatalystContributionTotals
         );
     }
 
@@ -88,14 +83,9 @@ public record EvaluationMetrics(
         return effectAffinityTotals.getOrDefault(effect, 0.0);
     }
 
-    public double effectRarityContributionTotal(EffectId effect) {
+    public double effectCatalystContributionTotal(EffectId effect) {
         Objects.requireNonNull(effect, "effect");
-        return effectRarityContributionTotals.getOrDefault(effect, 0.0);
-    }
-
-    public double effectCatalyticContributionTotal(EffectId effect) {
-        Objects.requireNonNull(effect, "effect");
-        return effectCatalyticContributionTotals.getOrDefault(effect, 0.0);
+        return effectCatalystContributionTotals.getOrDefault(effect, 0.0);
     }
 
     private static void requireNonNegativeFinite(String name, double value) {

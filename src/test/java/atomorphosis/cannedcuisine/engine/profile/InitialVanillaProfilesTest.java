@@ -25,16 +25,23 @@ class InitialVanillaProfilesTest {
     void shipsRawIngredientsAndExcludesTheirCookedVariants() {
         var profiles = atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.profiles();
 
-        assertEquals(27, profiles.size());
+        assertEquals(33, profiles.size());
         assertEquals(8.0, profiles.get(InitialVanillaProfiles.BEEF).nutritionPoints());
         assertEquals(12.8, profiles.get(InitialVanillaProfiles.BEEF).saturationPoints());
         assertEquals(5.0, profiles.get(InitialVanillaProfiles.POTATO).nutritionPoints());
         assertEquals(6.0, profiles.get(InitialVanillaProfiles.POTATO).saturationPoints());
+        assertEquals(1.0, profiles.get(InitialVanillaProfiles.PUMPKIN_SEEDS)
+                .categoryWeight(CulinaryCategory.FAT));
+        assertEquals(1.0, profiles.get(InitialVanillaProfiles.MELON_SEEDS)
+                .categoryWeight(CulinaryCategory.FAT));
+        assertEquals(0.75, profiles.get(InitialVanillaProfiles.COCOA_BEANS)
+                .categoryWeight(CulinaryCategory.FAT));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_beef")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_cod")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_salmon")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "cooked_rabbit")));
         assertFalse(profiles.containsKey(new IngredientId("minecraft", "baked_potato")));
+        assertFalse(profiles.containsKey(new IngredientId("minecraft", "enchanted_golden_apple")));
         assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.CARROT).isPresent());
         assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(new IngredientId("minecraft", "steak")).isEmpty());
         assertThrows(
@@ -91,8 +98,8 @@ class InitialVanillaProfilesTest {
                 InitialEffectRules.HASTE,
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.WHEAT,
-                InitialVanillaProfiles.BROWN_MUSHROOM,
-                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.BEEF,
+                InitialVanillaProfiles.COD,
                 InitialVanillaProfiles.BLAZE_POWDER,
                 InitialVanillaProfiles.GLOWSTONE_DUST
         );
@@ -139,19 +146,18 @@ class InitialVanillaProfilesTest {
 
     @Test
     void separatesCommonFoodFromAdvancedVanillaCatalysts() {
-        assertEquals(0.0, atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().rarity());
-        assertEquals(0, atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().catalyticPotency());
-        assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BLAZE_POWDER).orElseThrow().rarity() > 0.0);
+        assertEquals(0.0, atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BEEF).orElseThrow().catalystStrength());
+        assertTrue(atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.BLAZE_POWDER).orElseThrow().catalystStrength() > 0.0);
         assertEquals(
-                2,
+                2.0,
                 atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.find(InitialVanillaProfiles.GLOWSTONE_DUST)
                         .orElseThrow()
-                        .catalyticPotency()
+                        .catalystStrength()
         );
     }
 
     @Test
-    void producesNightVisionFromCarrotPotatoAndMushroom() {
+    void producesNightVisionSoupFromCarrotPotatoAndMushroom() {
         var evaluation = evaluate(
                 InitialVanillaProfiles.CARROT,
                 InitialVanillaProfiles.POTATO,
@@ -159,7 +165,7 @@ class InitialVanillaProfilesTest {
         );
 
         assertEquals(
-                InitialArchetypes.VEGETABLE_RATION,
+                InitialArchetypes.SOUP,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
         assertEquals(1, evaluation.canCount());
@@ -180,7 +186,7 @@ class InitialVanillaProfilesTest {
                 InitialArchetypes.PROTEIN_RATION,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
-        assertEquals(70, evaluation.qualityScore());
+        assertEquals(74, evaluation.qualityScore());
         assertEquals(
                 0.675,
                 evaluation.metrics().effectAffinityTotal(InitialEffectRules.STRENGTH)

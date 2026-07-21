@@ -7,8 +7,6 @@ public record ArchetypeDefinition(
         ArchetypeId id,
         List<CategoryCriterion> criteria,
         double minimumEffectiveDiversity,
-        double preferredEffectiveDiversity,
-        double diversityScoreWeight,
         int priority,
         double minimumNutritionDensity,
         double minimumFoodValueDensity
@@ -17,16 +15,12 @@ public record ArchetypeDefinition(
             ArchetypeId id,
             List<CategoryCriterion> criteria,
             double minimumEffectiveDiversity,
-            double preferredEffectiveDiversity,
-            double diversityScoreWeight,
             int priority
     ) {
         this(
                 id,
                 criteria,
                 minimumEffectiveDiversity,
-                preferredEffectiveDiversity,
-                diversityScoreWeight,
                 priority,
                 0.0,
                 0.0
@@ -38,21 +32,8 @@ public record ArchetypeDefinition(
         Objects.requireNonNull(criteria, "criteria");
         criteria = List.copyOf(criteria);
         requireNonNegativeFinite("minimumEffectiveDiversity", minimumEffectiveDiversity);
-        requireNonNegativeFinite("preferredEffectiveDiversity", preferredEffectiveDiversity);
-        requireNonNegativeFinite("diversityScoreWeight", diversityScoreWeight);
         requireNonNegativeFinite("minimumNutritionDensity", minimumNutritionDensity);
         requireNonNegativeFinite("minimumFoodValueDensity", minimumFoodValueDensity);
-
-        if (minimumEffectiveDiversity > preferredEffectiveDiversity) {
-            throw new IllegalArgumentException("Effective diversity bounds must be ordered");
-        }
-
-        var totalScoreWeight = diversityScoreWeight + criteria.stream()
-                .mapToDouble(CategoryCriterion::scoreWeight)
-                .sum();
-        if (totalScoreWeight <= 0.0) {
-            throw new IllegalArgumentException("An archetype requires positive score weight");
-        }
     }
 
     private static void requireNonNegativeFinite(String name, double value) {

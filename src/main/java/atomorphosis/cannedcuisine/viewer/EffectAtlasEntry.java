@@ -15,7 +15,7 @@ public record EffectAtlasEntry(
         sources = List.copyOf(sources);
     }
 
-    public record AffinitySource(ItemStack ingredient, double affinity, double rarity, int catalyticPotency) {
+    public record AffinitySource(ItemStack ingredient, double affinity, double catalystStrength) {
         public AffinitySource {
             ingredient = ingredient.copy();
         }

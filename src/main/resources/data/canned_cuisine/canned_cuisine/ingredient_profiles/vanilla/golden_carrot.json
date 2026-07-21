@@ -1,0 +1,15 @@
+{
+  "ingredient": "minecraft:golden_carrot",
+  "nutrition": 6.0,
+  "saturation": 14.4,
+  "categories": {
+    "vegetable": 1.0,
+    "medicinal": 1.0,
+    "exotic": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:night_vision": 1.0,
+    "minecraft:speed": 0.2
+  },
+  "catalyst_strength": 1.0
+}

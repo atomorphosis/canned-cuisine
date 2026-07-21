@@ -38,10 +38,9 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(EFFECT_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .optionalFieldOf("effect_affinities", Map.of())
                     .forGetter(Serialized::effectAffinities),
-            Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Serialized::rarity),
-            Codec.intRange(0, Integer.MAX_VALUE)
-                    .optionalFieldOf("catalytic_potency", 0)
-                    .forGetter(Serialized::catalyticPotency)
+            Codec.doubleRange(0.0, Double.MAX_VALUE)
+                    .optionalFieldOf("catalyst_strength", 0.0)
+                    .forGetter(Serialized::catalystStrength)
     ).apply(instance, Serialized::new));
 
     public static final Codec<IngredientProfileDefinition> CODEC = SERIALIZED_CODEC.comapFlatMap(
@@ -59,10 +58,9 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(EFFECT_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .optionalFieldOf("effect_affinities", Map.of())
                     .forGetter(Document::effectAffinities),
-            Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Document::rarity),
-            Codec.intRange(0, Integer.MAX_VALUE)
-                    .optionalFieldOf("catalytic_potency", 0)
-                    .forGetter(Document::catalyticPotency)
+            Codec.doubleRange(0.0, Double.MAX_VALUE)
+                    .optionalFieldOf("catalyst_strength", 0.0)
+                    .forGetter(Document::catalystStrength)
     ).apply(instance, Document::new));
     public static final Codec<List<IngredientProfileDefinition>> DOCUMENT_CODEC = DOCUMENT_SERIALIZED_CODEC.flatXmap(
             IngredientProfileDefinition::decodeDocument,
@@ -93,8 +91,7 @@ public record IngredientProfileDefinition(
                     serialized.saturation(),
                     serialized.categories(),
                     serialized.effectAffinities(),
-                    serialized.rarity(),
-                    serialized.catalyticPotency()
+                    serialized.catalystStrength()
             );
             return DataResult.success(new IngredientProfileDefinition(ingredient, profile));
         } catch (IllegalArgumentException exception) {
@@ -114,8 +111,7 @@ public record IngredientProfileDefinition(
                 profile.saturationPoints(),
                 profile.categoryWeights(),
                 profile.effectAffinities(),
-                profile.rarity(),
-                profile.catalyticPotency()
+                profile.catalystStrength()
         );
     }
 
@@ -136,8 +132,7 @@ public record IngredientProfileDefinition(
                     document.saturation(),
                     document.categories(),
                     document.effectAffinities(),
-                    document.rarity(),
-                    document.catalyticPotency()
+                    document.catalystStrength()
             );
             return DataResult.success(locations.stream()
                     .map(location -> new IngredientProfileDefinition(
@@ -171,8 +166,7 @@ public record IngredientProfileDefinition(
                 profile.saturationPoints(),
                 profile.categoryWeights(),
                 profile.effectAffinities(),
-                profile.rarity(),
-                profile.catalyticPotency()
+                profile.catalystStrength()
         ));
     }
 
@@ -182,8 +176,7 @@ public record IngredientProfileDefinition(
             double saturation,
             Map<CulinaryCategory, Double> categories,
             Map<EffectId, Double> effectAffinities,
-            double rarity,
-            int catalyticPotency
+            double catalystStrength
     ) {
     }
 
@@ -194,8 +187,7 @@ public record IngredientProfileDefinition(
             double saturation,
             Map<CulinaryCategory, Double> categories,
             Map<EffectId, Double> effectAffinities,
-            double rarity,
-            int catalyticPotency
+            double catalystStrength
     ) {
     }
 }

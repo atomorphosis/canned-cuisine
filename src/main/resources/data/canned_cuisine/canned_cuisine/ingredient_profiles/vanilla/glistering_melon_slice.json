@@ -1,0 +1,14 @@
+{
+  "ingredient": "minecraft:glistering_melon_slice",
+  "nutrition": 2.0,
+  "saturation": 1.2,
+  "categories": {
+    "fruit": 1.0,
+    "medicinal": 1.0,
+    "exotic": 0.25
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.75
+  },
+  "catalyst_strength": 1.0
+}

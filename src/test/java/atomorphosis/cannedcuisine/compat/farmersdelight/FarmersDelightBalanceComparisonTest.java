@@ -31,16 +31,16 @@ class FarmersDelightBalanceComparisonTest {
 
         assertEquals(2, cannedCuisineResult.canCount());
         assertEquals(QualityBand.GOOD, cannedCuisineResult.qualityBand());
-        assertEquals(79, cannedCuisineResult.qualityScore());
-        assertEquals(6.6, cannedCuisineResult.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(10.56, cannedCuisineResult.saturationPointsPerCan(), 0.0000001);
+        assertEquals(72, cannedCuisineResult.qualityScore());
+        assertEquals(6.292, cannedCuisineResult.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(7.0928, cannedCuisineResult.saturationPointsPerCan(), 0.0000001);
         assertTrue(
                 cannedCuisineResult.nutritionPointsPerCan() * cannedCuisineResult.canCount()
                         > farmersDelightNutrition
         );
         assertTrue(
                 cannedCuisineResult.saturationPointsPerCan() * cannedCuisineResult.canCount()
-                        > farmersDelightEffectiveSaturation
+                        < farmersDelightEffectiveSaturation
         );
         assertTrue(cannedCuisineNourishmentSeconds < farmersDelightNourishmentSeconds);
     }

@@ -23,8 +23,8 @@ class MealBalanceBenchmarkTest {
 
         assertEquals(1, result.canCount());
         assertEquals(QualityBand.STANDARD, result.qualityBand());
-        assertEquals(10.312301587301588, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(16.499682539682542, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(9.064, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(8.1576, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -58,13 +58,10 @@ class MealBalanceBenchmarkTest {
         var separatelyPreparedEffectiveSaturation = 22.4;
 
         assertEquals(QualityBand.GOOD, result.qualityBand());
-        assertEquals(
-                InitialArchetypes.PROTEIN_RATION,
-                result.archetypeMatch().orElseThrow().definition().id()
-        );
+        assertEquals(InitialArchetypes.STEW, result.archetypeMatch().orElseThrow().definition().id());
         assertEquals(2, result.canCount());
-        assertEquals(8.826633744855968, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(12.357287242798355, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(9.064, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(12.6896, result.saturationPointsPerCan(), 0.0000001);
         assertTrue(totalNutrition(result) > separatelyPreparedNutrition);
         assertTrue(totalSaturation(result) > separatelyPreparedEffectiveSaturation);
     }
@@ -81,8 +78,8 @@ class MealBalanceBenchmarkTest {
         );
 
         assertEquals(2, result.canCount());
-        assertEquals(7.95, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(12.0, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(8.745, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(5.247, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -97,8 +94,8 @@ class MealBalanceBenchmarkTest {
         );
 
         assertEquals(3, result.canCount());
-        assertEquals(8.48, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(8.0, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(9.328, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(4.664, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test

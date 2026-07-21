@@ -20,26 +20,20 @@ public final class ArchetypeDefinitionCodec {
     private static final Codec<SerializedCriterion> CRITERION_SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             CATEGORY_CODEC.listOf().fieldOf("categories").forGetter(SerializedCriterion::categories),
             Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("minimum_coverage").forGetter(SerializedCriterion::minimumCoverage),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("preferred_coverage").forGetter(SerializedCriterion::preferredCoverage),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("maximum_coverage").forGetter(SerializedCriterion::maximumCoverage),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("score_weight").forGetter(SerializedCriterion::scoreWeight)
+            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("maximum_coverage").forGetter(SerializedCriterion::maximumCoverage)
     ).apply(instance, SerializedCriterion::new));
     private static final Codec<CategoryCriterion> CRITERION_CODEC = CRITERION_SERIALIZED_CODEC.comapFlatMap(
             ArchetypeDefinitionCodec::decodeCriterion,
             value -> new SerializedCriterion(
                     List.copyOf(value.categories()),
                     value.minimumCoverage(),
-                    value.preferredCoverage(),
-                    value.maximumCoverage(),
-                    value.scoreWeight()
+                    value.maximumCoverage()
             )
     );
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(Serialized::id),
             CRITERION_CODEC.listOf().fieldOf("criteria").forGetter(Serialized::criteria),
             Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("minimum_effective_diversity").forGetter(Serialized::minimumEffectiveDiversity),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("preferred_effective_diversity").forGetter(Serialized::preferredEffectiveDiversity),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("diversity_score_weight").forGetter(Serialized::diversityScoreWeight),
             Codec.INT.optionalFieldOf("priority", 0).forGetter(Serialized::priority),
             Codec.doubleRange(0.0, Double.MAX_VALUE).optionalFieldOf("minimum_nutrition_density", 0.0).forGetter(Serialized::minimumNutritionDensity),
             Codec.doubleRange(0.0, Double.MAX_VALUE).optionalFieldOf("minimum_food_value_density", 0.0).forGetter(Serialized::minimumFoodValueDensity)
@@ -67,8 +61,6 @@ public final class ArchetypeDefinitionCodec {
                     new ArchetypeId(value.id().getNamespace(), value.id().getPath()),
                     value.criteria(),
                     value.minimumEffectiveDiversity(),
-                    value.preferredEffectiveDiversity(),
-                    value.diversityScoreWeight(),
                     value.priority(),
                     value.minimumNutritionDensity(),
                     value.minimumFoodValueDensity()
@@ -89,9 +81,7 @@ public final class ArchetypeDefinitionCodec {
             return DataResult.success(new CategoryCriterion(
                     java.util.Set.copyOf(value.categories()),
                     value.minimumCoverage(),
-                    value.preferredCoverage(),
-                    value.maximumCoverage(),
-                    value.scoreWeight()
+                    value.maximumCoverage()
             ));
         } catch (IllegalArgumentException exception) {
             return DataResult.error(exception::getMessage);
@@ -103,8 +93,6 @@ public final class ArchetypeDefinitionCodec {
                 ResourceLocation.fromNamespaceAndPath(value.id().namespace(), value.id().path()),
                 value.criteria(),
                 value.minimumEffectiveDiversity(),
-                value.preferredEffectiveDiversity(),
-                value.diversityScoreWeight(),
                 value.priority(),
                 value.minimumNutritionDensity(),
                 value.minimumFoodValueDensity()
@@ -115,8 +103,6 @@ public final class ArchetypeDefinitionCodec {
             ResourceLocation id,
             List<CategoryCriterion> criteria,
             double minimumEffectiveDiversity,
-            double preferredEffectiveDiversity,
-            double diversityScoreWeight,
             int priority,
             double minimumNutritionDensity,
             double minimumFoodValueDensity
@@ -126,9 +112,7 @@ public final class ArchetypeDefinitionCodec {
     private record SerializedCriterion(
             List<CulinaryCategory> categories,
             double minimumCoverage,
-            double preferredCoverage,
-            double maximumCoverage,
-            double scoreWeight
+            double maximumCoverage
     ) {
     }
 }

@@ -74,16 +74,12 @@ class ArchetypeReloadListenerTest {
                 {
                   "id": "%s",
                   "criteria": [{
-                    "categories": ["vegetable"],
-                    "minimum_coverage": 0.2,
-                    "preferred_coverage": 0.5,
-                    "maximum_coverage": 1.0,
-                    "score_weight": 1.0
-                  }],
-                  "minimum_effective_diversity": 1.0,
-                  "preferred_effective_diversity": 2.0,
-                  "diversity_score_weight": 1.0,
-                  "priority": %s
+                     "categories": ["vegetable"],
+                     "minimum_coverage": 0.2,
+                     "maximum_coverage": 1.0
+                   }],
+                   "minimum_effective_diversity": 1.0,
+                   "priority": %s
                 }
                 """.formatted(archetype, priority));
     }

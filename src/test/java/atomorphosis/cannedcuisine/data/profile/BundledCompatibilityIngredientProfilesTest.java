@@ -52,7 +52,7 @@ class BundledCompatibilityIngredientProfilesTest {
         );
         assertTrue(profiles.keySet().stream().noneMatch(id -> isPrepared(id.path())));
         assertEquals(10.0, profiles.get(new IngredientId("farmersdelight", "ham")).nutritionPoints());
-        assertEquals(1, profiles.get(new IngredientId("aether", "healing_stone")).catalyticPotency());
+        assertEquals(1.0, profiles.get(new IngredientId("aether", "healing_stone")).catalystStrength());
         assertEquals(0.5, profiles.get(new IngredientId("farmersdelight", "cabbage"))
                 .effectAffinity(new EffectId("farmersdelight", "nourishment")));
         assertEquals(1.0, profiles.get(new IngredientId("aether", "healing_stone"))

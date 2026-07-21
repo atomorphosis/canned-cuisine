@@ -17,17 +17,13 @@ class ArchetypeDefinitionCodecTest {
                   "id": "examplemod:hearty_stew",
                   "criteria": [
                     {
-                      "categories": ["protein", "vegetable"],
-                      "minimum_coverage": 0.25,
-                      "preferred_coverage": 0.5,
-                      "maximum_coverage": 1.0,
-                      "score_weight": 2.0
-                    }
-                  ],
-                  "minimum_effective_diversity": 2.0,
-                  "preferred_effective_diversity": 3.0,
-                  "diversity_score_weight": 1.0,
-                  "priority": 4,
+                       "categories": ["protein", "vegetable"],
+                       "minimum_coverage": 0.25,
+                       "maximum_coverage": 1.0
+                     }
+                   ],
+                   "minimum_effective_diversity": 2.0,
+                   "priority": 4,
                   "minimum_nutrition_density": 3.0,
                   "minimum_food_value_density": 5.0
                 }
@@ -45,8 +41,8 @@ class ArchetypeDefinitionCodecTest {
 
     @Test
     void rejectsUnknownCategoriesAndInvalidBounds() {
-        var unknown = validJson().replace("protein", "imaginary");
-        var invalidBounds = validJson().replace("\"preferred_coverage\": 0.5", "\"preferred_coverage\": 1.5");
+         var unknown = validJson().replace("protein", "imaginary");
+         var invalidBounds = validJson().replace("\"maximum_coverage\": 1.0", "\"maximum_coverage\": 0.1");
 
         assertTrue(ArchetypeDefinitionCodec.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(unknown))
                 .error().orElseThrow().message().contains("Unknown culinary category"));
@@ -59,16 +55,12 @@ class ArchetypeDefinitionCodecTest {
                 {
                   "id": "examplemod:test",
                   "criteria": [{
-                    "categories": ["protein"],
-                    "minimum_coverage": 0.25,
-                    "preferred_coverage": 0.5,
-                    "maximum_coverage": 1.0,
-                    "score_weight": 1.0
-                  }],
-                  "minimum_effective_diversity": 1.0,
-                  "preferred_effective_diversity": 2.0,
-                  "diversity_score_weight": 1.0
-                }
+                     "categories": ["protein"],
+                     "minimum_coverage": 0.25,
+                     "maximum_coverage": 1.0
+                   }],
+                   "minimum_effective_diversity": 1.0
+                 }
                 """;
     }
 }

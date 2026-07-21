@@ -9,12 +9,14 @@ import atomorphosis.cannedcuisine.minecraft.CannedMealCreationResult;
 import atomorphosis.cannedcuisine.minecraft.CannedMealFactory;
 import atomorphosis.cannedcuisine.minecraft.MinecraftEvaluationResolver;
 import atomorphosis.cannedcuisine.registry.ModBlockEntities;
+import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -58,6 +60,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     private int progress;
     private int burnTime;
     private int burnTimeTotal;
+    private int previewLabelColor = -1;
     private ItemStack cachedPreview = ItemStack.EMPTY;
     private boolean planDirty = true;
     private Object ingredientSnapshot;
@@ -150,6 +153,17 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         cachedPreview = result instanceof CannedMealCreationResult.Success success
                 ? success.output().copy()
                 : ItemStack.EMPTY;
+        int nextLabelColor = -1;
+        var mealData = cachedPreview.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        if (mealData != null) {
+            nextLabelColor = mealData.labelColor();
+        }
+        if (previewLabelColor != nextLabelColor) {
+            previewLabelColor = nextLabelColor;
+            if (level != null && !level.isClientSide) {
+                setChangedAndSync();
+            }
+        }
         ingredientSnapshot = ingredients;
         archetypeSnapshot = archetypes;
         effectSnapshot = effects;
@@ -197,6 +211,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         }
         progress = 0;
         invalidatePlan();
+        previewLabelColor = -1;
         setChangedAndSync();
     }
 
@@ -226,6 +241,22 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     public ContainerData data() {
         return data;
+    }
+
+    public int previewLabelColor() {
+        return previewLabelColor;
+    }
+
+    public int displayedLabelColor() {
+        var outputData = items.get(OUTPUT_SLOT).get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        if (outputData != null) {
+            return outputData.labelColor();
+        }
+        return hasCan() ? previewLabelColor : -1;
+    }
+
+    public boolean hasCan() {
+        return items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get());
     }
 
     @Override
@@ -260,6 +291,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         tag.putInt("Progress", progress);
         tag.putInt("BurnTime", burnTime);
         tag.putInt("BurnTimeTotal", burnTimeTotal);
+        tag.putInt("PreviewLabelColor", previewLabelColor);
     }
 
     @Override
@@ -270,7 +302,18 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         progress = Math.clamp(tag.getInt("Progress"), 0, PROCESS_TIME);
         burnTime = Math.max(0, tag.getInt("BurnTime"));
         burnTimeTotal = Math.max(0, tag.getInt("BurnTimeTotal"));
+        previewLabelColor = tag.contains("PreviewLabelColor") ? tag.getInt("PreviewLabelColor") : -1;
         invalidatePlan();
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
@@ -301,6 +344,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         if (slot < INGREDIENT_SLOT_COUNT) {
             progress = 0;
             invalidatePlan();
+            previewLabelColor = -1;
         }
         setChangedAndSync();
     }

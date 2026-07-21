@@ -71,7 +71,7 @@ class MealNameResolverTest {
                         ingredient("potato", 1, CulinaryCategory.VEGETABLE),
                         ingredient("beetroot", 1, CulinaryCategory.VEGETABLE)
                 ),
-                Optional.of(new ArchetypeMatch(definition, 100.0)),
+                Optional.of(new ArchetypeMatch(definition)),
                 MixtureFailureAssessment.successful(),
                 QualityBand.EXCELLENT,
                 List.of()
@@ -94,7 +94,7 @@ class MealNameResolverTest {
                         ingredient("magma_cream", 1, CulinaryCategory.EXOTIC),
                         ingredient("nether_wart", 1, CulinaryCategory.EXOTIC)
                 ),
-                Optional.of(new ArchetypeMatch(definition, 100.0)),
+                Optional.of(new ArchetypeMatch(definition)),
                 MixtureFailureAssessment.successful(),
                 QualityBand.GOOD,
                 List.of(new ResolvedEffect(InitialEffectRules.FIRE_RESISTANCE, 1.0, 0, 4200))
@@ -154,7 +154,7 @@ class MealNameResolverTest {
                         ),
                         ingredient("carrot", 1, CulinaryCategory.VEGETABLE)
                 ),
-                Optional.of(new ArchetypeMatch(definition, 100.0)),
+                Optional.of(new ArchetypeMatch(definition)),
                 MixtureFailureAssessment.successful(),
                 QualityBand.GOOD,
                 List.of()
@@ -181,7 +181,7 @@ class MealNameResolverTest {
                         ),
                         ingredient("apple", 1, CulinaryCategory.FRUIT)
                 ),
-                Optional.of(new ArchetypeMatch(definition, 100.0)),
+                Optional.of(new ArchetypeMatch(definition)),
                 MixtureFailureAssessment.successful(),
                 QualityBand.GOOD,
                 List.of()

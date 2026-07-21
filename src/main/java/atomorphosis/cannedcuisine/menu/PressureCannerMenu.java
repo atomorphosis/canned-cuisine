@@ -165,6 +165,28 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
         return slots.get(PressureCannerBlockEntity.OUTPUT_SLOT).getItem().isEmpty();
     }
 
+    public int missingCanCount() {
+        ItemStack preview = previewStack();
+        if (preview.isEmpty()) {
+            return 0;
+        }
+        int available = slots.get(PressureCannerBlockEntity.CAN_SLOT).getItem().getCount();
+        return Math.max(0, preview.getCount() - available);
+    }
+
+    public boolean hasAnyCans() {
+        return !slots.get(PressureCannerBlockEntity.CAN_SLOT).getItem().isEmpty();
+    }
+
+    public boolean isProcessing() {
+        return data.get(0) > 0;
+    }
+
+    public int progressPercent() {
+        int total = data.get(1);
+        return total <= 0 ? 0 : Math.min(100, data.get(0) * 100 / total);
+    }
+
     private final class FilteredSlot extends Slot {
         private FilteredSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);

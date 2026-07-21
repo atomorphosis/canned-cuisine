@@ -4,10 +4,13 @@ import atomorphosis.cannedcuisine.CannedCuisine;
 import atomorphosis.cannedcuisine.menu.PressureCannerMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
 
 public final class PressureCannerScreen extends AbstractContainerScreen<PressureCannerMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
@@ -32,7 +35,7 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
         ItemStack preview = menu.previewStack();
-        if (menu.outputIsEmpty() && !preview.isEmpty()) {
+        if (isPreviewVisible()) {
             graphics.renderItem(preview, leftPos + PREVIEW_X, topPos + PREVIEW_Y);
             graphics.renderItemDecorations(font, preview, leftPos + PREVIEW_X, topPos + PREVIEW_Y);
             graphics.fill(
@@ -43,7 +46,23 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
                     0x4CFFFFFF
             );
             if (isHovering(PREVIEW_X, PREVIEW_Y, 16, 16, mouseX, mouseY)) {
-                graphics.renderTooltip(font, preview, mouseX, mouseY);
+                var tooltip = new ArrayList<>(getTooltipFromContainerItem(preview));
+                tooltip.add(Component.translatable("tooltip.canned_cuisine.preview.not_ready")
+                        .withStyle(ChatFormatting.GRAY));
+                int missingCans = menu.missingCanCount();
+                if (missingCans > 0) {
+                    String key = menu.hasAnyCans()
+                            ? "tooltip.canned_cuisine.preview.missing_cans"
+                            : "tooltip.canned_cuisine.preview.no_cans";
+                    tooltip.add(Component.translatable(key, missingCans).withStyle(ChatFormatting.RED));
+                }
+                if (menu.isProcessing()) {
+                    tooltip.add(Component.translatable(
+                            "tooltip.canned_cuisine.preview.processing",
+                            menu.progressPercent()
+                    ).withStyle(ChatFormatting.YELLOW));
+                }
+                graphics.renderTooltip(font, tooltip, preview.getTooltipImage(), preview, mouseX, mouseY);
             }
         }
         renderTooltip(graphics, mouseX, mouseY);
@@ -67,6 +86,14 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
 
     public ItemStack previewStackForViewer() {
         return menu.previewStack();
+    }
+
+    public boolean isPreviewVisible() {
+        return shouldShowPreview(menu.outputIsEmpty(), menu.previewStack());
+    }
+
+    static boolean shouldShowPreview(boolean outputEmpty, ItemStack preview) {
+        return outputEmpty && !preview.isEmpty();
     }
 
     public boolean isOverPreview(int mouseX, int mouseY) {

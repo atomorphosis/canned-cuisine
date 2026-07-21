@@ -115,43 +115,36 @@ class IngredientProfileTest {
     }
 
     @Test
-    void storesRarityAndCatalyticPotencyWithSafeDefaults() {
+    void storesCatalystStrengthWithASafeDefault() {
         var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
         var defaults = new IngredientProfile(4.0, 2.0, categories);
         var advanced = new IngredientProfile(
                 4.0,
                 2.0,
-                categories,
-                Map.of(new EffectId("minecraft", "strength"), 0.75),
-                0.8,
-                2
-        );
+                 categories,
+                 Map.of(new EffectId("minecraft", "strength"), 0.75),
+                 2.0
+         );
 
-        assertEquals(0.0, defaults.rarity());
-        assertEquals(0, defaults.catalyticPotency());
-        assertEquals(0.8, advanced.rarity());
-        assertEquals(2, advanced.catalyticPotency());
+        assertEquals(0.0, defaults.catalystStrength());
+        assertEquals(2.0, advanced.catalystStrength());
     }
 
     @Test
-    void rejectsInvalidRarityAndCatalyticPotency() {
+    void rejectsInvalidCatalystStrength() {
         var categories = Map.of(CulinaryCategory.EXOTIC, 1.0);
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), -0.01, 0)
-        );
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), 1.01, 0)
-        );
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), Double.NaN, 0)
-        );
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), 0.5, -1)
-        );
+                () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), -0.01)
+         );
+         assertThrows(
+                 IllegalArgumentException.class,
+                 () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), Double.NaN)
+         );
+         assertThrows(
+                 IllegalArgumentException.class,
+                 () -> new IngredientProfile(1.0, 1.0, categories, Map.of(), Double.POSITIVE_INFINITY)
+         );
     }
 }

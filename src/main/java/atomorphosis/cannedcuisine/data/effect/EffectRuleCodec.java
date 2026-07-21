@@ -18,10 +18,9 @@ public final class EffectRuleCodec {
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
     );
     private static final Codec<LevelTwoRequirements> LEVEL_TWO_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.intRange(0, 100).fieldOf("minimum_quality_score").forGetter(LevelTwoRequirements::minimumQualityScore),
-            Codec.doubleRange(Double.MIN_VALUE, 1.0).fieldOf("minimum_affinity").forGetter(LevelTwoRequirements::minimumAffinity),
-            Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_rarity_contribution_per_unit").forGetter(LevelTwoRequirements::minimumRarityContributionPerUnit),
-            Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_catalytic_contribution_per_unit").forGetter(LevelTwoRequirements::minimumCatalyticContributionPerUnit)
+             Codec.intRange(0, 100).fieldOf("minimum_quality_score").forGetter(LevelTwoRequirements::minimumQualityScore),
+             Codec.doubleRange(Double.MIN_VALUE, 1.0).fieldOf("minimum_affinity").forGetter(LevelTwoRequirements::minimumAffinity),
+             Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_catalyst_contribution_per_unit").forGetter(LevelTwoRequirements::minimumCatalystContributionPerUnit)
     ).apply(instance, LevelTwoRequirements::new));
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("effect").forGetter(Serialized::effect),

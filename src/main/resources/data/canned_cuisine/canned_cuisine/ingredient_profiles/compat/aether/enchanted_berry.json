@@ -11,6 +11,5 @@
     "minecraft:regeneration": 0.8,
     "minecraft:speed": 0.65
   },
-  "rarity": 0.65,
-  "catalytic_potency": 1
+  "catalyst_strength": 1.0
 }

@@ -23,8 +23,8 @@ class MealEvaluatorTest {
 
         assertEquals(1, evaluation.canCount());
         assertEquals(QualityBand.STANDARD, evaluation.qualityBand());
-        assertEquals(9.75, evaluation.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(15.6, evaluation.saturationPointsPerCan(), 0.0000001);
+        assertEquals(6.18, evaluation.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(3.09, evaluation.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -43,9 +43,9 @@ class MealEvaluatorTest {
         var evaluation = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(new EvaluationInput(ingredients));
 
         assertEquals(2, evaluation.canCount());
-        assertEquals(QualityBand.GOOD, evaluation.qualityBand());
-        assertEquals(7.95, evaluation.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(12.0, evaluation.saturationPointsPerCan(), 0.0000001);
+        assertEquals(QualityBand.EXCEPTIONAL, evaluation.qualityBand());
+        assertEquals(8.745, evaluation.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(5.247, evaluation.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -60,7 +60,29 @@ class MealEvaluatorTest {
         ));
 
         assertEquals(3, evaluation.canCount());
-        assertEquals(8.48, evaluation.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(9.328, evaluation.nutritionPointsPerCan(), 0.0000001);
+    }
+
+    @Test
+    void zeroFoodCatalystsOnlyAffectTheExplicitProcessingBonus() {
+        var foodOnly = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
+                ingredient("apple", 1, 2.0, 1.0, CulinaryCategory.FRUIT),
+                ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE),
+                ingredient("wheat", 1, 2.0, 1.0, CulinaryCategory.GRAIN)
+        ));
+        var withCatalysts = atomorphosis.cannedcuisine.engine.evaluation.TestMealEvaluator.evaluate(input(
+                ingredient("apple", 1, 2.0, 1.0, CulinaryCategory.FRUIT),
+                ingredient("carrot", 1, 2.0, 1.0, CulinaryCategory.VEGETABLE),
+                ingredient("wheat", 1, 2.0, 1.0, CulinaryCategory.GRAIN),
+                ingredient("milk_catalyst", 1, 0.0, 0.0, CulinaryCategory.DAIRY),
+                ingredient("water_catalyst", 1, 0.0, 0.0, CulinaryCategory.LIQUID),
+                ingredient("herb_catalyst", 1, 0.0, 0.0, CulinaryCategory.MEDICINAL)
+        ));
+
+        assertEquals(6.18, foodOnly.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(6.36, withCatalysts.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(3.09, foodOnly.saturationPointsPerCan(), 0.0000001);
+        assertEquals(3.18, withCatalysts.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -77,9 +99,9 @@ class MealEvaluatorTest {
 
         assertEquals(diverse.metrics().totalNutritionPoints(), repeated.metrics().totalNutritionPoints());
         assertEquals(diverse.canCount(), repeated.canCount());
-        assertEquals(40, diverse.qualityScore());
-        assertEquals(24, repeated.qualityScore());
-        assertEquals(9.75, diverse.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(42, diverse.qualityScore());
+        assertEquals(25, repeated.qualityScore());
+        assertEquals(6.18, diverse.nutritionPointsPerCan(), 0.0000001);
         assertEquals(5.566, repeated.nutritionPointsPerCan(), 0.0000001);
     }
 

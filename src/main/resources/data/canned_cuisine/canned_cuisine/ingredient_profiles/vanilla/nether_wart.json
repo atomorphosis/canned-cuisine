@@ -1,1 +1,1 @@
-{"ingredient":"minecraft:nether_wart","nutrition":0.0,"saturation":0.0,"categories":{"medicinal":1.0,"spice":0.5,"exotic":0.5},"effect_affinities":{"minecraft:regeneration":0.5,"minecraft:resistance":0.4,"minecraft:fire_resistance":0.4},"rarity":0.4,"catalytic_potency":1}
+{"ingredient":"minecraft:nether_wart","nutrition":0.0,"saturation":0.0,"categories":{"medicinal":1.0,"spice":0.5,"exotic":0.5},"effect_affinities":{"minecraft:regeneration":0.5,"minecraft:resistance":0.4,"minecraft:fire_resistance":0.4},"catalyst_strength":1.0}

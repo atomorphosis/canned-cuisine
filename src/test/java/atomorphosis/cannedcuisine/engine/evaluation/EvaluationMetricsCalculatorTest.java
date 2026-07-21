@@ -118,7 +118,7 @@ class EvaluationMetricsCalculatorTest {
     }
 
     @Test
-    void associatesRarityAndCatalyticPotencyOnlyWithEffectsTheIngredientSupports() {
+    void associatesCatalystStrengthOnlyWithEffectsTheIngredientSupports() {
         var strength = new EffectId("minecraft", "strength");
         var nightVision = new EffectId("minecraft", "night_vision");
         var metrics = EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
@@ -128,10 +128,9 @@ class EvaluationMetricsCalculatorTest {
                         new IngredientProfile(
                                 4.0,
                                 2.0,
-                                Map.of(CulinaryCategory.PROTEIN, 1.0),
-                                Map.of(strength, 0.5),
-                                0.8,
-                                2
+                                 Map.of(CulinaryCategory.PROTEIN, 1.0),
+                                 Map.of(strength, 0.5),
+                                 2.0
                         )
                 ),
                 new ProfiledIngredient(
@@ -140,20 +139,17 @@ class EvaluationMetricsCalculatorTest {
                         new IngredientProfile(
                                 4.0,
                                 2.0,
-                                Map.of(CulinaryCategory.VEGETABLE, 1.0),
-                                Map.of(nightVision, 1.0),
-                                1.0,
-                                3
+                                 Map.of(CulinaryCategory.VEGETABLE, 1.0),
+                                 Map.of(nightVision, 1.0),
+                                 3.0
                         )
                 )
         )));
 
-        assertEquals(1.0, metrics.effectAffinityTotal(strength));
-        assertEquals(0.8, metrics.effectRarityContributionTotal(strength));
-        assertEquals(2.0, metrics.effectCatalyticContributionTotal(strength));
-        assertEquals(1.0, metrics.effectAffinityTotal(nightVision));
-        assertEquals(1.0, metrics.effectRarityContributionTotal(nightVision));
-        assertEquals(3.0, metrics.effectCatalyticContributionTotal(nightVision));
+         assertEquals(1.0, metrics.effectAffinityTotal(strength));
+        assertEquals(2.0, metrics.effectCatalystContributionTotal(strength));
+         assertEquals(1.0, metrics.effectAffinityTotal(nightVision));
+        assertEquals(3.0, metrics.effectCatalystContributionTotal(nightVision));
     }
 
     private static ProfiledIngredient ingredient(String path, int count, CulinaryCategory category) {

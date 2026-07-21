@@ -63,10 +63,9 @@ class MealAppearanceResolverTest {
                 3.0,
                 3.0,
                 3.0,
-                categories,
-                Map.of(),
-                Map.of(),
-                Map.of()
+                 categories,
+                 Map.of(),
+                 Map.of()
         );
     }
 }

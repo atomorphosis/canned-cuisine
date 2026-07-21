@@ -55,8 +55,7 @@ class EffectAffinityPagesTest {
             sources.add(new EffectAtlasEntry.AffinitySource(
                     new ItemStack(index % 2 == 0 ? Items.CARROT : Items.POTATO),
                     1.0 - index * 0.01,
-                    0.0,
-                    0
+                    0.0
             ));
         }
         return new EffectAtlasEntry(

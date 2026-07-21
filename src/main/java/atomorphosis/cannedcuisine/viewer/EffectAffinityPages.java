@@ -69,16 +69,12 @@ public final class EffectAffinityPages {
                 "atlas.canned_cuisine.tooltip.affinity",
                 Math.round(source.affinity() * 100.0)
         ).withStyle(Style.EMPTY.withColor(effectColor)));
-        if (source.rarity() > 0.0) {
-            tooltip.add(Component.translatable(
-                    "atlas.canned_cuisine.tooltip.rare_contribution"
-            ).withColor(0xFFE18A));
-        }
-        if (source.catalyticPotency() > 0) {
-            tooltip.add(Component.translatable(
-                    "atlas.canned_cuisine.tooltip.catalytic_contribution"
-            ).withColor(0xFFC857));
-        }
+        if (source.catalystStrength() > 0.0) {
+             tooltip.add(Component.translatable(
+                     "atlas.canned_cuisine.tooltip.catalyst_strength",
+                     source.catalystStrength()
+             ).withColor(0xFFE18A));
+         }
         return List.copyOf(tooltip);
     }
 
@@ -113,9 +109,10 @@ public final class EffectAffinityPages {
                     requirements.minimumQualityScore(),
                     Math.round(requirements.minimumAffinity() * 100.0)
             ).withStyle(ChatFormatting.GOLD));
-            tooltip.add(Component.translatable(
-                    "atlas.canned_cuisine.tooltip.level_two_advanced"
-            ).withStyle(ChatFormatting.DARK_GRAY));
+             tooltip.add(Component.translatable(
+                     "atlas.canned_cuisine.tooltip.level_two_advanced",
+                     requirements.minimumCatalystContributionPerUnit()
+             ).withStyle(ChatFormatting.DARK_GRAY));
         });
         return List.copyOf(tooltip);
     }

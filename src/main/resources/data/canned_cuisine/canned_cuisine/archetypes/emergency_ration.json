@@ -1,12 +1,10 @@
 {
   "id": "canned_cuisine:emergency_ration",
   "criteria": [
-    { "categories": ["preservative"], "minimum_coverage": 0.15, "preferred_coverage": 0.25, "maximum_coverage": 1.0, "score_weight": 1.0 },
-    { "categories": ["protein", "grain", "fat"], "minimum_coverage": 0.30, "preferred_coverage": 0.60, "maximum_coverage": 3.0, "score_weight": 1.0 }
+    { "categories": ["preservative"], "minimum_coverage": 0.15, "maximum_coverage": 1.0 },
+    { "categories": ["protein", "grain", "fat"], "minimum_coverage": 0.30, "maximum_coverage": 3.0 }
   ],
   "minimum_effective_diversity": 2.0,
-  "preferred_effective_diversity": 3.0,
-  "diversity_score_weight": 1.0,
   "priority": 5,
   "minimum_nutrition_density": 4.0,
   "minimum_food_value_density": 6.0

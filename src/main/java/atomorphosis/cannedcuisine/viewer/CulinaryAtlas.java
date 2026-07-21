@@ -48,10 +48,9 @@ public final class CulinaryAtlas {
                                     comparingDouble(entry -> entry.getValue().effectAffinity(rule.effect())).reversed()
                                     .thenComparing(entry -> entry.getKey().toString()))
                             .map(entry -> item(entry.getKey()).map(item -> new EffectAtlasEntry.AffinitySource(
-                                    new ItemStack(item),
-                                    entry.getValue().effectAffinity(rule.effect()),
-                                    entry.getValue().rarity(),
-                                    entry.getValue().catalyticPotency()
+                                     new ItemStack(item),
+                                     entry.getValue().effectAffinity(rule.effect()),
+                                     entry.getValue().catalystStrength()
                             )).orElse(null))
                             .filter(java.util.Objects::nonNull)
                             .toList();

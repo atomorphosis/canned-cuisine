@@ -113,31 +113,20 @@ class EffectSelectorTest {
     }
 
     @Test
-    void awardsLevelTwoFromRarityThatContributesToTheSameEffect() {
-        var selection = EffectSelector.select(
-                advancedMetrics(true, 1.0, 0),
-                90,
-                List.of(advancedRule(HASTE))
+    void awardsLevelTwoFromCatalystStrengthThatContributesToTheSameEffect() {
+         var selection = EffectSelector.select(
+                 advancedMetrics(true, 1.0),
+                 90,
+                 List.of(advancedRule(HASTE))
         );
 
         assertEquals(1, selection.effects().getFirst().amplifier());
     }
 
     @Test
-    void awardsLevelTwoFromCatalyticPotencyThatContributesToTheSameEffect() {
-        var selection = EffectSelector.select(
-                advancedMetrics(true, 0.0, 1),
-                90,
-                List.of(advancedRule(HASTE))
-        );
-
-        assertEquals(1, selection.effects().getFirst().amplifier());
-    }
-
-    @Test
-    void unrelatedRarityCannotUpgradeAnotherEffect() {
-        var selection = EffectSelector.select(
-                advancedMetrics(false, 1.0, 3),
+    void unrelatedCatalystCannotUpgradeAnotherEffect() {
+         var selection = EffectSelector.select(
+                 advancedMetrics(false, 3.0),
                 90,
                 List.of(advancedRule(HASTE))
         );
@@ -149,8 +138,8 @@ class EffectSelectorTest {
     void levelTwoStillRequiresHighQualityAndAffinity() {
         var rule = advancedRule(HASTE);
 
-        assertEquals(0, EffectSelector.select(
-                advancedMetrics(true, 1.0, 1),
+         assertEquals(0, EffectSelector.select(
+                 advancedMetrics(true, 1.0),
                 79,
                 List.of(rule)
         ).effects().getFirst().amplifier());
@@ -208,30 +197,28 @@ class EffectSelectorTest {
                 0,
                 true,
                 Set.of(),
-                Optional.of(new LevelTwoRequirements(80, 0.6, 0.15, 0.15))
+                Optional.of(new LevelTwoRequirements(80, 0.6, 0.15))
         );
     }
 
     private static EvaluationMetrics advancedMetrics(
-            boolean advancedIngredientSupportsHaste,
-            double rarity,
-            int catalyticPotency
+             boolean advancedIngredientSupportsHaste,
+             double catalystStrength
     ) {
         var advancedAffinities = advancedIngredientSupportsHaste
                 ? Map.of(HASTE, 1.0)
                 : Map.of(SPEED, 1.0);
         return EvaluationMetricsCalculator.calculate(new EvaluationInput(List.of(
-                advancedIngredient("advanced", advancedAffinities, rarity, catalyticPotency),
-                advancedIngredient("common_one", Map.of(HASTE, 1.0), 0.0, 0),
-                advancedIngredient("common_two", Map.of(HASTE, 1.0), 0.0, 0)
+                advancedIngredient("advanced", advancedAffinities, catalystStrength),
+                advancedIngredient("common_one", Map.of(HASTE, 1.0), 0.0),
+                advancedIngredient("common_two", Map.of(HASTE, 1.0), 0.0)
         )));
     }
 
     private static ProfiledIngredient advancedIngredient(
-            String path,
-            Map<EffectId, Double> affinities,
-            double rarity,
-            int catalyticPotency
+             String path,
+             Map<EffectId, Double> affinities,
+             double catalystStrength
     ) {
         return new ProfiledIngredient(
                 new IngredientId("canned_cuisine", path),
@@ -239,10 +226,9 @@ class EffectSelectorTest {
                 new IngredientProfile(
                         4.0,
                         2.0,
-                        Map.of(CulinaryCategory.EXOTIC, 1.0),
-                        affinities,
-                        rarity,
-                        catalyticPotency
+                         Map.of(CulinaryCategory.EXOTIC, 1.0),
+                         affinities,
+                         catalystStrength
                 )
         );
     }

@@ -1,10 +1,9 @@
 {
   "id": "canned_cuisine:exotic_ration",
   "criteria": [
-    { "categories": ["exotic"], "minimum_coverage": 0.15, "preferred_coverage": 0.30, "maximum_coverage": 1.0, "score_weight": 1.0 }
+    { "categories": ["exotic"], "minimum_coverage": 0.15, "maximum_coverage": 1.0 }
   ],
   "minimum_effective_diversity": 2.0,
-  "preferred_effective_diversity": 3.0,
-  "diversity_score_weight": 1.0,
-  "priority": 10
+  "priority": 10,
+  "minimum_food_value_density": 5.0
 }

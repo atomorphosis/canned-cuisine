@@ -1,0 +1,9 @@
+{
+  "ingredient": "minecraft:cocoa_beans",
+  "nutrition": 1.0,
+  "saturation": 1.2,
+  "categories": {
+    "fat": 0.75,
+    "spice": 0.5
+  }
+}

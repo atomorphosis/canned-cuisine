@@ -1,0 +1,8 @@
+{
+  "ingredient": "minecraft:pumpkin_seeds",
+  "nutrition": 1.0,
+  "saturation": 1.2,
+  "categories": {
+    "fat": 1.0
+  }
+}

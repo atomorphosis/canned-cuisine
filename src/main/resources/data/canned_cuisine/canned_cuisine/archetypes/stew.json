@@ -1,11 +1,9 @@
 {
   "id": "canned_cuisine:stew",
   "criteria": [
-    { "categories": ["protein"], "minimum_coverage": 0.15, "preferred_coverage": 0.30, "maximum_coverage": 1.0, "score_weight": 1.0 },
-    { "categories": ["vegetable"], "minimum_coverage": 0.15, "preferred_coverage": 0.30, "maximum_coverage": 1.0, "score_weight": 1.0 },
-    { "categories": ["liquid"], "minimum_coverage": 0.0, "preferred_coverage": 0.15, "maximum_coverage": 0.50, "score_weight": 0.5 }
+    { "categories": ["protein"], "minimum_coverage": 0.15, "maximum_coverage": 0.49 },
+    { "categories": ["vegetable"], "minimum_coverage": 0.15, "maximum_coverage": 1.0 }
   ],
   "minimum_effective_diversity": 2.0,
-  "preferred_effective_diversity": 3.0,
-  "diversity_score_weight": 1.0
+  "priority": 3
 }

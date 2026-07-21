@@ -3,7 +3,9 @@ package atomorphosis.cannedcuisine;
 import atomorphosis.cannedcuisine.client.CannedMealItemColor;
 import atomorphosis.cannedcuisine.client.CannedMealCompositionTooltipRenderer;
 import atomorphosis.cannedcuisine.client.PressureCannerScreen;
+import atomorphosis.cannedcuisine.client.PressureCannerRenderer;
 import atomorphosis.cannedcuisine.item.CannedMealCompositionTooltip;
+import atomorphosis.cannedcuisine.registry.ModBlockEntities;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import atomorphosis.cannedcuisine.registry.ModMenus;
 import atomorphosis.cannedcuisine.viewer.CulinaryAtlasData;
@@ -13,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -24,6 +27,7 @@ public final class CannedCuisineClient {
         modEventBus.addListener(CannedCuisineClient::registerItemColors);
         modEventBus.addListener(CannedCuisineClient::registerTooltipComponents);
         modEventBus.addListener(CannedCuisineClient::registerScreens);
+        modEventBus.addListener(CannedCuisineClient::registerRenderers);
         NeoForge.EVENT_BUS.addListener(CannedCuisineClient::clearAtlasData);
         NeoForge.EVENT_BUS.addListener(CannedCuisineClient::refreshFuelDisplay);
         CannedCuisine.LOGGER.info("Loading Canned Cuisine client");
@@ -39,6 +43,10 @@ public final class CannedCuisineClient {
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.PRESSURE_CANNER.get(), PressureCannerScreen::new);
+    }
+
+    private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModBlockEntities.PRESSURE_CANNER.get(), PressureCannerRenderer::new);
     }
 
     private static void clearAtlasData(ClientPlayerNetworkEvent.LoggingOut event) {

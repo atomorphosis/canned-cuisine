@@ -1,10 +1,26 @@
 {
-  "parent": "minecraft:block/orientable_with_bottom",
+  "parent": "minecraft:block/block",
   "textures": {
-    "front": "minecraft:block/blast_furnace_front",
-    "side": "minecraft:block/iron_block",
-    "top": "minecraft:block/smooth_stone",
-    "bottom": "minecraft:block/smooth_stone_slab_side",
-    "particle": "minecraft:block/iron_block"
-  }
+    "front": "canned_cuisine:block/pressure_canner_front",
+    "back": "canned_cuisine:block/pressure_canner_back",
+    "side_left": "canned_cuisine:block/pressure_canner_side_left",
+    "side_right": "canned_cuisine:block/pressure_canner_side_right",
+    "top": "canned_cuisine:block/pressure_canner_top",
+    "bottom": "canned_cuisine:block/pressure_canner_bottom",
+    "particle": "canned_cuisine:block/pressure_canner_side_left"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "down": { "texture": "#bottom", "cullface": "down" },
+        "up": { "texture": "#top", "cullface": "up" },
+        "north": { "texture": "#front", "cullface": "north" },
+        "south": { "texture": "#back", "cullface": "south" },
+        "west": { "texture": "#side_left", "cullface": "west" },
+        "east": { "texture": "#side_right", "cullface": "east" }
+      }
+    }
+  ]
 }

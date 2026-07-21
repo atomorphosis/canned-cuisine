@@ -24,8 +24,7 @@ class IngredientProfileDefinitionTest {
                   "effect_affinities": {
                     "minecraft:strength": 0.9
                   },
-                  "rarity": 0.25,
-                  "catalytic_potency": 1
+                  "catalyst_strength": 1.0
                 }
                 """);
 
@@ -38,8 +37,7 @@ class IngredientProfileDefinitionTest {
         assertEquals(12.8, definition.profile().saturationPoints());
         assertEquals(1.0, definition.profile().categoryWeight(CulinaryCategory.PROTEIN));
         assertEquals(0.9, definition.profile().effectAffinity(new EffectId("minecraft", "strength")));
-        assertEquals(0.25, definition.profile().rarity());
-        assertEquals(1, definition.profile().catalyticPotency());
+        assertEquals(1.0, definition.profile().catalystStrength());
         assertEquals(definition, decoded);
     }
 

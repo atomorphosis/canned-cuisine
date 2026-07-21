@@ -29,7 +29,7 @@ class DiscoveryFormulaBalanceTest {
 
     @Test
     void rareDiscoveryFormulasResolveTheirIntendedLevelTwoEffects() {
-        assertEffect(InitialEffectRules.HASTE, 1, Items.POTATO, Items.WHEAT, Items.BROWN_MUSHROOM, Items.CARROT, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST);
+        assertEffect(InitialEffectRules.HASTE, 1, Items.POTATO, Items.WHEAT, Items.BEEF, Items.COD, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST);
         assertEffect(InitialEffectRules.STRENGTH, 1, Items.BEEF, Items.PORKCHOP, Items.MUTTON, Items.WHEAT, Items.CARROT, Items.BLAZE_POWDER);
         assertEffect(InitialEffectRules.REGENERATION, 1, Items.APPLE, Items.SWEET_BERRIES, Items.GLOW_BERRIES, Items.BEETROOT, Items.HONEY_BOTTLE, Items.GHAST_TEAR);
         assertEffect(InitialEffectRules.RESISTANCE, 1, Items.BEEF, Items.PORKCHOP, Items.POTATO, Items.WHEAT, Items.MAGMA_CREAM, Items.GLOWSTONE_DUST);

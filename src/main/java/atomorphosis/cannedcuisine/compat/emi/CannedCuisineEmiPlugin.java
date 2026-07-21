@@ -28,7 +28,7 @@ public final class CannedCuisineEmiPlugin implements EmiPlugin {
         CulinaryAtlas.effects().forEach(entry -> registry.addRecipe(new EffectAffinitiesEmiRecipe(EFFECTS, entry)));
 
         registry.addStackProvider(PressureCannerScreen.class, (screen, x, y) -> {
-            if (!screen.isOverPreview(x, y) || screen.previewStackForViewer().isEmpty()) {
+            if (!screen.isOverPreview(x, y) || !screen.isPreviewVisible()) {
                 return EmiStackInteraction.EMPTY;
             }
             return new EmiStackInteraction(EmiStack.of(screen.previewStackForViewer()), null, true);

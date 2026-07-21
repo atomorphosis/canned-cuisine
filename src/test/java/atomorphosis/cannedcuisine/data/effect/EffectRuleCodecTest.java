@@ -22,10 +22,9 @@ class EffectRuleCodecTest {
                   "eligible_as_secondary": true,
                   "incompatible_effects": ["minecraft:poison"],
                   "level_two": {
-                    "minimum_quality_score": 85,
-                    "minimum_affinity": 0.7,
-                    "minimum_rarity_contribution_per_unit": 0.2,
-                    "minimum_catalytic_contribution_per_unit": 0.3
+                     "minimum_quality_score": 85,
+                     "minimum_affinity": 0.7,
+                     "minimum_catalyst_contribution_per_unit": 0.2
                   }
                 }
                 """);
@@ -35,7 +34,8 @@ class EffectRuleCodecTest {
 
         assertEquals(new EffectId("examplemod", "focus"), rule.effect());
         assertEquals(java.util.Set.of(new EffectId("minecraft", "poison")), rule.incompatibleEffects());
-        assertEquals(85, rule.levelTwoRequirements().orElseThrow().minimumQualityScore());
+         assertEquals(85, rule.levelTwoRequirements().orElseThrow().minimumQualityScore());
+        assertEquals(0.2, rule.levelTwoRequirements().orElseThrow().minimumCatalystContributionPerUnit());
         assertEquals(rule, EffectRuleCodec.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow());
     }
 
