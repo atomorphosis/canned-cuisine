@@ -99,7 +99,7 @@ class CannedMealFoodPropertiesTest {
     }
 
     private static ItemStack proteinRation() {
-        return create(Items.BEEF, Items.PORKCHOP, Items.MUTTON, Items.WHEAT);
+        return create(Items.COCOA_BEANS, Items.BEEF, Items.PORKCHOP, Items.WHEAT, Items.CARROT);
     }
 
     private static ItemStack create(Item... ingredients) {

@@ -8,6 +8,5 @@
   "effect_affinities": {
     "minecraft:speed": 0.45,
     "minecraft:strength": 0.35
-  },
-  "catalyst_strength": 0.25
+  }
 }

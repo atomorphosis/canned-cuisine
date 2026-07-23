@@ -1,0 +1,26 @@
+{
+  "parent": "canned_cuisine:under_pressure",
+  "criteria": {
+    "take_canned_meal": {
+      "trigger": "canned_cuisine:canned_meal_taken"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.first_batch.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "canned_cuisine:canned_meal"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.first_batch.title"
+    }
+  },
+  "requirements": [
+    [
+      "take_canned_meal"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

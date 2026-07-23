@@ -12,7 +12,7 @@
     "protein": 1
   },
   "effect_affinities": {
-    "minecraft:haste": 0.3,
-    "minecraft:night_vision": 0.25
+    "minecraft:night_vision": 0.25,
+    "minecraft:water_breathing": 0.5
   }
 }

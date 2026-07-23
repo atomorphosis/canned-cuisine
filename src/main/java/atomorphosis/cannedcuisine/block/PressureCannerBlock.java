@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 public final class PressureCannerBlock extends BaseEntityBlock {
@@ -93,6 +94,22 @@ public final class PressureCannerBlock extends BaseEntityBlock {
             level.updateNeighbourForOutputSignal(pos, this);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof PressureCannerBlockEntity canner
+                ? analogOutputSignal(canner)
+                : 0;
+    }
+
+    static int analogOutputSignal(PressureCannerBlockEntity canner) {
+        return ItemHandlerHelper.calcRedstoneFromInventory(canner.itemHandler(null));
     }
 
     @Nullable

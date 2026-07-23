@@ -1,13 +1,13 @@
 {
   "effect": "minecraft:speed",
-  "minimum_affinity": 0.40,
-  "minimum_quality_score": 40,
-  "minimum_duration_ticks": 6000,
-  "maximum_duration_ticks": 12000,
+  "minimum_affinity": 0.45,
+  "minimum_quality_score": 50,
+  "minimum_duration_ticks": 2400,
+  "maximum_duration_ticks": 6000,
   "eligible_as_secondary": true,
   "level_two": {
-    "minimum_quality_score": 85,
-    "minimum_affinity": 0.65,
-    "minimum_catalyst_contribution_per_unit": 0.15
+    "minimum_quality_score": 88,
+    "minimum_affinity": 0.63,
+    "minimum_catalyst_contribution_per_unit": 0.20
   }
 }

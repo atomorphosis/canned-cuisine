@@ -10,6 +10,7 @@ import atomorphosis.cannedcuisine.registry.ModBlockEntities;
 import atomorphosis.cannedcuisine.registry.ModBlocks;
 import atomorphosis.cannedcuisine.registry.ModMenus;
 import atomorphosis.cannedcuisine.registry.ModLootFunctions;
+import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
 import atomorphosis.cannedcuisine.network.AtlasNetworking;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -33,6 +34,7 @@ public final class CannedCuisine {
         ModBlockEntities.register(modEventBus);
         ModMenus.register(modEventBus);
         ModLootFunctions.register(modEventBus);
+        ModCriterionTriggers.register(modEventBus);
         modEventBus.addListener(ModBlockEntities::registerCapabilities);
         modEventBus.addListener(AtlasNetworking::registerPayloads);
         modEventBus.addListener(CannedCuisine::addCreativeTabItems);

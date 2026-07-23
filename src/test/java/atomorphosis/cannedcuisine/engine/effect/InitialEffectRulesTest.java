@@ -15,8 +15,8 @@ class InitialEffectRulesTest {
                 .map(EffectRule::effect)
                 .toList();
 
-        assertEquals(8, effectIds.size());
-        assertEquals(8, effectIds.stream().distinct().count());
+        assertEquals(11, effectIds.size());
+        assertEquals(11, effectIds.stream().distinct().count());
         assertTrue(effectIds.contains(InitialEffectRules.HASTE));
         assertTrue(effectIds.contains(InitialEffectRules.STRENGTH));
         assertTrue(effectIds.contains(InitialEffectRules.REGENERATION));
@@ -24,6 +24,9 @@ class InitialEffectRulesTest {
         assertTrue(effectIds.contains(InitialEffectRules.FIRE_RESISTANCE));
         assertTrue(effectIds.contains(InitialEffectRules.SPEED));
         assertTrue(effectIds.contains(InitialEffectRules.NIGHT_VISION));
+        assertTrue(effectIds.contains(InitialEffectRules.WATER_BREATHING));
+        assertTrue(effectIds.contains(InitialEffectRules.JUMP_BOOST));
+        assertTrue(effectIds.contains(InitialEffectRules.SLOW_FALLING));
         assertTrue(effectIds.contains(InitialEffectRules.NOURISHMENT));
     }
 
@@ -39,7 +42,8 @@ class InitialEffectRulesTest {
                 InitialEffectRules.STRENGTH,
                 InitialEffectRules.REGENERATION,
                 InitialEffectRules.RESISTANCE,
-                InitialEffectRules.SPEED
+                InitialEffectRules.SPEED,
+                InitialEffectRules.JUMP_BOOST
         ), levelTwoEffects);
     }
 }

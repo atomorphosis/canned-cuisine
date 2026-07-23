@@ -55,6 +55,13 @@ class MealAppearanceResolverTest {
         );
     }
 
+    @Test
+    void givesTheUtilityEffectsDistinctCuratedColors() {
+        assertEquals(0x2E7299, MealAppearanceResolver.effectColor(InitialEffectRules.WATER_BREATHING));
+        assertEquals(0x58C95A, MealAppearanceResolver.effectColor(InitialEffectRules.JUMP_BOOST));
+        assertEquals(0xD7BFAE, MealAppearanceResolver.effectColor(InitialEffectRules.SLOW_FALLING));
+    }
+
     private static EvaluationMetrics metrics(Map<CulinaryCategory, Double> categories) {
         return new EvaluationMetrics(
                 3,

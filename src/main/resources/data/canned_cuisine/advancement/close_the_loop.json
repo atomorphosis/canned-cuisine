@@ -1,0 +1,26 @@
+{
+  "parent": "canned_cuisine:first_batch",
+  "criteria": {
+    "consume_canned_meal": {
+      "trigger": "canned_cuisine:canned_meal_consumed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.close_the_loop.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "canned_cuisine:empty_can"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.close_the_loop.title"
+    }
+  },
+  "requirements": [
+    [
+      "consume_canned_meal"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

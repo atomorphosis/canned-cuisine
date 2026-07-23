@@ -1,14 +1,14 @@
 {
   "effect": "minecraft:haste",
-  "minimum_affinity": 0.25,
-  "minimum_quality_score": 60,
-  "minimum_duration_ticks": 6000,
-  "maximum_duration_ticks": 14400,
+  "minimum_affinity": 0.30,
+  "minimum_quality_score": 70,
+  "minimum_duration_ticks": 2400,
+  "maximum_duration_ticks": 6000,
   "priority": 1,
   "eligible_as_secondary": true,
   "level_two": {
-    "minimum_quality_score": 84,
+    "minimum_quality_score": 88,
     "minimum_affinity": 0.35,
-    "minimum_catalyst_contribution_per_unit": 0.15
+    "minimum_catalyst_contribution_per_unit": 0.20
   }
 }

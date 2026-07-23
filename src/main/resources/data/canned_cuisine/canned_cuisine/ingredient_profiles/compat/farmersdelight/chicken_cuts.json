@@ -6,8 +6,9 @@
     "protein": 1
   },
   "effect_affinities": {
-    "minecraft:strength": 0.6,
-    "minecraft:haste": 0.35,
+    "minecraft:strength": 0.45,
+    "minecraft:haste": 0.25,
+    "minecraft:slow_falling": 0.2,
     "farmersdelight:nourishment": 0.5
   }
 }

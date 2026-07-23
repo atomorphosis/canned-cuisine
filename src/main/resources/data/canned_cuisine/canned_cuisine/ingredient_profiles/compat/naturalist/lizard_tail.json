@@ -7,8 +7,8 @@
     "exotic": 0.4
   },
   "effect_affinities": {
-    "minecraft:regeneration": 0.45,
+    "minecraft:regeneration": 0.5,
     "minecraft:resistance": 0.25
   },
-  "catalyst_strength": 0.4
+  "catalyst_strength": 0.3
 }

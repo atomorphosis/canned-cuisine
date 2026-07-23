@@ -1,0 +1,9 @@
+{
+  "effect": "minecraft:water_breathing",
+  "minimum_affinity": 0.35,
+  "minimum_quality_score": 60,
+  "minimum_duration_ticks": 1200,
+  "maximum_duration_ticks": 3600,
+  "priority": 3,
+  "eligible_as_secondary": true
+}

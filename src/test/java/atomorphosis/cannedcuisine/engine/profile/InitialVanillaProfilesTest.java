@@ -5,11 +5,9 @@ import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.engine.effect.InitialEffectRules;
 import atomorphosis.cannedcuisine.engine.evaluation.EvaluationInput;
 import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluation;
-import atomorphosis.cannedcuisine.engine.evaluation.MealEvaluator;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
 import atomorphosis.cannedcuisine.engine.evaluation.ProfiledIngredient;
 import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
-import atomorphosis.cannedcuisine.engine.evaluation.SatietyDurationEstimator;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +23,7 @@ class InitialVanillaProfilesTest {
     void shipsRawIngredientsAndExcludesTheirCookedVariants() {
         var profiles = atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.profiles();
 
-        assertEquals(33, profiles.size());
+        assertEquals(35, profiles.size());
         assertEquals(8.0, profiles.get(InitialVanillaProfiles.BEEF).nutritionPoints());
         assertEquals(12.8, profiles.get(InitialVanillaProfiles.BEEF).saturationPoints());
         assertEquals(5.0, profiles.get(InitialVanillaProfiles.POTATO).nutritionPoints());
@@ -76,19 +74,19 @@ class InitialVanillaProfilesTest {
 
         assertEquals(InitialEffectRules.FIRE_RESISTANCE, evaluation.effectsPerCan().getFirst().effect());
         assertEquals(0, evaluation.effectsPerCan().getFirst().amplifier());
-        assertEquals(4200, evaluation.effectsPerCan().getFirst().durationTicks());
+        assertEquals(3784, evaluation.effectsPerCan().getFirst().durationTicks());
     }
 
     @Test
     void producesStrengthTwoUsingARelevantVanillaCatalyst() {
         assertLevelTwo(
                 InitialEffectRules.STRENGTH,
+                InitialVanillaProfiles.COCOA_BEANS,
                 InitialVanillaProfiles.BEEF,
                 InitialVanillaProfiles.PORKCHOP,
-                InitialVanillaProfiles.MUTTON,
                 InitialVanillaProfiles.WHEAT,
-                InitialVanillaProfiles.CARROT,
-                InitialVanillaProfiles.BLAZE_POWDER
+                InitialVanillaProfiles.BLAZE_POWDER,
+                InitialVanillaProfiles.GLOWSTONE_DUST
         );
     }
 
@@ -109,12 +107,12 @@ class InitialVanillaProfilesTest {
     void producesRegenerationTwoUsingARelevantVanillaCatalyst() {
         assertLevelTwo(
                 InitialEffectRules.REGENERATION,
-                InitialVanillaProfiles.APPLE,
+                InitialVanillaProfiles.GOLDEN_APPLE,
                 InitialVanillaProfiles.SWEET_BERRIES,
-                InitialVanillaProfiles.GLOW_BERRIES,
-                InitialVanillaProfiles.BEETROOT,
                 InitialVanillaProfiles.HONEY_BOTTLE,
-                InitialVanillaProfiles.GHAST_TEAR
+                InitialVanillaProfiles.GHAST_TEAR,
+                InitialVanillaProfiles.GLOWSTONE_DUST,
+                InitialVanillaProfiles.GLISTERING_MELON_SLICE
         );
     }
 
@@ -138,7 +136,7 @@ class InitialVanillaProfilesTest {
                 InitialVanillaProfiles.APPLE,
                 InitialVanillaProfiles.SWEET_BERRIES,
                 InitialVanillaProfiles.MELON_SLICE,
-                InitialVanillaProfiles.SUGAR,
+                InitialVanillaProfiles.HONEY_BOTTLE,
                 InitialVanillaProfiles.RABBIT_FOOT,
                 InitialVanillaProfiles.GLOWSTONE_DUST
         );
@@ -157,9 +155,9 @@ class InitialVanillaProfilesTest {
     }
 
     @Test
-    void producesNightVisionSoupFromCarrotPotatoAndMushroom() {
+    void producesNightVisionSoupFromGoldenCarrotPotatoAndMushroom() {
         var evaluation = evaluate(
-                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.GOLDEN_CARROT,
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.BROWN_MUSHROOM
         );
@@ -168,27 +166,28 @@ class InitialVanillaProfilesTest {
                 InitialArchetypes.SOUP,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
-        assertEquals(1, evaluation.canCount());
+        assertEquals(2, evaluation.canCount());
         assertEquals(InitialEffectRules.NIGHT_VISION, evaluation.effectsPerCan().getFirst().effect());
-        assertEquals(9600, evaluation.effectsPerCan().getFirst().durationTicks());
+        assertEquals(3600, evaluation.effectsPerCan().getFirst().durationTicks());
     }
 
     @Test
-    void producesUsefulStrengthRationsFromDenseRawProteinsAndGrain() {
+    void producesUsefulStrengthRationsFromCocoaAndVariedOverworldFood() {
         var evaluation = evaluate(
+                InitialVanillaProfiles.COCOA_BEANS,
                 InitialVanillaProfiles.BEEF,
                 InitialVanillaProfiles.PORKCHOP,
-                InitialVanillaProfiles.MUTTON,
-                InitialVanillaProfiles.WHEAT
+                InitialVanillaProfiles.WHEAT,
+                InitialVanillaProfiles.CARROT
         );
 
         assertEquals(
-                InitialArchetypes.PROTEIN_RATION,
+                InitialArchetypes.STEW,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
-        assertEquals(74, evaluation.qualityScore());
+        assertEquals(85, evaluation.qualityScore());
         assertEquals(
-                0.675,
+                0.45,
                 evaluation.metrics().effectAffinityTotal(InitialEffectRules.STRENGTH)
                         / evaluation.metrics().totalUnits(),
                 0.0000001
@@ -196,8 +195,7 @@ class InitialVanillaProfilesTest {
         assertEquals(3, evaluation.canCount());
         assertEquals(InitialEffectRules.STRENGTH, evaluation.effectsPerCan().getFirst().effect());
         assertEquals(0, evaluation.effectsPerCan().getFirst().amplifier());
-        assertEquals(4050, evaluation.effectsPerCan().getFirst().durationTicks());
-        assertTrue(effectSeconds(evaluation) > continuousSprintSatietySeconds(evaluation));
+        assertEquals(1223, evaluation.effectsPerCan().getFirst().durationTicks());
     }
 
     private static MealEvaluation evaluate(IngredientId... ingredients) {
@@ -207,25 +205,15 @@ class InitialVanillaProfilesTest {
                 .toList()));
     }
 
-    private static double effectSeconds(MealEvaluation evaluation) {
-        return evaluation.effectsPerCan().getFirst().durationTicks() / 20.0;
-    }
-
     private static void assertLevelTwo(
             EffectId expectedEffect,
             IngredientId... ingredients
     ) {
         var evaluation = evaluate(ingredients);
 
-        assertTrue(evaluation.qualityScore() >= 80);
+        assertTrue(evaluation.qualityScore() >= 88);
         assertEquals(expectedEffect, evaluation.effectsPerCan().getFirst().effect());
         assertEquals(1, evaluation.effectsPerCan().getFirst().amplifier());
     }
 
-    private static double continuousSprintSatietySeconds(MealEvaluation evaluation) {
-        return SatietyDurationEstimator.secondsUntilSaturationIsDepleted(
-                evaluation.saturationPointsPerCan(),
-                5.612 * 0.1
-        );
-    }
 }

@@ -6,8 +6,7 @@
     "protein": 1
   },
   "effect_affinities": {
-    "minecraft:haste": 0.35,
-    "minecraft:night_vision": 0.25
-  },
-  "catalyst_strength": 0.15
+    "minecraft:night_vision": 0.2,
+    "minecraft:water_breathing": 0.4
+  }
 }

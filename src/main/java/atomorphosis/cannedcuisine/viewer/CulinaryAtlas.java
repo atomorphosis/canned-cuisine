@@ -21,7 +21,7 @@ public final class CulinaryAtlas {
     public static List<OperationAtlasEntry> operations() {
         var snapshot = CulinaryAtlasData.current();
         var ingredients = List.of(
-                new ItemStack(Items.CARROT),
+                new ItemStack(Items.GOLDEN_CARROT),
                 new ItemStack(Items.POTATO),
                 new ItemStack(Items.BROWN_MUSHROOM)
         );

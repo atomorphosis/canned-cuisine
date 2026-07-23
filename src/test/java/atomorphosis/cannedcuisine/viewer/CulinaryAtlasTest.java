@@ -26,7 +26,7 @@ class CulinaryAtlasTest {
                 BundledEffectRules.rules()
         ));
 
-        assertEquals(8, CulinaryAtlas.effects().size());
+        assertEquals(11, CulinaryAtlas.effects().size());
 
         var operation = CulinaryAtlas.operations().getFirst();
         assertFalse(operation.output().isEmpty());

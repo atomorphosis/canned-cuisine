@@ -7,8 +7,8 @@
     "fat": 0.2
   },
   "effect_affinities": {
-    "minecraft:strength": 0.75,
-    "minecraft:haste": 0.25,
+    "minecraft:strength": 0.5,
+    "minecraft:haste": 0.2,
     "farmersdelight:nourishment": 0.5
   }
 }

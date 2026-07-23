@@ -1,8 +1,5 @@
 {
-  "ingredients": [
-    "aether:blue_gummy_swet",
-    "aether:golden_gummy_swet"
-  ],
+  "ingredient": "aether:blue_gummy_swet",
   "nutrition": 20,
   "saturation": 36,
   "categories": {
@@ -10,8 +7,7 @@
     "exotic": 1
   },
   "effect_affinities": {
-    "minecraft:regeneration": 0.8,
-    "minecraft:resistance": 0.6
-  },
-  "catalyst_strength": 0.85
+    "minecraft:regeneration": 0.55,
+    "minecraft:resistance": 0.25
+  }
 }

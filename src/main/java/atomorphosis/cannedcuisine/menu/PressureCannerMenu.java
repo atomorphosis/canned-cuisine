@@ -3,6 +3,8 @@ package atomorphosis.cannedcuisine.menu;
 import atomorphosis.cannedcuisine.block.entity.PressureCannerBlockEntity;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import atomorphosis.cannedcuisine.registry.ModMenus;
+import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -49,10 +51,18 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
         }
         addSlot(new FilteredSlot(container, PressureCannerBlockEntity.CAN_SLOT, 83, 20));
         addSlot(new FilteredSlot(container, PressureCannerBlockEntity.FUEL_SLOT, 83, 56));
-        addSlot(new Slot(container, PressureCannerBlockEntity.OUTPUT_SLOT, 134, 29) {
+        addSlot(new Slot(container, PressureCannerBlockEntity.OUTPUT_SLOT, 133, 38) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
+            }
+
+            @Override
+            public void onTake(Player player, ItemStack stack) {
+                super.onTake(player, stack);
+                if (player instanceof ServerPlayer serverPlayer && !stack.isEmpty()) {
+                    ModCriterionTriggers.CANNED_MEAL_TAKEN.get().trigger(serverPlayer, stack.getCount());
+                }
             }
         });
         addSlot(new Slot(previewContainer, 0, -1000, -1000) {
@@ -132,7 +142,10 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
         if (stack.getCount() == original.getCount()) {
             return ItemStack.EMPTY;
         }
-        slot.onTake(player, stack);
+        ItemStack taken = slotIndex == PressureCannerBlockEntity.OUTPUT_SLOT
+                ? original.copyWithCount(original.getCount() - stack.getCount())
+                : stack;
+        slot.onTake(player, taken);
         return original;
     }
 
@@ -159,32 +172,6 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
 
     public ItemStack previewStack() {
         return previewContainer.getItem(0);
-    }
-
-    public boolean outputIsEmpty() {
-        return slots.get(PressureCannerBlockEntity.OUTPUT_SLOT).getItem().isEmpty();
-    }
-
-    public int missingCanCount() {
-        ItemStack preview = previewStack();
-        if (preview.isEmpty()) {
-            return 0;
-        }
-        int available = slots.get(PressureCannerBlockEntity.CAN_SLOT).getItem().getCount();
-        return Math.max(0, preview.getCount() - available);
-    }
-
-    public boolean hasAnyCans() {
-        return !slots.get(PressureCannerBlockEntity.CAN_SLOT).getItem().isEmpty();
-    }
-
-    public boolean isProcessing() {
-        return data.get(0) > 0;
-    }
-
-    public int progressPercent() {
-        int total = data.get(1);
-        return total <= 0 ? 0 : Math.min(100, data.get(0) * 100 / total);
     }
 
     private final class FilteredSlot extends Slot {

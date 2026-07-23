@@ -35,9 +35,9 @@ class BundledRuleResourcesTest {
         var haste = BundledEffectRules.find(InitialEffectRules.HASTE);
 
         assertEquals(InitialEffectRules.effects(), effects);
-        assertEquals(8, effects.size());
-        assertEquals(6000, haste.minimumDurationTicks());
-        assertEquals(14400, haste.maximumDurationTicks());
+        assertEquals(11, effects.size());
+        assertEquals(2400, haste.minimumDurationTicks());
+        assertEquals(6000, haste.maximumDurationTicks());
         assertTrue(haste.levelTwoRequirements().isPresent());
     }
 }

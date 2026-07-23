@@ -1,0 +1,33 @@
+{
+  "parent": "canned_cuisine:root",
+  "criteria": {
+    "get_pressure_canner": {
+      "conditions": {
+        "items": [
+          {
+            "items": "canned_cuisine:pressure_canner"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.under_pressure.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "canned_cuisine:pressure_canner"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.under_pressure.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_pressure_canner"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

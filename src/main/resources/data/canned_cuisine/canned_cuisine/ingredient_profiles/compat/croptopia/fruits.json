@@ -38,7 +38,7 @@
     "fruit": 1
   },
   "effect_affinities": {
-    "minecraft:speed": 0.55,
+    "minecraft:speed": 0.45,
     "minecraft:regeneration": 0.2
   }
 }

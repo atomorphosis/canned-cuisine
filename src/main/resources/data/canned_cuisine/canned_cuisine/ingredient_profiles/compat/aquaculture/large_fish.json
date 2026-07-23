@@ -15,9 +15,9 @@
     "fat": 0.2
   },
   "effect_affinities": {
-    "minecraft:strength": 0.55,
-    "minecraft:resistance": 0.25,
-    "minecraft:night_vision": 0.25
-  },
-  "catalyst_strength": 0.35
+    "minecraft:strength": 0.3,
+    "minecraft:resistance": 0.2,
+    "minecraft:night_vision": 0.2,
+    "minecraft:water_breathing": 0.55
+  }
 }

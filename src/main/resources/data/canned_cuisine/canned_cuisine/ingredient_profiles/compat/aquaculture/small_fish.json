@@ -12,9 +12,8 @@
     "protein": 1
   },
   "effect_affinities": {
-    "minecraft:haste": 0.35,
-    "minecraft:speed": 0.3,
-    "minecraft:night_vision": 0.3
-  },
-  "catalyst_strength": 0.15
+    "minecraft:speed": 0.25,
+    "minecraft:night_vision": 0.2,
+    "minecraft:water_breathing": 0.5
+  }
 }

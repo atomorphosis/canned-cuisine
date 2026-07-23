@@ -20,8 +20,8 @@
     "medicinal": 0.2
   },
   "effect_affinities": {
-    "minecraft:haste": 0.35,
-    "minecraft:speed": 0.3,
-    "minecraft:regeneration": 0.2
+    "minecraft:haste": 0.3,
+    "minecraft:speed": 0.2,
+    "minecraft:regeneration": 0.15
   }
 }

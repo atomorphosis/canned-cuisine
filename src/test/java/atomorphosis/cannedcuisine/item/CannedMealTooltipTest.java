@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 class CannedMealTooltipTest {
     @Test
     void showsQualityAndResolvedEffectWithoutRepeatingFoodValues() {
-        var output = create(Items.BEEF, Items.PORKCHOP, Items.MUTTON, Items.WHEAT);
+        var output = create(Items.COCOA_BEANS, Items.BEEF, Items.PORKCHOP, Items.WHEAT, Items.CARROT);
         var data = output.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
         var lines = CannedMealTooltip.create(data);
         var visual = assertInstanceOf(

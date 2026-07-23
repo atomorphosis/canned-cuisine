@@ -9,6 +9,5 @@
   "effect_affinities": {
     "minecraft:speed": 0.35,
     "minecraft:resistance": 0.3
-  },
-  "catalyst_strength": 0.2
+  }
 }

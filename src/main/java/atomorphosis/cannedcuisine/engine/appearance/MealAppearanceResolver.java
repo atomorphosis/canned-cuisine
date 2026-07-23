@@ -17,17 +17,20 @@ public final class MealAppearanceResolver {
 
     private static final double LABEL_SATURATION_FACTOR = 1.35;
     private static final Map<CulinaryCategory, Integer> CATEGORY_COLORS = categoryColors();
-    private static final Map<EffectId, Integer> EFFECT_COLORS = Map.of(
-            InitialEffectRules.HASTE, 0xD9C043,
-            InitialEffectRules.STRENGTH, 0x932423,
-            InitialEffectRules.REGENERATION, 0xCD5CAB,
-            InitialEffectRules.RESISTANCE, 0x99453A,
-            InitialEffectRules.FIRE_RESISTANCE, 0xE49A3A,
-            InitialEffectRules.SPEED, 0x7CAFC6,
-            InitialEffectRules.NIGHT_VISION, 0x3A3AAE,
-            InitialEffectRules.NOURISHMENT, 0xD7B84B,
-            new EffectId("minecraft", "nausea"), 0x7A3F87,
-            new EffectId("minecraft", "poison"), 0x4E9331
+    private static final Map<EffectId, Integer> EFFECT_COLORS = Map.ofEntries(
+            Map.entry(InitialEffectRules.HASTE, 0xD9C043),
+            Map.entry(InitialEffectRules.STRENGTH, 0x932423),
+            Map.entry(InitialEffectRules.REGENERATION, 0xCD5CAB),
+            Map.entry(InitialEffectRules.RESISTANCE, 0x99453A),
+            Map.entry(InitialEffectRules.FIRE_RESISTANCE, 0xE49A3A),
+            Map.entry(InitialEffectRules.SPEED, 0x7CAFC6),
+            Map.entry(InitialEffectRules.NIGHT_VISION, 0x3A3AAE),
+            Map.entry(InitialEffectRules.WATER_BREATHING, 0x2E7299),
+            Map.entry(InitialEffectRules.JUMP_BOOST, 0x58C95A),
+            Map.entry(InitialEffectRules.SLOW_FALLING, 0xD7BFAE),
+            Map.entry(InitialEffectRules.NOURISHMENT, 0xD7B84B),
+            Map.entry(new EffectId("minecraft", "nausea"), 0x7A3F87),
+            Map.entry(new EffectId("minecraft", "poison"), 0x4E9331)
     );
 
     private MealAppearanceResolver() {

@@ -8,7 +8,7 @@
   },
   "effect_affinities": {
     "minecraft:strength": 0.5,
-    "minecraft:speed": 0.35
-  },
-  "catalyst_strength": 0.35
+    "minecraft:speed": 0.3,
+    "minecraft:water_breathing": 0.6
+  }
 }

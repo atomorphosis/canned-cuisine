@@ -64,15 +64,18 @@ class InitialEffectBalanceMatrixTest {
 
     @Test
     void keepsPrimaryEffectsWithinApprovedPerCanRanges() {
-        var expectedRanges = Map.of(
-                InitialEffectRules.HASTE, new DurationRange(6000, 14400),
-                InitialEffectRules.STRENGTH, new DurationRange(2400, 6000),
-                InitialEffectRules.REGENERATION, new DurationRange(200, 600),
-                InitialEffectRules.RESISTANCE, new DurationRange(2400, 6000),
-                InitialEffectRules.FIRE_RESISTANCE, new DurationRange(2400, 6000),
-                InitialEffectRules.SPEED, new DurationRange(6000, 12000),
-                InitialEffectRules.NIGHT_VISION, new DurationRange(9600, 18000),
-                InitialEffectRules.NOURISHMENT, new DurationRange(1200, 6000)
+        var expectedRanges = Map.ofEntries(
+                Map.entry(InitialEffectRules.HASTE, new DurationRange(2400, 6000)),
+                Map.entry(InitialEffectRules.STRENGTH, new DurationRange(900, 3000)),
+                Map.entry(InitialEffectRules.REGENERATION, new DurationRange(160, 500)),
+                Map.entry(InitialEffectRules.RESISTANCE, new DurationRange(900, 2400)),
+                Map.entry(InitialEffectRules.FIRE_RESISTANCE, new DurationRange(2400, 6000)),
+                Map.entry(InitialEffectRules.SPEED, new DurationRange(2400, 6000)),
+                Map.entry(InitialEffectRules.NIGHT_VISION, new DurationRange(3600, 9600)),
+                Map.entry(InitialEffectRules.WATER_BREATHING, new DurationRange(1200, 3600)),
+                Map.entry(InitialEffectRules.JUMP_BOOST, new DurationRange(900, 3000)),
+                Map.entry(InitialEffectRules.SLOW_FALLING, new DurationRange(1200, 3600)),
+                Map.entry(InitialEffectRules.NOURISHMENT, new DurationRange(1200, 6000))
         );
 
         for (var rule : atomorphosis.cannedcuisine.data.effect.BundledEffectRules.rules()) {

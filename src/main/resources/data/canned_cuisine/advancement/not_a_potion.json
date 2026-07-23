@@ -1,0 +1,30 @@
+{
+  "parent": "canned_cuisine:first_batch",
+  "criteria": {
+    "consume_effect_meal": {
+      "conditions": {
+        "minimum_effects": 1
+      },
+      "trigger": "canned_cuisine:canned_meal_consumed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.not_a_potion.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:nether_wart"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.not_a_potion.title"
+    }
+  },
+  "requirements": [
+    [
+      "consume_effect_meal"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

@@ -8,7 +8,7 @@
   },
   "effect_affinities": {
     "minecraft:regeneration": 1,
-    "minecraft:resistance": 0.35
+    "minecraft:resistance": 0.25
   },
   "catalyst_strength": 1.0
 }

@@ -1,0 +1,33 @@
+{
+  "criteria": {
+    "get_empty_can": {
+      "conditions": {
+        "items": [
+          {
+            "items": "canned_cuisine:empty_can"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "canned_cuisine:textures/block/pressure_canner_top.png",
+    "description": {
+      "translate": "advancement.canned_cuisine.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "canned_cuisine:empty_can"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_empty_can"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

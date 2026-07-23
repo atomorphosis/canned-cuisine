@@ -5,5 +5,8 @@
   "categories": {
     "fat": 0.75,
     "spice": 0.5
+  },
+  "effect_affinities": {
+    "minecraft:strength": 1.0
   }
 }

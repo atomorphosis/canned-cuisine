@@ -24,17 +24,18 @@ class ResolvedCannedMealDataTest {
     @Test
     void preservesAResolvedMealThroughPersistentSerialization() {
         var data = resolve(
+                InitialVanillaProfiles.COCOA_BEANS,
                 InitialVanillaProfiles.BEEF,
                 InitialVanillaProfiles.PORKCHOP,
-                InitialVanillaProfiles.MUTTON,
-                InitialVanillaProfiles.WHEAT
+                InitialVanillaProfiles.WHEAT,
+                InitialVanillaProfiles.CARROT
         );
 
         var encoded = ResolvedCannedMealData.CODEC.encodeStart(JsonOps.INSTANCE, data).getOrThrow();
         var decoded = ResolvedCannedMealData.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow();
 
         assertEquals(data, decoded);
-        assertEquals(4, decoded.composition().totalUnits());
+        assertEquals(5, decoded.composition().totalUnits());
         assertEquals(1, decoded.effects().size());
         assertEquals(data.labelColor(), decoded.labelColor());
         assertEquals(data.effectColor(), decoded.effectColor());
@@ -55,7 +56,7 @@ class ResolvedCannedMealDataTest {
         var decoded = ResolvedCannedMealData.STREAM_CODEC.decode(buffer);
 
         assertEquals(data, decoded);
-        assertEquals(4200, decoded.effects().getFirst().durationTicks());
+        assertEquals(3784, decoded.effects().getFirst().durationTicks());
     }
 
     @Test

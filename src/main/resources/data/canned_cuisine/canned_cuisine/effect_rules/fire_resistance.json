@@ -1,6 +1,6 @@
 {
   "effect": "minecraft:fire_resistance",
-  "minimum_affinity": 0.20,
+  "minimum_affinity": 0.35,
   "minimum_quality_score": 40,
   "minimum_duration_ticks": 2400,
   "maximum_duration_ticks": 6000,

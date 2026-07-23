@@ -1,0 +1,30 @@
+{
+  "parent": "canned_cuisine:first_batch",
+  "criteria": {
+    "consume_good_meal": {
+      "conditions": {
+        "minimum_quality": "good"
+      },
+      "trigger": "canned_cuisine:canned_meal_consumed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.respectable_meal.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:cooked_beef"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.respectable_meal.title"
+    }
+  },
+  "requirements": [
+    [
+      "consume_good_meal"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

@@ -7,9 +7,8 @@
     "fat": 0.3
   },
   "effect_affinities": {
-    "minecraft:strength": 0.9,
-    "minecraft:resistance": 0.4,
+    "minecraft:strength": 0.55,
+    "minecraft:resistance": 0.3,
     "farmersdelight:nourishment": 0.6
-  },
-  "catalyst_strength": 0.25
+  }
 }

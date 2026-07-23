@@ -31,7 +31,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -51,8 +53,8 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     public static final int PROCESS_TIME = 200;
 
     private static final int[] INGREDIENT_SLOTS = {0, 1, 2, 3, 4, 5};
-    private static final int[] SIDE_SLOTS = {0, 1, 2, 3, 4, 5, CAN_SLOT, FUEL_SLOT};
-    private static final int[] BOTTOM_SLOTS = {FUEL_SLOT, OUTPUT_SLOT};
+    private static final int[] SIDE_SLOTS = {CAN_SLOT, FUEL_SLOT};
+    private static final int[] BOTTOM_SLOTS = {0, 1, 2, 3, 4, 5, FUEL_SLOT, OUTPUT_SLOT};
 
     private NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
     private final IItemHandler unsidedHandler = new InvWrapper(this);
@@ -197,8 +199,8 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
                 if (!remainder.isEmpty()) {
                     if (ingredient.isEmpty()) {
                         items.set(slot, remainder);
-                    } else if (level != null) {
-                        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ(), remainder);
+                    } else {
+                        preserveRemainder(remainder);
                     }
                 }
             }
@@ -222,6 +224,32 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         if (fuel.isEmpty() && !remainder.isEmpty()) {
             items.set(FUEL_SLOT, remainder);
         }
+        setChangedAndSync();
+    }
+
+    private void preserveRemainder(ItemStack remainder) {
+        ItemStack leftover = remainder;
+        if (level != null) {
+            IItemHandler below = level.getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    worldPosition.below(),
+                    Direction.UP
+            );
+            leftover = insertRemainder(below, remainder);
+            if (!leftover.isEmpty()) {
+                Containers.dropItemStack(
+                        level,
+                        worldPosition.getX() + 0.5,
+                        worldPosition.getY() - 0.5,
+                        worldPosition.getZ() + 0.5,
+                        leftover
+                );
+            }
+        }
+    }
+
+    static ItemStack insertRemainder(@Nullable IItemHandler target, ItemStack remainder) {
+        return target == null ? remainder : ItemHandlerHelper.insertItemStacked(target, remainder, false);
     }
 
     private int fuelDuration(ItemStack stack) {
@@ -318,35 +346,46 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        ItemStack previous = items.get(slot).copy();
         super.setItem(slot, stack);
-        inventoryChanged(slot);
+        inventoryChanged(slot, previous);
     }
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
+        ItemStack previous = items.get(slot).copy();
         ItemStack removed = super.removeItem(slot, amount);
         if (!removed.isEmpty()) {
-            inventoryChanged(slot);
+            inventoryChanged(slot, previous);
         }
         return removed;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack previous = items.get(slot).copy();
         ItemStack removed = super.removeItemNoUpdate(slot);
         if (!removed.isEmpty()) {
-            inventoryChanged(slot);
+            inventoryChanged(slot, previous);
         }
         return removed;
     }
 
-    private void inventoryChanged(int slot) {
-        if (slot < INGREDIENT_SLOT_COUNT) {
+    private void inventoryChanged(int slot, ItemStack previous) {
+        if (slot < INGREDIENT_SLOT_COUNT && !sameFormulaIngredient(previous, items.get(slot))) {
             progress = 0;
             invalidatePlan();
             previewLabelColor = -1;
         }
         setChangedAndSync();
+    }
+
+    static boolean sameFormulaIngredient(ItemStack first, ItemStack second) {
+        if (first.isEmpty() || second.isEmpty()) {
+            return first.isEmpty() && second.isEmpty();
+        }
+        return MinecraftEvaluationResolver.ingredientId(first)
+                .equals(MinecraftEvaluationResolver.ingredientId(second));
     }
 
     private void invalidatePlan() {
@@ -358,6 +397,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         setChanged();
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
         }
     }
 
@@ -382,13 +422,23 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
-        return side != Direction.DOWN && canPlaceItem(slot, stack);
+        if (side == Direction.UP) {
+            return slot < INGREDIENT_SLOT_COUNT && canPlaceItem(slot, stack);
+        }
+        return side != null && side.getAxis().isHorizontal()
+                && (slot == CAN_SLOT || slot == FUEL_SLOT)
+                && canPlaceItem(slot, stack);
     }
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return side == Direction.DOWN && (slot == OUTPUT_SLOT
-                || slot == FUEL_SLOT && !isFuel(stack));
+        if (side != Direction.DOWN) {
+            return false;
+        }
+        if (slot == OUTPUT_SLOT || slot == FUEL_SLOT && !isFuel(stack)) {
+            return true;
+        }
+        return slot < INGREDIENT_SLOT_COUNT && !canPlaceItem(slot, stack);
     }
 
     @Override

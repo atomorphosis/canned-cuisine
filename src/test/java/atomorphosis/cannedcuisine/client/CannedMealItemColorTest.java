@@ -20,10 +20,11 @@ class CannedMealItemColorTest {
     void leavesTheMetalUntintedAndTintsBothProceduralOverlays() {
         var success = (CannedMealCreationResult.Success) atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
                 List.of(
+                        new ItemStack(Items.COCOA_BEANS),
                         new ItemStack(Items.BEEF),
                         new ItemStack(Items.PORKCHOP),
-                        new ItemStack(Items.MUTTON),
-                        new ItemStack(Items.WHEAT)
+                        new ItemStack(Items.WHEAT),
+                        new ItemStack(Items.CARROT)
                 ),
                 atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
         );

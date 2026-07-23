@@ -38,6 +38,8 @@ public final class InitialVanillaProfiles {
     public static final IngredientId GOLDEN_CARROT = id("golden_carrot");
     public static final IngredientId GLISTERING_MELON_SLICE = id("glistering_melon_slice");
     public static final IngredientId GOLDEN_APPLE = id("golden_apple");
+    public static final IngredientId KELP = id("kelp");
+    public static final IngredientId PHANTOM_MEMBRANE = id("phantom_membrane");
 
     private static final Set<IngredientId> INGREDIENTS = Set.of(
             BEEF,
@@ -72,7 +74,9 @@ public final class InitialVanillaProfiles {
             COCOA_BEANS,
             GOLDEN_CARROT,
             GLISTERING_MELON_SLICE,
-            GOLDEN_APPLE
+            GOLDEN_APPLE,
+            KELP,
+            PHANTOM_MEMBRANE
     );
 
     private InitialVanillaProfiles() {

@@ -11,8 +11,9 @@
     "exotic": 0.25
   },
   "effect_affinities": {
-    "minecraft:regeneration": 0.6,
-    "minecraft:night_vision": 0.5
+    "minecraft:regeneration": 0.65,
+    "minecraft:night_vision": 0.5,
+    "minecraft:water_breathing": 0.4
   },
-  "catalyst_strength": 0.45
+  "catalyst_strength": 0.3
 }

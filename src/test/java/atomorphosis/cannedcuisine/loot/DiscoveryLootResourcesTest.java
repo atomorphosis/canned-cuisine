@@ -39,7 +39,7 @@ class DiscoveryLootResourcesTest {
                 formulaCount++;
             }
         }
-        assertEquals(19, formulaCount);
+        assertEquals(23, formulaCount);
     }
 
     @Test

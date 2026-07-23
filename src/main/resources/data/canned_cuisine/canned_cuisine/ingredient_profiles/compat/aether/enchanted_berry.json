@@ -8,8 +8,8 @@
     "exotic": 0.5
   },
   "effect_affinities": {
-    "minecraft:regeneration": 0.8,
-    "minecraft:speed": 0.65
+    "minecraft:regeneration": 0.85,
+    "minecraft:speed": 0.35
   },
-  "catalyst_strength": 1.0
+  "catalyst_strength": 0.75
 }

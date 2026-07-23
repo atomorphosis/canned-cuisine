@@ -1,0 +1,14 @@
+{
+  "ingredient": "aether:golden_gummy_swet",
+  "nutrition": 20,
+  "saturation": 36,
+  "categories": {
+    "sweetener": 0.6,
+    "exotic": 1
+  },
+  "effect_affinities": {
+    "minecraft:regeneration": 0.8,
+    "minecraft:resistance": 0.5
+  },
+  "catalyst_strength": 0.6
+}

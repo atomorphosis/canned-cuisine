@@ -1,0 +1,30 @@
+{
+  "parent": "canned_cuisine:close_the_loop",
+  "criteria": {
+    "consume_failed_meal": {
+      "conditions": {
+        "failed": true
+      },
+      "trigger": "canned_cuisine:canned_meal_consumed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.canned_cuisine.technically_edible.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:poisonous_potato"
+    },
+    "title": {
+      "translate": "advancement.canned_cuisine.technically_edible.title"
+    }
+  },
+  "requirements": [
+    [
+      "consume_failed_meal"
+    ]
+  ],
+  "sends_telemetry_event": false
+}
