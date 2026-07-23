@@ -254,13 +254,22 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     }
 
     private void consumeFuel() {
-        ItemStack fuel = items.get(FUEL_SLOT);
-        ItemStack remainder = CommonHooks.getCraftingRemainingItem(fuel);
-        fuel.shrink(1);
-        if (fuel.isEmpty() && !remainder.isEmpty()) {
-            items.set(FUEL_SLOT, remainder);
+        FuelConsumption consumption = consumeFuelStack(items.get(FUEL_SLOT));
+        items.set(FUEL_SLOT, consumption.fuelSlot());
+        if (!consumption.externalRemainder().isEmpty()) {
+            preserveRemainder(consumption.externalRemainder());
         }
         setChangedAndSync();
+    }
+
+    static FuelConsumption consumeFuelStack(ItemStack stack) {
+        ItemStack fuel = stack.copy();
+        ItemStack remainder = CommonHooks.getCraftingRemainingItem(fuel);
+        fuel.shrink(1);
+        if (fuel.isEmpty()) {
+            return new FuelConsumption(remainder, ItemStack.EMPTY);
+        }
+        return new FuelConsumption(fuel, remainder);
     }
 
     private void preserveRemainder(ItemStack remainder) {
@@ -489,5 +498,12 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         MISSING_FUEL,
         READY,
         PROCESSING
+    }
+
+    record FuelConsumption(ItemStack fuelSlot, ItemStack externalRemainder) {
+        FuelConsumption {
+            fuelSlot = fuelSlot.copy();
+            externalRemainder = externalRemainder.copy();
+        }
     }
 }

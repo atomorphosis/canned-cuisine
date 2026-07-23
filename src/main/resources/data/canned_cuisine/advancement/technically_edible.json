@@ -1,5 +1,5 @@
 {
-  "parent": "canned_cuisine:close_the_loop",
+  "parent": "canned_cuisine:first_batch",
   "criteria": {
     "consume_failed_meal": {
       "conditions": {

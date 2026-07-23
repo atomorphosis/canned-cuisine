@@ -114,6 +114,23 @@ class PressureCannerBlockEntityTest {
     }
 
     @Test
+    void stackableFuelKeepsItsPerItemRemainderOutsideTheFuelSlot() {
+        var consumption = PressureCannerBlockEntity.consumeFuelStack(new ItemStack(Items.HONEY_BOTTLE, 2));
+
+        assertTrue(consumption.fuelSlot().is(Items.HONEY_BOTTLE));
+        assertEquals(1, consumption.fuelSlot().getCount());
+        assertTrue(consumption.externalRemainder().is(Items.GLASS_BOTTLE));
+    }
+
+    @Test
+    void finalFuelItemLeavesItsRemainderInTheFuelSlot() {
+        var consumption = PressureCannerBlockEntity.consumeFuelStack(new ItemStack(Items.HONEY_BOTTLE));
+
+        assertTrue(consumption.fuelSlot().is(Items.GLASS_BOTTLE));
+        assertTrue(consumption.externalRemainder().isEmpty());
+    }
+
+    @Test
     void operationalStatusPrioritizesActionableBlockers() {
         assertEquals(
                 PressureCannerBlockEntity.OperationalStatus.INCOMPLETE_FORMULA,

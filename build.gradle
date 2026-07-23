@@ -57,6 +57,12 @@ base {
 // Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+def compatRuntime = providers.gradleProperty('compat_runtime').orElse('full').get()
+if (!(compatRuntime in ['full', 'ui', 'automation', 'minimal'])) {
+    throw new GradleException("compat_runtime must be one of: full, ui, automation, minimal")
+}
+def compatibilityRunDirectory = compatRuntime == 'full' ? 'run' : "run-${compatRuntime}"
+
 neoForge {
     // Specify the version of NeoForge to use.
     version = project.neo_version
@@ -105,6 +111,8 @@ neoForge {
 
         // applies to all the run configs above
         configureEach {
+            gameDirectory = project.file(compatibilityRunDirectory)
+
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.
@@ -142,10 +150,15 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-def viewerRuntime = providers.gradleProperty('viewer_runtime').orElse('both').get()
+def defaultViewerRuntime = compatRuntime in ['minimal', 'automation'] ? 'none' : 'both'
+def viewerRuntime = providers.gradleProperty('viewer_runtime').orElse(defaultViewerRuntime).get()
 if (!(viewerRuntime in ['both', 'jei', 'emi', 'none'])) {
     throw new GradleException("viewer_runtime must be one of: both, jei, emi, none")
 }
+
+def includeUiRuntime = compatRuntime in ['full', 'ui']
+def includeAutomationRuntime = compatRuntime in ['full', 'automation']
+def includeFullRuntime = compatRuntime == 'full'
 
 dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
@@ -158,22 +171,40 @@ dependencies {
     }
 
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
-    localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    if (includeFullRuntime) {
+        localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    }
 
     compileOnly "maven.modrinth:jade:${jade_version}"
-    localRuntime "maven.modrinth:jade:${jade_version}"
+    if (includeUiRuntime) {
+        localRuntime "maven.modrinth:jade:${jade_version}"
+        localRuntime "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
+        localRuntime "maven.modrinth:tooltip-overhaul:${tooltip_overhaul_version_id}"
+    }
 
-    localRuntime "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
-    localRuntime "maven.modrinth:tooltip-overhaul:${tooltip_overhaul_version_id}"
-    localRuntime "maven.modrinth:Vl1uNAuy:${aquaculture_version_id}"
-    localRuntime "maven.modrinth:R2OftAxM:${farmers_delight_version_id}"
-    localRuntime "curse.maven:croptopia-415438:${croptopia_file_id}"
-    localRuntime "maven.modrinth:DIIgdJzf:${epherolib_version_id}"
-    localRuntime "maven.modrinth:YhmgMVyu:${aether_version_id}"
-    localRuntime "maven.modrinth:ccKDOlHs:${owo_lib_version_id}"
-    localRuntime "maven.modrinth:jtmvUHXj:${accessories_version_id}"
-    localRuntime "maven.modrinth:F8BQNPWX:${naturalist_version_id}"
-    localRuntime "maven.modrinth:8BmcQJ2H:${geckolib_version_id}"
+    if (includeAutomationRuntime) {
+        localRuntime "maven.modrinth:create:${create_version_id}"
+        localRuntime "maven.modrinth:mekanism:${mekanism_version_id}"
+        localRuntime "maven.modrinth:ae2:${ae2_version_id}"
+        localRuntime "maven.modrinth:guideme:${guideme_version_id}"
+        localRuntime "maven.modrinth:pipez:${pipez_version_id}"
+        localRuntime "maven.modrinth:sophisticated-core:${sophisticated_core_version_id}"
+        localRuntime "maven.modrinth:sophisticated-backpacks:${sophisticated_backpacks_version_id}"
+        localRuntime "maven.modrinth:sophisticated-storage:${sophisticated_storage_version_id}"
+        localRuntime "maven.modrinth:carry-on:${carry_on_version_id}"
+    }
+
+    if (includeFullRuntime) {
+        localRuntime "maven.modrinth:Vl1uNAuy:${aquaculture_version_id}"
+        localRuntime "maven.modrinth:R2OftAxM:${farmers_delight_version_id}"
+        localRuntime "curse.maven:croptopia-415438:${croptopia_file_id}"
+        localRuntime "maven.modrinth:DIIgdJzf:${epherolib_version_id}"
+        localRuntime "maven.modrinth:YhmgMVyu:${aether_version_id}"
+        localRuntime "maven.modrinth:ccKDOlHs:${owo_lib_version_id}"
+        localRuntime "maven.modrinth:jtmvUHXj:${accessories_version_id}"
+        localRuntime "maven.modrinth:F8BQNPWX:${naturalist_version_id}"
+        localRuntime "maven.modrinth:8BmcQJ2H:${geckolib_version_id}"
+    }
 
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'

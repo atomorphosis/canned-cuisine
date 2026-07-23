@@ -120,12 +120,17 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, PressureCannerBlockEntity.CAN_SLOT, PressureCannerBlockEntity.CAN_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (PressureCannerBlockEntity.isFuel(stack)) {
-            if (!moveItemStackTo(stack, PressureCannerBlockEntity.FUEL_SLOT, PressureCannerBlockEntity.FUEL_SLOT + 1, false)) {
-                return ItemStack.EMPTY;
-            }
         } else if (!moveItemStackTo(stack, 0, PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT, false)) {
-            if (slotIndex < PLAYER_MAIN_END) {
+            if (PressureCannerBlockEntity.isFuel(stack)) {
+                if (!moveItemStackTo(
+                        stack,
+                        PressureCannerBlockEntity.FUEL_SLOT,
+                        PressureCannerBlockEntity.FUEL_SLOT + 1,
+                        false
+                )) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (slotIndex < PLAYER_MAIN_END) {
                 if (!moveItemStackTo(stack, PLAYER_MAIN_END, PLAYER_END, false)) {
                     return ItemStack.EMPTY;
                 }

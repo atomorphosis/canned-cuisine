@@ -1,5 +1,6 @@
 package atomorphosis.cannedcuisine;
 
+import atomorphosis.cannedcuisine.command.DataCommands;
 import atomorphosis.cannedcuisine.command.DevelopmentCommands;
 import atomorphosis.cannedcuisine.data.archetype.ArchetypeReloadListener;
 import atomorphosis.cannedcuisine.data.effect.EffectRuleReloadListener;
@@ -40,6 +41,7 @@ public final class CannedCuisine {
         modEventBus.addListener(CannedCuisine::addCreativeTabItems);
         NeoForge.EVENT_BUS.addListener(CannedCuisine::addReloadListeners);
         NeoForge.EVENT_BUS.addListener(AtlasNetworking::sync);
+        NeoForge.EVENT_BUS.addListener(DataCommands::register);
         if (!FMLEnvironment.production) {
             NeoForge.EVENT_BUS.addListener(DevelopmentCommands::register);
         }
