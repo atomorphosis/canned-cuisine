@@ -160,6 +160,9 @@ dependencies {
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
     localRuntime "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
+    compileOnly "maven.modrinth:jade:${jade_version}"
+    localRuntime "maven.modrinth:jade:${jade_version}"
+
     localRuntime "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
     localRuntime "maven.modrinth:tooltip-overhaul:${tooltip_overhaul_version_id}"
     localRuntime "maven.modrinth:Vl1uNAuy:${aquaculture_version_id}"

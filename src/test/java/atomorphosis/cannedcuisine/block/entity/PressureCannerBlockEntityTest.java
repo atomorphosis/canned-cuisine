@@ -113,6 +113,34 @@ class PressureCannerBlockEntityTest {
         assertEquals(1, leftover.getCount());
     }
 
+    @Test
+    void operationalStatusPrioritizesActionableBlockers() {
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.INCOMPLETE_FORMULA,
+                PressureCannerBlockEntity.resolveOperationalStatus(false, false, false, false, false)
+        );
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.MISSING_CANS,
+                PressureCannerBlockEntity.resolveOperationalStatus(true, false, false, true, true)
+        );
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.OUTPUT_BLOCKED,
+                PressureCannerBlockEntity.resolveOperationalStatus(true, true, false, true, true)
+        );
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.MISSING_FUEL,
+                PressureCannerBlockEntity.resolveOperationalStatus(true, true, true, false, false)
+        );
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.READY,
+                PressureCannerBlockEntity.resolveOperationalStatus(true, true, true, false, true)
+        );
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.PROCESSING,
+                PressureCannerBlockEntity.resolveOperationalStatus(true, true, true, true, false)
+        );
+    }
+
     private static PressureCannerBlockEntity canner() {
         return new PressureCannerBlockEntity(
                 BlockPos.ZERO,

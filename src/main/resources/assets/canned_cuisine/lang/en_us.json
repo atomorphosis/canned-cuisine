@@ -196,5 +196,14 @@
   "atlas.canned_cuisine.tooltip.previous_page": "Previous ingredients",
   "atlas.canned_cuisine.tooltip.next_page": "Next ingredients",
   "emi.category.canned_cuisine.canning_operation": "Pressure Canning",
-  "emi.category.canned_cuisine.effect_affinities": "Effect Affinities"
+  "emi.category.canned_cuisine.effect_affinities": "Effect Affinities",
+  "config.jade.plugin_canned_cuisine.pressure_canner": "Pressure Canner status",
+  "jade.canned_cuisine.pressure_canner.result": "Result: %1$s x %2$s",
+  "jade.canned_cuisine.pressure_canner.progress": "Progress: %s%%",
+  "jade.canned_cuisine.pressure_canner.status.incomplete_formula": "Incomplete formula",
+  "jade.canned_cuisine.pressure_canner.status.missing_cans": "Missing Empty Cans",
+  "jade.canned_cuisine.pressure_canner.status.output_blocked": "Output blocked",
+  "jade.canned_cuisine.pressure_canner.status.missing_fuel": "Missing fuel",
+  "jade.canned_cuisine.pressure_canner.status.ready": "Ready",
+  "jade.canned_cuisine.pressure_canner.status.processing": "Processing"
 }

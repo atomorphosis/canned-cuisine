@@ -173,6 +173,42 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         return cachedPreview.copy();
     }
 
+    public OperationalStatus operationalStatus() {
+        ItemStack plan = previewStack();
+        boolean hasCans = !plan.isEmpty()
+                && items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get())
+                && items.get(CAN_SLOT).getCount() >= plan.getCount();
+        return resolveOperationalStatus(
+                !plan.isEmpty(),
+                hasCans,
+                !plan.isEmpty() && canMergeOutput(items.get(OUTPUT_SLOT), plan),
+                burnTime > 0,
+                fuelDuration(items.get(FUEL_SLOT)) > 0
+        );
+    }
+
+    static OperationalStatus resolveOperationalStatus(
+            boolean hasPlan,
+            boolean hasCans,
+            boolean outputFits,
+            boolean burning,
+            boolean hasFuel
+    ) {
+        if (!hasPlan) {
+            return OperationalStatus.INCOMPLETE_FORMULA;
+        }
+        if (!hasCans) {
+            return OperationalStatus.MISSING_CANS;
+        }
+        if (!outputFits) {
+            return OperationalStatus.OUTPUT_BLOCKED;
+        }
+        if (burning) {
+            return OperationalStatus.PROCESSING;
+        }
+        return hasFuel ? OperationalStatus.READY : OperationalStatus.MISSING_FUEL;
+    }
+
     private boolean canProcess(ItemStack result) {
         if (result.isEmpty() || items.get(CAN_SLOT).getCount() < result.getCount()
                 || !items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get())) {
@@ -444,5 +480,14 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     @Override
     public boolean stillValid(Player player) {
         return Container.stillValidBlockEntity(this, player);
+    }
+
+    public enum OperationalStatus {
+        INCOMPLETE_FORMULA,
+        MISSING_CANS,
+        OUTPUT_BLOCKED,
+        MISSING_FUEL,
+        READY,
+        PROCESSING
     }
 }

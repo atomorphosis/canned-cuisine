@@ -196,5 +196,14 @@
   "atlas.canned_cuisine.tooltip.previous_page": "Ingredientes anteriores",
   "atlas.canned_cuisine.tooltip.next_page": "Ingredientes siguientes",
   "emi.category.canned_cuisine.canning_operation": "Enlatado a presión",
-  "emi.category.canned_cuisine.effect_affinities": "Afinidades de efectos"
+  "emi.category.canned_cuisine.effect_affinities": "Afinidades de efectos",
+  "config.jade.plugin_canned_cuisine.pressure_canner": "Estado de la Enlatadora a presión",
+  "jade.canned_cuisine.pressure_canner.result": "Resultado: %1$s x %2$s",
+  "jade.canned_cuisine.pressure_canner.progress": "Progreso: %s%%",
+  "jade.canned_cuisine.pressure_canner.status.incomplete_formula": "Fórmula incompleta",
+  "jade.canned_cuisine.pressure_canner.status.missing_cans": "Faltan Latas vacías",
+  "jade.canned_cuisine.pressure_canner.status.output_blocked": "Salida bloqueada",
+  "jade.canned_cuisine.pressure_canner.status.missing_fuel": "Falta combustible",
+  "jade.canned_cuisine.pressure_canner.status.ready": "Lista",
+  "jade.canned_cuisine.pressure_canner.status.processing": "Procesando"
 }

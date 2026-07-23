@@ -22,6 +22,12 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
             CannedCuisine.MOD_ID,
             "textures/gui/container/pressure_canner.png"
     );
+    private static final int PROGRESS_X = 104;
+    private static final int PROGRESS_Y = 38;
+    private static final int PROGRESS_TEXTURE_X = 176;
+    private static final int PROGRESS_TEXTURE_Y = 0;
+    private static final int PROGRESS_WIDTH = 21;
+    private static final int PROGRESS_HEIGHT = 16;
     private static final int BAR_X = 128;
     private static final int NUTRITION_BAR_Y = 61;
     private static final int SATURATION_BAR_Y = 66;
@@ -56,9 +62,19 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
-        int progress = menu.progressWidth(21);
+        int progress = menu.progressWidth(PROGRESS_WIDTH);
         if (progress > 0) {
-            graphics.blit(TEXTURE, leftPos + 105, topPos + 29, 176, 0, progress, 16, 256, 256);
+            graphics.blit(
+                    TEXTURE,
+                    leftPos + PROGRESS_X,
+                    topPos + PROGRESS_Y,
+                    PROGRESS_TEXTURE_X,
+                    PROGRESS_TEXTURE_Y,
+                    progress,
+                    PROGRESS_HEIGHT,
+                    256,
+                    256
+            );
         }
 
         int fuel = menu.fuelHeight(14);
