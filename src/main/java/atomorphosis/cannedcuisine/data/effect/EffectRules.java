@@ -17,4 +17,8 @@ public final class EffectRules {
     static void install(List<EffectRule> snapshot) {
         rules = List.copyOf(snapshot);
     }
+
+    public static void clear() {
+        rules = List.of();
+    }
 }

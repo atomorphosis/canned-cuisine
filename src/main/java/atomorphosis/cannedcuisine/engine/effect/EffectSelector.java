@@ -5,6 +5,7 @@ import atomorphosis.cannedcuisine.engine.evaluation.EvaluationMetrics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Objects;
 
 public final class EffectSelector {
@@ -26,13 +27,19 @@ public final class EffectSelector {
         if (qualityScore < 0 || qualityScore > 100) {
             throw new IllegalArgumentException("Quality score must be in the range [0, 100]");
         }
+        var effectIds = new HashSet<EffectId>();
+        for (var rule : rules) {
+            Objects.requireNonNull(rule, "rule");
+            if (!effectIds.add(rule.effect())) {
+                throw new IllegalArgumentException("Effect rules must have unique effect identifiers");
+            }
+        }
         if (metrics.totalUnits() == 0 || qualityScore < MINIMUM_POSITIVE_EFFECT_QUALITY) {
             return EffectSelection.empty();
         }
 
         var candidates = new ArrayList<Candidate>();
         for (var rule : rules) {
-            Objects.requireNonNull(rule, "rule");
             var affinity = Math.min(metrics.effectAffinityTotal(rule.effect()) / metrics.totalUnits(), 1.0);
             if (qualityScore >= rule.minimumQualityScore() && affinity >= rule.minimumAffinity()) {
                 var levelTwo = rule.levelTwoRequirements()

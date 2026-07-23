@@ -17,4 +17,8 @@ public final class Archetypes {
     static void install(List<ArchetypeDefinition> snapshot) {
         definitions = List.copyOf(snapshot);
     }
+
+    public static void clear() {
+        definitions = List.of();
+    }
 }

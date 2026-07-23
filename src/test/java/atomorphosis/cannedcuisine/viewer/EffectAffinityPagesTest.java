@@ -2,15 +2,20 @@ package atomorphosis.cannedcuisine.viewer;
 
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.engine.effect.EffectRule;
+import atomorphosis.cannedcuisine.engine.effect.LevelTwoRequirements;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EffectAffinityPagesTest {
@@ -49,6 +54,45 @@ class EffectAffinityPagesTest {
         assertTrue(pages.source(0).isEmpty());
     }
 
+    @Test
+    void effectTooltipShowsLocalizedQualityBandsInsteadOfScores() {
+        var rule = new EffectRule(
+                new EffectId("minecraft", "haste"),
+                0.3,
+                70,
+                100,
+                200,
+                0,
+                true,
+                Set.of(),
+                Optional.of(new LevelTwoRequirements(88, 0.6, 0.15))
+        );
+        var entry = new EffectAtlasEntry(
+                ResourceLocation.fromNamespaceAndPath("canned_cuisine", "effect/test"),
+                rule,
+                java.util.List.of()
+        );
+
+        var tooltip = EffectAffinityPages.effectTooltip(entry);
+        var minimumQuality = translation(tooltip.stream()
+                .filter(line -> translation(line).getKey().equals("atlas.canned_cuisine.tooltip.minimum_quality"))
+                .findFirst()
+                .orElseThrow());
+        var levelTwo = translation(tooltip.stream()
+                .filter(line -> translation(line).getKey().equals("atlas.canned_cuisine.tooltip.level_two"))
+                .findFirst()
+                .orElseThrow());
+
+        assertEquals(
+                "tooltip.canned_cuisine.quality.good",
+                translation(assertInstanceOf(Component.class, minimumQuality.getArgs()[0])).getKey()
+        );
+        assertEquals(
+                "tooltip.canned_cuisine.quality.excellent",
+                translation(assertInstanceOf(Component.class, levelTwo.getArgs()[0])).getKey()
+        );
+    }
+
     private static EffectAtlasEntry entry(int sourceCount) {
         var sources = new ArrayList<EffectAtlasEntry.AffinitySource>();
         for (int index = 0; index < sourceCount; index++) {
@@ -72,5 +116,9 @@ class EffectAffinityPagesTest {
                 ),
                 sources
         );
+    }
+
+    private static TranslatableContents translation(Component component) {
+        return assertInstanceOf(TranslatableContents.class, component.getContents());
     }
 }

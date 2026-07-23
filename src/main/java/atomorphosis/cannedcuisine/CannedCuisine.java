@@ -3,8 +3,12 @@ package atomorphosis.cannedcuisine;
 import atomorphosis.cannedcuisine.command.DataCommands;
 import atomorphosis.cannedcuisine.command.DevelopmentCommands;
 import atomorphosis.cannedcuisine.data.archetype.ArchetypeReloadListener;
+import atomorphosis.cannedcuisine.data.archetype.Archetypes;
 import atomorphosis.cannedcuisine.data.effect.EffectRuleReloadListener;
+import atomorphosis.cannedcuisine.data.effect.EffectRules;
 import atomorphosis.cannedcuisine.data.profile.IngredientProfileReloadListener;
+import atomorphosis.cannedcuisine.data.profile.IngredientProfiles;
+import atomorphosis.cannedcuisine.data.ScriptedDataOverrides;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import atomorphosis.cannedcuisine.registry.ModBlockEntities;
@@ -21,6 +25,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import org.slf4j.Logger;
 
 @Mod(CannedCuisine.MOD_ID)
@@ -42,6 +47,7 @@ public final class CannedCuisine {
         NeoForge.EVENT_BUS.addListener(CannedCuisine::addReloadListeners);
         NeoForge.EVENT_BUS.addListener(AtlasNetworking::sync);
         NeoForge.EVENT_BUS.addListener(DataCommands::register);
+        NeoForge.EVENT_BUS.addListener(CannedCuisine::clearServerData);
         if (!FMLEnvironment.production) {
             NeoForge.EVENT_BUS.addListener(DevelopmentCommands::register);
         }
@@ -61,5 +67,12 @@ public final class CannedCuisine {
         event.addListener(new IngredientProfileReloadListener());
         event.addListener(new ArchetypeReloadListener());
         event.addListener(new EffectRuleReloadListener());
+    }
+
+    private static void clearServerData(ServerStoppedEvent event) {
+        IngredientProfiles.clear();
+        Archetypes.clear();
+        EffectRules.clear();
+        ScriptedDataOverrides.clear();
     }
 }

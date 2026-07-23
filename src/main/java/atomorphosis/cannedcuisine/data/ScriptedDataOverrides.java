@@ -25,6 +25,10 @@ public final class ScriptedDataOverrides {
         snapshot = Objects.requireNonNull(value, "value");
     }
 
+    public static void clear() {
+        snapshot = Snapshot.empty();
+    }
+
     public record Snapshot(
             Map<IngredientId, IngredientProfile> ingredientProfiles,
             Set<IngredientId> removedIngredients,

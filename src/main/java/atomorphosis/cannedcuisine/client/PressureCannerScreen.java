@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -35,6 +36,8 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
     private static final int BAR_WIDTH = 26;
     private static final int BAR_HEIGHT = 3;
     private static final int BAR_HOVER_HEIGHT = 5;
+    private static final int BAR_GROUP_Y = NUTRITION_BAR_Y - 1;
+    private static final int BAR_GROUP_HEIGHT = QUALITY_BAR_Y - NUTRITION_BAR_Y + BAR_HOVER_HEIGHT;
     private static final int RED_BAR_TEXTURE_Y = 30;
     private static final int YELLOW_BAR_TEXTURE_Y = 33;
     private static final int HIGH_BAR_TEXTURE_Y = 36;
@@ -106,38 +109,42 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
     private void renderBarTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         ItemStack meal = menu.previewStack();
         ResolvedCannedMealData data = meal.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
-        if (data == null || mouseX < leftPos + BAR_X || mouseX >= leftPos + BAR_X + BAR_WIDTH) {
+        if (data == null || !barsHovered(mouseX - leftPos, mouseY - topPos)) {
             return;
         }
 
-        List<Component> tooltip = null;
-        ItemStack tooltipStack = ItemStack.EMPTY;
-        if (isHovering(BAR_X, NUTRITION_BAR_Y - 1, BAR_WIDTH, BAR_HOVER_HEIGHT, mouseX, mouseY)) {
-            int perCan = Math.clamp((int) Math.round(data.nutritionPoints()), 0, 20);
-            tooltip = foodTooltip(
-                    "tooltip.canned_cuisine.preview.nutrition",
-                    Integer.toString(perCan),
-                    Integer.toString(perCan * meal.getCount()),
-                    metricFormatting(perCan, FOOD_BAR_MAXIMUM)
-            );
-            tooltipStack = meal;
-        } else if (isHovering(BAR_X, SATURATION_BAR_Y - 1, BAR_WIDTH, BAR_HOVER_HEIGHT, mouseX, mouseY)) {
-            double perCan = Math.clamp(data.saturationPoints(), 0.0, FOOD_BAR_MAXIMUM);
-            tooltip = foodTooltip(
-                    "tooltip.canned_cuisine.preview.saturation",
-                    formatPoints(perCan),
-                    formatPoints(perCan * meal.getCount()),
-                    metricFormatting(perCan, FOOD_BAR_MAXIMUM)
-            );
-            tooltipStack = meal;
-        } else if (isHovering(BAR_X, QUALITY_BAR_Y - 1, BAR_WIDTH, BAR_HOVER_HEIGHT, mouseX, mouseY)) {
-            QualityBand quality = QualityBand.fromScore(data.qualityScore());
-            tooltip = qualityTooltip(quality);
-        }
+        graphics.renderTooltip(font, barTooltip(meal, data), Optional.empty(), meal, mouseX, mouseY);
+    }
 
-        if (tooltip != null) {
-            graphics.renderTooltip(font, tooltip, Optional.empty(), tooltipStack, mouseX, mouseY);
-        }
+    static boolean barsHovered(double mouseX, double mouseY) {
+        return mouseX >= BAR_X
+                && mouseX < BAR_X + BAR_WIDTH
+                && mouseY >= BAR_GROUP_Y
+                && mouseY < BAR_GROUP_Y + BAR_GROUP_HEIGHT;
+    }
+
+    static List<Component> barTooltip(ItemStack meal, ResolvedCannedMealData data) {
+        var tooltip = new ArrayList<Component>();
+        QualityBand quality = QualityBand.fromScore(data.qualityScore());
+        tooltip.add(meal.getHoverName().copy().withStyle(mealNameFormatting(quality)));
+
+        int nutritionPerCan = Math.clamp((int) Math.round(data.nutritionPoints()), 0, 20);
+        tooltip.addAll(foodTooltip(
+                "tooltip.canned_cuisine.preview.nutrition",
+                Integer.toString(nutritionPerCan),
+                Integer.toString(nutritionPerCan * meal.getCount()),
+                metricFormatting(nutritionPerCan, FOOD_BAR_MAXIMUM)
+        ));
+
+        double saturationPerCan = Math.clamp(data.saturationPoints(), 0.0, FOOD_BAR_MAXIMUM);
+        tooltip.addAll(foodTooltip(
+                "tooltip.canned_cuisine.preview.saturation",
+                formatPoints(saturationPerCan),
+                formatPoints(saturationPerCan * meal.getCount()),
+                metricFormatting(saturationPerCan, FOOD_BAR_MAXIMUM)
+        ));
+        tooltip.addAll(qualityTooltip(quality));
+        return List.copyOf(tooltip);
     }
 
     private static List<Component> foodTooltip(
@@ -199,6 +206,15 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
             case RED_BAR_TEXTURE_Y -> ChatFormatting.RED;
             case YELLOW_BAR_TEXTURE_Y -> ChatFormatting.YELLOW;
             default -> ChatFormatting.AQUA;
+        };
+    }
+
+    static ChatFormatting mealNameFormatting(QualityBand quality) {
+        return switch (quality) {
+            case FAILED, QUESTIONABLE, STANDARD -> ChatFormatting.WHITE;
+            case GOOD -> ChatFormatting.YELLOW;
+            case EXCELLENT -> ChatFormatting.AQUA;
+            case EXCEPTIONAL -> ChatFormatting.LIGHT_PURPLE;
         };
     }
 

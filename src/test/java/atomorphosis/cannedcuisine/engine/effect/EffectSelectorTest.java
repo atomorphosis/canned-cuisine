@@ -113,6 +113,16 @@ class EffectSelectorTest {
     }
 
     @Test
+    void rejectsDuplicateRulesBeforeSelectingEffects() {
+        var duplicate = rule(HASTE, 0.5, 40, 1200, 3600, 0, true, Set.of());
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> EffectSelector.select(metrics(Map.of(HASTE, 1.0)), 80, List.of(duplicate, duplicate))
+        );
+    }
+
+    @Test
     void awardsLevelTwoFromCatalystStrengthThatContributesToTheSameEffect() {
          var selection = EffectSelector.select(
                  advancedMetrics(true, 1.0),

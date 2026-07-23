@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IngredientIdTest {
     @Test
@@ -21,5 +22,13 @@ class IngredientIdTest {
         var id = new IngredientId("minecraft", "apple");
 
         assertEquals("minecraft:apple", id.toString());
+    }
+
+    @Test
+    void rejectsInvalidResourceIdentifiers() {
+        assertThrows(NullPointerException.class, () -> new IngredientId(null, "apple"));
+        assertThrows(IllegalArgumentException.class, () -> new IngredientId("Minecraft", "apple"));
+        assertThrows(IllegalArgumentException.class, () -> new IngredientId("minecraft", ""));
+        assertThrows(IllegalArgumentException.class, () -> new IngredientId("minecraft", "bad path"));
     }
 }

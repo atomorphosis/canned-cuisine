@@ -14,6 +14,7 @@ import atomorphosis.cannedcuisine.engine.naming.MealNameSubjectType;
 import atomorphosis.cannedcuisine.engine.naming.MealNameTokens;
 import atomorphosis.cannedcuisine.engine.naming.NameTokenId;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -51,7 +52,10 @@ public record ResolvedCannedMealData(
             Codec.intRange(1, 6).fieldOf("count").forGetter(IngredientCount::count)
     ).apply(instance, IngredientCount::new));
     private static final Codec<CanonicalComposition> COMPOSITION_CODEC = INGREDIENT_COUNT_CODEC.listOf()
-            .xmap(CanonicalComposition::new, CanonicalComposition::ingredients);
+            .flatXmap(
+                    ingredients -> decode(() -> new CanonicalComposition(ingredients)),
+                    composition -> DataResult.success(composition.ingredients())
+            );
     private static final Codec<EffectId> EFFECT_ID_CODEC = ResourceLocation.CODEC.xmap(
             id -> new EffectId(id.getNamespace(), id.getPath()),
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
@@ -75,8 +79,8 @@ public record ResolvedCannedMealData(
             id -> new NameTokenId(id.getNamespace(), id.getPath()),
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
     );
-    private static final Codec<MealNameSubjectType> SUBJECT_TYPE_CODEC = Codec.STRING.xmap(
-            value -> MealNameSubjectType.valueOf(value.toUpperCase(Locale.ROOT)),
+    private static final Codec<MealNameSubjectType> SUBJECT_TYPE_CODEC = Codec.STRING.comapFlatMap(
+            value -> decode(() -> MealNameSubjectType.valueOf(value.toUpperCase(Locale.ROOT))),
             value -> value.name().toLowerCase(Locale.ROOT)
     );
     private static final Codec<MealNameSubject> SUBJECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -90,31 +94,52 @@ public record ResolvedCannedMealData(
             SUBJECT_CODEC.fieldOf("subject").forGetter(MealNameTokens::subject),
             NAME_TOKEN_CODEC.optionalFieldOf("profile").forGetter(MealNameTokens::profile)
     ).apply(instance, MealNameTokens::new));
-    private static final Codec<MixtureFailureReason> FAILURE_REASON_CODEC = Codec.STRING.xmap(
-            value -> MixtureFailureReason.valueOf(value.toUpperCase(Locale.ROOT)),
+    private static final Codec<MixtureFailureReason> FAILURE_REASON_CODEC = Codec.STRING.comapFlatMap(
+            value -> decode(() -> MixtureFailureReason.valueOf(value.toUpperCase(Locale.ROOT))),
             value -> value.name().toLowerCase(Locale.ROOT)
     );
     private static final Codec<Set<MixtureFailureReason>> FAILURE_REASONS_CODEC = FAILURE_REASON_CODEC.listOf()
-            .xmap(Set::copyOf, List::copyOf);
+            .flatXmap(
+                    reasons -> {
+                        if (reasons.size() > MixtureFailureReason.values().length) {
+                            return DataResult.error(() -> "Too many failure reasons");
+                        }
+                        var unique = Set.copyOf(reasons);
+                        return unique.size() == reasons.size()
+                                ? DataResult.success(unique)
+                                : DataResult.error(() -> "Failure reasons cannot contain duplicates");
+                    },
+                    reasons -> DataResult.success(List.copyOf(reasons))
+            );
+    private static final Codec<List<ResolvedEffect>> EFFECTS_CODEC = boundedList(EFFECT_CODEC, 2, "effects");
+    private static final Codec<List<IngredientEffectContribution>> EFFECT_CONTRIBUTIONS_CODEC = boundedList(
+            EFFECT_CONTRIBUTION_CODEC,
+            12,
+            "effect contributions"
+    );
 
-    public static final Codec<ResolvedCannedMealData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.intRange(1, Integer.MAX_VALUE).fieldOf("data_version").forGetter(ResolvedCannedMealData::dataVersion),
-            COMPOSITION_CODEC.fieldOf("composition").forGetter(ResolvedCannedMealData::composition),
-            Codec.intRange(0, 100).fieldOf("quality").forGetter(ResolvedCannedMealData::qualityScore),
-            FAILURE_REASONS_CODEC.optionalFieldOf("failures", Set.of()).forGetter(ResolvedCannedMealData::failureReasons),
-            Codec.DOUBLE.fieldOf("nutrition").forGetter(ResolvedCannedMealData::nutritionPoints),
-            Codec.DOUBLE.fieldOf("saturation").forGetter(ResolvedCannedMealData::saturationPoints),
-            EFFECT_CODEC.listOf().optionalFieldOf("effects", List.of()).forGetter(ResolvedCannedMealData::effects),
-            EFFECT_CONTRIBUTION_CODEC.listOf()
+    private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.intRange(1, Integer.MAX_VALUE).fieldOf("data_version").forGetter(Serialized::dataVersion),
+            COMPOSITION_CODEC.fieldOf("composition").forGetter(Serialized::composition),
+            Codec.intRange(0, 100).fieldOf("quality").forGetter(Serialized::qualityScore),
+            FAILURE_REASONS_CODEC.optionalFieldOf("failures", Set.of()).forGetter(Serialized::failureReasons),
+            Codec.DOUBLE.fieldOf("nutrition").forGetter(Serialized::nutritionPoints),
+            Codec.DOUBLE.fieldOf("saturation").forGetter(Serialized::saturationPoints),
+            EFFECTS_CODEC.optionalFieldOf("effects", List.of()).forGetter(Serialized::effects),
+            EFFECT_CONTRIBUTIONS_CODEC
                     .optionalFieldOf("effect_contributions", List.of())
-                    .forGetter(ResolvedCannedMealData::effectContributions),
+                    .forGetter(Serialized::effectContributions),
             Codec.intRange(0, 0xFFFFFF).optionalFieldOf(
                     "label_color",
                     MealAppearanceResolver.NEUTRAL_LABEL_COLOR
-            ).forGetter(ResolvedCannedMealData::labelColor),
-            Codec.intRange(0, 0xFFFFFF).optionalFieldOf("effect_color").forGetter(ResolvedCannedMealData::effectColor),
-            NAME_CODEC.fieldOf("name").forGetter(ResolvedCannedMealData::name)
-    ).apply(instance, ResolvedCannedMealData::new));
+            ).forGetter(Serialized::labelColor),
+            Codec.intRange(0, 0xFFFFFF).optionalFieldOf("effect_color").forGetter(Serialized::effectColor),
+            NAME_CODEC.fieldOf("name").forGetter(Serialized::name)
+    ).apply(instance, Serialized::new));
+    public static final Codec<ResolvedCannedMealData> CODEC = SERIALIZED_CODEC.comapFlatMap(
+            serialized -> decode(serialized::toData),
+            Serialized::from
+    );
     public static final StreamCodec<ByteBuf, ResolvedCannedMealData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
     public ResolvedCannedMealData {
@@ -250,6 +275,58 @@ public record ResolvedCannedMealData(
     private static void requireNonNegativeFinite(String name, double value) {
         if (!Double.isFinite(value) || value < 0.0) {
             throw new IllegalArgumentException(name + " must be finite and non-negative");
+        }
+    }
+
+    private static <T> Codec<List<T>> boundedList(Codec<T> elementCodec, int maximumSize, String name) {
+        return elementCodec.listOf().flatXmap(
+                values -> values.size() <= maximumSize
+                        ? DataResult.success(values)
+                        : DataResult.error(() -> "Too many " + name + "; maximum is " + maximumSize),
+                DataResult::success
+        );
+    }
+
+    private static <T> DataResult<T> decode(Decoder<T> decoder) {
+        try {
+            return DataResult.success(decoder.decode());
+        } catch (RuntimeException exception) {
+            var message = exception.getMessage();
+            return DataResult.error(() -> message == null ? "Invalid canned meal data" : message);
+        }
+    }
+
+    @FunctionalInterface
+    private interface Decoder<T> {
+        T decode();
+    }
+
+    private record Serialized(
+            int dataVersion,
+            CanonicalComposition composition,
+            int qualityScore,
+            Set<MixtureFailureReason> failureReasons,
+            double nutritionPoints,
+            double saturationPoints,
+            List<ResolvedEffect> effects,
+            List<IngredientEffectContribution> effectContributions,
+            int labelColor,
+            Optional<Integer> effectColor,
+            MealNameTokens name
+    ) {
+        private static Serialized from(ResolvedCannedMealData data) {
+            return new Serialized(
+                    data.dataVersion(), data.composition(), data.qualityScore(), data.failureReasons(),
+                    data.nutritionPoints(), data.saturationPoints(), data.effects(), data.effectContributions(),
+                    data.labelColor(), data.effectColor(), data.name()
+            );
+        }
+
+        private ResolvedCannedMealData toData() {
+            return new ResolvedCannedMealData(
+                    dataVersion, composition, qualityScore, failureReasons, nutritionPoints, saturationPoints,
+                    effects, effectContributions, labelColor, effectColor, name
+            );
         }
     }
 }

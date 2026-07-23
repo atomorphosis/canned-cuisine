@@ -9,6 +9,7 @@ import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
 import atomorphosis.cannedcuisine.engine.evaluation.ProfiledIngredient;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import atomorphosis.cannedcuisine.engine.profile.InitialVanillaProfiles;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -124,6 +125,46 @@ class ResolvedCannedMealDataTest {
                 data.effects(),
                 data.name()
         ));
+    }
+
+    @Test
+    void reportsMalformedPersistentDataAsCodecErrors() {
+        var data = resolve(
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.BROWN_MUSHROOM
+        );
+        var encoded = ResolvedCannedMealData.CODEC.encodeStart(JsonOps.INSTANCE, data)
+                .getOrThrow()
+                .getAsJsonObject();
+        encoded.getAsJsonArray("composition").add(encoded.getAsJsonArray("composition").get(0));
+
+        var duplicateComposition = ResolvedCannedMealData.CODEC.parse(JsonOps.INSTANCE, encoded);
+        var unknownFailure = ResolvedCannedMealData.CODEC.parse(
+                JsonOps.INSTANCE,
+                JsonParser.parseString("""
+                        {
+                          "data_version": 3,
+                          "composition": [
+                            {"ingredient": "minecraft:apple", "count": 3}
+                          ],
+                          "quality": 0,
+                          "failures": ["unknown"],
+                          "nutrition": 0.0,
+                          "saturation": 0.0,
+                          "label_color": 8355711,
+                          "name": {
+                            "version": 1,
+                            "template": "canned_cuisine:basic",
+                            "archetype": "canned_cuisine:mixture",
+                            "subject": {"type": "ingredient", "id": "minecraft:apple"}
+                          }
+                        }
+                        """)
+        );
+
+        assertTrue(duplicateComposition.error().isPresent());
+        assertTrue(unknownFailure.error().isPresent());
     }
 
     private static ResolvedCannedMealData resolve(IngredientId... ingredients) {

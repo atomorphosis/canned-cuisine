@@ -43,10 +43,19 @@ class ArchetypeDefinitionCodecTest {
     void rejectsUnknownCategoriesAndInvalidBounds() {
          var unknown = validJson().replace("protein", "imaginary");
          var invalidBounds = validJson().replace("\"maximum_coverage\": 1.0", "\"maximum_coverage\": 0.1");
+         var emptyCriteria = """
+                 {
+                   "id": "examplemod:test",
+                   "criteria": [],
+                   "minimum_effective_diversity": 1.0
+                 }
+                 """;
 
         assertTrue(ArchetypeDefinitionCodec.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(unknown))
                 .error().orElseThrow().message().contains("Unknown culinary category"));
         assertTrue(ArchetypeDefinitionCodec.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(invalidBounds))
+                .error().isPresent());
+        assertTrue(ArchetypeDefinitionCodec.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(emptyCriteria))
                 .error().isPresent());
     }
 

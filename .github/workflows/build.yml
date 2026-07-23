@@ -5,6 +5,15 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: minimal
+            arguments: -Pcompat_runtime=minimal -Pviewer_runtime=none
+          - name: full
+            arguments: -Pcompat_runtime=full -Pviewer_runtime=both
+    name: Build (${{ matrix.name }})
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,4 +31,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build ${{ matrix.arguments }}
+
+      - name: Upload release candidate
+        if: matrix.name == 'minimal'
+        uses: actions/upload-artifact@v4
+        with:
+          name: canned-cuisine-${{ github.sha }}
+          path: build/libs/*.jar
+          if-no-files-found: error

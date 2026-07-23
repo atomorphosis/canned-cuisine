@@ -1,6 +1,7 @@
 package atomorphosis.cannedcuisine.viewer;
 
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
+import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -11,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public final class EffectAffinityPages {
@@ -94,7 +96,7 @@ public final class EffectAffinityPages {
         ).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable(
                 "atlas.canned_cuisine.tooltip.minimum_quality",
-                rule.minimumQualityScore()
+                qualityName(rule.minimumQualityScore())
         ).withStyle(ChatFormatting.GRAY));
         holder.ifPresent(value -> tooltip.add(Component.translatable(
                 "atlas.canned_cuisine.tooltip.duration_range",
@@ -106,7 +108,7 @@ public final class EffectAffinityPages {
         rule.levelTwoRequirements().ifPresent(requirements -> {
             tooltip.add(Component.translatable(
                     "atlas.canned_cuisine.tooltip.level_two",
-                    requirements.minimumQualityScore(),
+                    qualityName(requirements.minimumQualityScore()),
                     Math.round(requirements.minimumAffinity() * 100.0)
             ).withStyle(ChatFormatting.GOLD));
              tooltip.add(Component.translatable(
@@ -115,5 +117,11 @@ public final class EffectAffinityPages {
              ).withStyle(ChatFormatting.DARK_GRAY));
         });
         return List.copyOf(tooltip);
+    }
+
+    private static Component qualityName(int score) {
+        var quality = QualityBand.fromScore(score);
+        return Component.translatable(
+                "tooltip.canned_cuisine.quality." + quality.name().toLowerCase(Locale.ROOT));
     }
 }

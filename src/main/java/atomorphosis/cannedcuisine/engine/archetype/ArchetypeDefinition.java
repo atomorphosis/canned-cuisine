@@ -31,6 +31,9 @@ public record ArchetypeDefinition(
         Objects.requireNonNull(id, "id");
         Objects.requireNonNull(criteria, "criteria");
         criteria = List.copyOf(criteria);
+        if (criteria.isEmpty()) {
+            throw new IllegalArgumentException("An archetype requires at least one category criterion");
+        }
         requireNonNegativeFinite("minimumEffectiveDiversity", minimumEffectiveDiversity);
         requireNonNegativeFinite("minimumNutritionDensity", minimumNutritionDensity);
         requireNonNegativeFinite("minimumFoodValueDensity", minimumFoodValueDensity);

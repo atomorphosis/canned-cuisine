@@ -28,4 +28,8 @@ public final class IngredientProfiles {
     static void install(Map<IngredientId, IngredientProfile> snapshot) {
         profiles = Map.copyOf(snapshot);
     }
+
+    public static void clear() {
+        profiles = Map.of();
+    }
 }

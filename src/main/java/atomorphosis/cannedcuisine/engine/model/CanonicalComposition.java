@@ -8,6 +8,11 @@ public record CanonicalComposition(List<IngredientCount> ingredients) {
     public CanonicalComposition {
         Objects.requireNonNull(ingredients, "ingredients");
         ingredients = List.copyOf(ingredients);
+        for (var index = 1; index < ingredients.size(); index++) {
+            if (ingredients.get(index - 1).ingredient().compareTo(ingredients.get(index).ingredient()) >= 0) {
+                throw new IllegalArgumentException("Canonical ingredients must be sorted and unique");
+            }
+        }
     }
 
     public String signature() {
@@ -17,8 +22,10 @@ public record CanonicalComposition(List<IngredientCount> ingredients) {
     }
 
     public int totalUnits() {
-        return ingredients.stream()
-                .mapToInt(IngredientCount::count)
-                .sum();
+        var total = 0;
+        for (var ingredient : ingredients) {
+            total = Math.addExact(total, ingredient.count());
+        }
+        return total;
     }
 }

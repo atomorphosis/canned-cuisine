@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CompositionNormalizerTest {
     private static final IngredientId APPLE = new IngredientId("minecraft", "apple");
@@ -49,5 +50,27 @@ class CompositionNormalizerTest {
         var composition = CompositionNormalizer.normalize(List.of(APPLE, APPLE, CARROT, WHEAT));
 
         assertEquals(4, composition.totalUnits());
+    }
+
+    @Test
+    void canonicalCompositionRejectsDuplicateOrUnsortedEntries() {
+        assertThrows(IllegalArgumentException.class, () -> new CanonicalComposition(List.of(
+                new IngredientCount(APPLE, 1),
+                new IngredientCount(APPLE, 1)
+        )));
+        assertThrows(IllegalArgumentException.class, () -> new CanonicalComposition(List.of(
+                new IngredientCount(WHEAT, 1),
+                new IngredientCount(APPLE, 1)
+        )));
+    }
+
+    @Test
+    void totalUnitsRejectsIntegerOverflow() {
+        var composition = new CanonicalComposition(List.of(
+                new IngredientCount(APPLE, Integer.MAX_VALUE),
+                new IngredientCount(CARROT, 1)
+        ));
+
+        assertThrows(ArithmeticException.class, composition::totalUnits);
     }
 }
