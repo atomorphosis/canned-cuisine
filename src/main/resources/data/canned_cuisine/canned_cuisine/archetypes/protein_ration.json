@@ -1,9 +1,0 @@
-{
-  "id": "canned_cuisine:protein_ration",
-  "criteria": [
-    { "categories": ["protein"], "minimum_coverage": 0.25, "maximum_coverage": 1.0 },
-    { "categories": ["vegetable", "grain"], "minimum_coverage": 0.20, "maximum_coverage": 2.0 }
-  ],
-  "minimum_effective_diversity": 2.0,
-  "priority": 1
-}

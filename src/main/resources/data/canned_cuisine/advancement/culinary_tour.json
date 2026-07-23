@@ -1,0 +1,45 @@
+{
+  "parent": "canned_cuisine:first_batch",
+  "criteria": {
+    "stew": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:stew"}
+    },
+    "mushroom_soup": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:mushroom_soup"}
+    },
+    "porridge": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:porridge"}
+    },
+    "compote": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:compote"}
+    },
+    "vegetable_medley": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:vegetable_medley"}
+    },
+    "field_ration": {
+      "trigger": "canned_cuisine:canned_meal_taken",
+      "conditions": {"archetype": "canned_cuisine:field_ration"}
+    }
+  },
+  "display": {
+    "icon": {"id": "canned_cuisine:canned_meal", "count": 1},
+    "title": {"translate": "advancement.canned_cuisine.culinary_tour.title"},
+    "description": {"translate": "advancement.canned_cuisine.culinary_tour.description"},
+    "frame": "challenge"
+  },
+  "requirements": [
+    ["stew"],
+    ["mushroom_soup"],
+    ["porridge"],
+    ["compote"],
+    ["vegetable_medley"],
+    ["field_ration"]
+  ],
+  "rewards": {"experience": 50},
+  "sends_telemetry_event": false
+}

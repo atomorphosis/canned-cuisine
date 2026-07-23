@@ -23,8 +23,8 @@ class MealBalanceBenchmarkTest {
 
         assertEquals(1, result.canCount());
         assertEquals(QualityBand.STANDARD, result.qualityBand());
-        assertEquals(9.064, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(8.1576, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(8.24, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(7.416, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -60,8 +60,8 @@ class MealBalanceBenchmarkTest {
         assertEquals(QualityBand.GOOD, result.qualityBand());
         assertEquals(InitialArchetypes.STEW, result.archetypeMatch().orElseThrow().definition().id());
         assertEquals(2, result.canCount());
-        assertEquals(9.064, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(12.6896, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(8.8168, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(12.34352, result.saturationPointsPerCan(), 0.0000001);
         assertTrue(totalNutrition(result) > separatelyPreparedNutrition);
         assertTrue(totalSaturation(result) > separatelyPreparedEffectiveSaturation);
     }
@@ -78,8 +78,8 @@ class MealBalanceBenchmarkTest {
         );
 
         assertEquals(2, result.canCount());
-        assertEquals(8.745, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(5.247, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(8.5065, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(5.1039, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test
@@ -94,8 +94,8 @@ class MealBalanceBenchmarkTest {
         );
 
         assertEquals(3, result.canCount());
-        assertEquals(9.328, result.nutritionPointsPerCan(), 0.0000001);
-        assertEquals(4.664, result.saturationPointsPerCan(), 0.0000001);
+        assertEquals(9.0736, result.nutritionPointsPerCan(), 0.0000001);
+        assertEquals(4.5368, result.saturationPointsPerCan(), 0.0000001);
     }
 
     @Test

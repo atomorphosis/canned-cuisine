@@ -61,7 +61,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
             public void onTake(Player player, ItemStack stack) {
                 super.onTake(player, stack);
                 if (player instanceof ServerPlayer serverPlayer && !stack.isEmpty()) {
-                    ModCriterionTriggers.CANNED_MEAL_TAKEN.get().trigger(serverPlayer, stack.getCount());
+                    ModCriterionTriggers.CANNED_MEAL_TAKEN.get().trigger(serverPlayer, stack);
                 }
             }
         });

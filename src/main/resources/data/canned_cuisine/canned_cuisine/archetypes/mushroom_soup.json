@@ -1,0 +1,10 @@
+{
+  "id": "canned_cuisine:mushroom_soup",
+  "criteria": [
+    { "categories": ["vegetable"], "minimum_coverage": 0.30, "maximum_coverage": 0.80 },
+    { "categories": ["mushroom"], "minimum_coverage": 0.20, "maximum_coverage": 1.0 },
+    { "categories": ["protein"], "minimum_coverage": 0.0, "maximum_coverage": 0.14 }
+  ],
+  "minimum_effective_diversity": 2.0,
+  "priority": 3
+}

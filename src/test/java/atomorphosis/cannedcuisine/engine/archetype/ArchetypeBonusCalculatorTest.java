@@ -15,8 +15,8 @@ class ArchetypeBonusCalculatorTest {
     }
 
     @Test
-    void givesEveryRecognizedArchetypeTheSameReward() {
-        assertEquals(new ArchetypeBonus(10, 1.10), ArchetypeBonusCalculator.calculate(Optional.of(match())));
+    void rewardsStructureWithoutCreatingFoodValueDirectly() {
+        assertEquals(new ArchetypeBonus(10, 1.0), ArchetypeBonusCalculator.calculate(Optional.of(match())));
     }
 
     private static ArchetypeMatch match() {

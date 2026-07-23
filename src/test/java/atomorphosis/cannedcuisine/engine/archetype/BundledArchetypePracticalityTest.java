@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BundledArchetypePracticalityTest {
     @Test
-    void practicalBundledFormulasWinAllNineArchetypes() {
+    void practicalBundledFormulasWinAllSixStructuralArchetypes() {
         var formulas = new LinkedHashMap<ArchetypeId, List<IngredientId>>();
         formulas.put(InitialArchetypes.STEW, List.of(
                 InitialVanillaProfiles.BEEF,
@@ -30,7 +30,7 @@ class BundledArchetypePracticalityTest {
                 InitialVanillaProfiles.MELON_SLICE,
                 InitialVanillaProfiles.SUGAR
         ));
-        formulas.put(InitialArchetypes.SOUP, List.of(
+        formulas.put(InitialArchetypes.MUSHROOM_SOUP, List.of(
                 InitialVanillaProfiles.CARROT,
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.BROWN_MUSHROOM
@@ -41,34 +41,17 @@ class BundledArchetypePracticalityTest {
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.SUGAR
         ));
-        formulas.put(InitialArchetypes.PROTEIN_RATION, List.of(
+        formulas.put(InitialArchetypes.FIELD_RATION, List.of(
                 InitialVanillaProfiles.BEEF,
                 InitialVanillaProfiles.CHICKEN,
                 InitialVanillaProfiles.CARROT,
                 InitialVanillaProfiles.WHEAT
         ));
-        formulas.put(InitialArchetypes.VEGETABLE_RATION, List.of(
+        formulas.put(InitialArchetypes.VEGETABLE_MEDLEY, List.of(
                 InitialVanillaProfiles.CARROT,
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.BEETROOT,
-                InitialVanillaProfiles.BROWN_MUSHROOM
-        ));
-        formulas.put(InitialArchetypes.TRAIL_MIX, List.of(
-                InitialVanillaProfiles.APPLE,
-                InitialVanillaProfiles.SWEET_BERRIES,
-                InitialVanillaProfiles.WHEAT,
-                InitialVanillaProfiles.PUMPKIN_SEEDS
-        ));
-        formulas.put(InitialArchetypes.EMERGENCY_RATION, List.of(
-                InitialVanillaProfiles.BEEF,
-                InitialVanillaProfiles.PORKCHOP,
-                InitialVanillaProfiles.WHEAT,
-                InitialVanillaProfiles.SUGAR
-        ));
-        formulas.put(InitialArchetypes.EXOTIC_RATION, List.of(
-                InitialVanillaProfiles.BEEF,
-                InitialVanillaProfiles.POTATO,
-                InitialVanillaProfiles.MAGMA_CREAM
+                InitialVanillaProfiles.APPLE
         ));
 
         formulas.forEach((expected, formula) -> {
@@ -78,41 +61,38 @@ class BundledArchetypePracticalityTest {
     }
 
     @Test
-    void vanillaTrailMixIngredientsAreClassifiedAsProteinRationInstead() {
+    void meatGrainAndSeedsAreClassifiedAsFieldRation() {
         var formula = List.of(
                 InitialVanillaProfiles.APPLE,
                 InitialVanillaProfiles.WHEAT,
                 InitialVanillaProfiles.PORKCHOP,
                 InitialVanillaProfiles.MUTTON
         );
-        var metrics = metrics(formula);
-
-        assertTrue(ArchetypeMatcher.match(
-                metrics,
-                atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.TRAIL_MIX)
-        ).isPresent());
-        assertEquals(InitialArchetypes.PROTEIN_RATION, bestMatch(formula).definition().id());
+        assertEquals(InitialArchetypes.FIELD_RATION, bestMatch(formula).definition().id());
     }
 
     @Test
-    void eachVanillaSeedOrCocoaFatSourceCanProduceTrailMix() {
+    void dryFruitGrainAndFatRemainGenericMedleys() {
         for (var fatSource : List.of(
                 InitialVanillaProfiles.PUMPKIN_SEEDS,
                 InitialVanillaProfiles.MELON_SEEDS,
                 InitialVanillaProfiles.COCOA_BEANS
         )) {
-            var match = bestMatch(List.of(
+            var metrics = metrics(List.of(
                     InitialVanillaProfiles.APPLE,
                     InitialVanillaProfiles.SWEET_BERRIES,
                     InitialVanillaProfiles.WHEAT,
                     fatSource
             ));
-            assertEquals(InitialArchetypes.TRAIL_MIX, match.definition().id(), fatSource.toString());
+            assertTrue(ArchetypeMatcher.findBest(
+                    metrics,
+                    atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()
+            ).isEmpty(), fatSource.toString());
         }
     }
 
     @Test
-    void exoticRationsNeedTransformedFoodInsteadOfPureCatalysts() {
+    void catalystsDoNotCreateAFieldRationWithoutGrain() {
         var pureCatalysts = metrics(List.of(
                 InitialVanillaProfiles.BLAZE_POWDER,
                 InitialVanillaProfiles.MAGMA_CREAM,
@@ -123,18 +103,10 @@ class BundledArchetypePracticalityTest {
                 InitialVanillaProfiles.BLAZE_POWDER,
                 InitialVanillaProfiles.MAGMA_CREAM
         ));
-        var exoticRation = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(
-                InitialArchetypes.EXOTIC_RATION
-        );
+        var ration = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.FIELD_RATION);
 
-        assertFalse(ArchetypeMatcher.match(pureCatalysts, exoticRation).isPresent());
-        assertEquals(
-                InitialArchetypes.EXOTIC_RATION,
-                ArchetypeMatcher.findBest(
-                        transformedFood,
-                        atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()
-                ).orElseThrow().definition().id()
-        );
+        assertFalse(ArchetypeMatcher.match(pureCatalysts, ration).isPresent());
+        assertFalse(ArchetypeMatcher.match(transformedFood, ration).isPresent());
         assertEquals(1.0 / 3.0, BundledVanillaProfiles.find(InitialVanillaProfiles.MAGMA_CREAM)
                 .orElseThrow().nutritionPoints());
         assertEquals(4.0, BundledVanillaProfiles.find(InitialVanillaProfiles.MAGMA_CREAM)

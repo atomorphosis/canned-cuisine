@@ -42,7 +42,7 @@ public final class MealNameResolver {
                                 match.definition().id().namespace(),
                                 match.definition().id().path()
                         ))
-                        .orElse(InitialMealNames.MIXTURE);
+                        .orElse(InitialMealNames.MEDLEY);
         var subject = failureAssessment.has(MixtureFailureReason.EXCESSIVE_TOXICITY)
                 ? MealNameSubject.category(CulinaryCategory.TOXIC)
                 : resolveSubject(input);
@@ -111,12 +111,12 @@ public final class MealNameResolver {
         if (subject.type() != MealNameSubjectType.CATEGORY && subject.type() != MealNameSubjectType.MIXED) {
             return false;
         }
-        var repeatsRationCategory = subject.type() == MealNameSubjectType.CATEGORY
+        var repeatsNamedCategory = subject.type() == MealNameSubjectType.CATEGORY
                 && archetype.namespace().equals(subject.id().namespace())
-                && archetype.path().equals(subject.id().path() + "_ration");
-        var repeatsMixedMixture = archetype.equals(InitialMealNames.MIXTURE)
+                && archetype.path().startsWith(subject.id().path() + "_");
+        var repeatsMixedMedley = archetype.equals(InitialMealNames.MEDLEY)
                 && subject.id().equals(InitialMealNames.id("mixed"));
-        return repeatsRationCategory || repeatsMixedMixture;
+        return repeatsNamedCategory || repeatsMixedMedley;
     }
 
     private static MealNameSubject resolveSubject(EvaluationInput input) {

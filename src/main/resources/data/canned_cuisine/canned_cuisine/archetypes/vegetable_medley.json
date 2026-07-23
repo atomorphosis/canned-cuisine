@@ -1,0 +1,9 @@
+{
+  "id": "canned_cuisine:vegetable_medley",
+  "criteria": [
+    { "categories": ["vegetable"], "minimum_coverage": 0.60, "maximum_coverage": 1.0 },
+    { "categories": ["protein"], "minimum_coverage": 0.0, "maximum_coverage": 0.14 }
+  ],
+  "minimum_effective_diversity": 2.5,
+  "priority": 1
+}

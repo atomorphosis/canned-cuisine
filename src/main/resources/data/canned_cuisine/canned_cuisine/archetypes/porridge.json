@@ -2,7 +2,8 @@
   "id": "canned_cuisine:porridge",
   "criteria": [
     { "categories": ["grain"], "minimum_coverage": 0.50, "maximum_coverage": 1.0 },
-    { "categories": ["sweetener"], "minimum_coverage": 0.0, "maximum_coverage": 0.35 }
+    { "categories": ["sweetener"], "minimum_coverage": 0.0, "maximum_coverage": 0.35 },
+    { "categories": ["protein"], "minimum_coverage": 0.0, "maximum_coverage": 0.24 }
   ],
-  "minimum_effective_diversity": 2.0
+  "minimum_effective_diversity": 1.8
 }

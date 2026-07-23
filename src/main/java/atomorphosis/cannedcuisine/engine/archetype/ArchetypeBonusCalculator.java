@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public final class ArchetypeBonusCalculator {
-    private static final ArchetypeBonus RECOGNIZED_ARCHETYPE_BONUS = new ArchetypeBonus(10, 1.10);
+    private static final ArchetypeBonus RECOGNIZED_ARCHETYPE_BONUS = new ArchetypeBonus(10, 1.0);
 
     private ArchetypeBonusCalculator() {
     }

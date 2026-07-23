@@ -1,6 +1,7 @@
 package atomorphosis.cannedcuisine.minecraft;
 
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
+import atomorphosis.cannedcuisine.engine.archetype.InitialArchetypes;
 import atomorphosis.cannedcuisine.engine.profile.InitialVanillaProfiles;
 import atomorphosis.cannedcuisine.engine.validation.CompositionValidationResult;
 import atomorphosis.cannedcuisine.item.CannedMealRarity;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class CannedMealFactoryTest {
     @Test
@@ -93,5 +95,48 @@ class CannedMealFactoryTest {
         );
 
         assertFalse(ItemStack.isSameItemSameComponents(first.output(), second.output()));
+    }
+
+    @Test
+    void similarMeatRationsRemainDistinctAndVisuallyIdentifiable() {
+        var first = create(List.of(
+                Items.BEEF, Items.PORKCHOP, Items.PUMPKIN_SEEDS, Items.WHEAT
+        ));
+        var second = create(List.of(
+                Items.BEEF, Items.MUTTON, Items.PORKCHOP, Items.POTATO, Items.PUMPKIN_SEEDS, Items.WHEAT
+        ));
+        var third = create(List.of(
+                Items.BEEF, Items.MUTTON, Items.PORKCHOP, Items.PUMPKIN_SEEDS, Items.WHEAT
+        ));
+
+        assertEquals(InitialArchetypes.FIELD_RATION, first.evaluation().archetypeMatch().orElseThrow().definition().id());
+        assertEquals(InitialArchetypes.FIELD_RATION, second.evaluation().archetypeMatch().orElseThrow().definition().id());
+        assertEquals(InitialArchetypes.FIELD_RATION, third.evaluation().archetypeMatch().orElseThrow().definition().id());
+        assertEquals(3, first.output().getCount());
+        assertEquals(3, second.output().getCount());
+        assertEquals(3, third.output().getCount());
+
+        var firstData = first.output().get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        var secondData = second.output().get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        var thirdData = third.output().get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        assertNotNull(firstData);
+        assertNotNull(secondData);
+        assertNotNull(thirdData);
+        assertNotEquals(firstData.labelColor(), secondData.labelColor());
+        assertNotEquals(firstData.labelColor(), thirdData.labelColor());
+        assertNotEquals(secondData.labelColor(), thirdData.labelColor());
+        assertFalse(ItemStack.isSameItemSameComponents(first.output(), second.output()));
+        assertFalse(ItemStack.isSameItemSameComponents(first.output(), third.output()));
+        assertFalse(ItemStack.isSameItemSameComponents(second.output(), third.output()));
+    }
+
+    private static CannedMealCreationResult.Success create(List<net.minecraft.world.item.Item> ingredients) {
+        return assertInstanceOf(
+                CannedMealCreationResult.Success.class,
+                atomorphosis.cannedcuisine.minecraft.TestCannedMealFactory.create(
+                        ingredients.stream().map(ItemStack::new).toList(),
+                        atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles.lookup()
+                )
+        );
     }
 }

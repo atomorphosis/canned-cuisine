@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.viewer;
 
 import atomorphosis.cannedcuisine.CannedCuisine;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
+import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.minecraft.CannedMealCreationResult;
 import atomorphosis.cannedcuisine.minecraft.CannedMealFactory;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -38,8 +39,13 @@ public final class CulinaryAtlas {
     }
 
     public static List<EffectAtlasEntry> effects() {
+        return effects(CulinaryAtlas::isEffectAvailable);
+    }
+
+    static List<EffectAtlasEntry> effects(java.util.function.Predicate<EffectId> effectAvailable) {
         var profiles = CulinaryAtlasData.current().profiles();
         return CulinaryAtlasData.current().effects().stream()
+                .filter(rule -> effectAvailable.test(rule.effect()))
                 .sorted(Comparator.comparing(rule -> rule.effect().toString()))
                 .map(rule -> {
                     var sources = profiles.entrySet().stream()
@@ -61,6 +67,13 @@ public final class CulinaryAtlas {
                     );
                 })
                 .toList();
+    }
+
+    private static boolean isEffectAvailable(EffectId effect) {
+        return BuiltInRegistries.MOB_EFFECT.getOptional(ResourceLocation.fromNamespaceAndPath(
+                effect.namespace(),
+                effect.path()
+        )).isPresent();
     }
 
     private static java.util.Optional<Item> item(IngredientId id) {

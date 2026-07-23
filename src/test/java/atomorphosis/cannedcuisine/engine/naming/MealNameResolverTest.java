@@ -60,9 +60,9 @@ class MealNameResolverTest {
     }
 
     @Test
-    void omitsACategorySubjectThatRepeatsTheArchetype() {
+    void omitsTheVegetableSubjectFromVegetableMedley() {
         var definition = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
-                .filter(value -> value.id().equals(InitialArchetypes.VEGETABLE_RATION))
+                .filter(value -> value.id().equals(InitialArchetypes.VEGETABLE_MEDLEY))
                 .findFirst()
                 .orElseThrow();
         var tokens = MealNameResolver.resolve(
@@ -79,13 +79,14 @@ class MealNameResolverTest {
 
         assertEquals(InitialMealNames.PROFILE_ARCHETYPE, tokens.template());
         assertEquals(InitialMealNames.EXCELLENT, tokens.profile().orElseThrow());
+        assertEquals(new NameTokenId("canned_cuisine", "vegetable_medley"), tokens.archetype());
         assertEquals(new NameTokenId("canned_cuisine", "vegetable"), tokens.subject().id());
     }
 
     @Test
-    void omitsExoticWhenTheArchetypeIsAlreadyAnExoticRation() {
+    void keepsAnExoticSubjectOnAFieldRation() {
         var definition = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
-                .filter(value -> value.id().equals(InitialArchetypes.EXOTIC_RATION))
+                .filter(value -> value.id().equals(InitialArchetypes.FIELD_RATION))
                 .findFirst()
                 .orElseThrow();
         var tokens = MealNameResolver.resolve(
@@ -100,8 +101,9 @@ class MealNameResolverTest {
                 List.of(new ResolvedEffect(InitialEffectRules.FIRE_RESISTANCE, 1.0, 0, 4200))
         );
 
-        assertEquals(InitialMealNames.PROFILE_ARCHETYPE, tokens.template());
+        assertEquals(InitialMealNames.PROFILE_SUBJECT_ARCHETYPE, tokens.template());
         assertEquals(new NameTokenId("minecraft", "fire_resistance"), tokens.profile().orElseThrow());
+        assertEquals(new NameTokenId("canned_cuisine", "field_ration"), tokens.archetype());
         assertEquals(new NameTokenId("canned_cuisine", "exotic"), tokens.subject().id());
     }
 
@@ -139,9 +141,9 @@ class MealNameResolverTest {
     }
 
     @Test
-    void simplifiesAQualifiedRationWhenTheDominantIngredientAlreadyExpressesItsCategory() {
+    void dominantIngredientQualifiesAFieldRation() {
         var definition = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
-                .filter(value -> value.id().equals(InitialArchetypes.EXOTIC_RATION))
+                .filter(value -> value.id().equals(InitialArchetypes.FIELD_RATION))
                 .findFirst()
                 .orElseThrow();
         var tokens = MealNameResolver.resolve(
@@ -160,15 +162,15 @@ class MealNameResolverTest {
                 List.of()
         );
 
-        assertEquals(InitialMealNames.RATION, tokens.archetype());
+        assertEquals(new NameTokenId("canned_cuisine", "field_ration"), tokens.archetype());
         assertEquals(InitialMealNames.SUBJECT_ARCHETYPE, tokens.template());
         assertEquals(new NameTokenId("naturalist", "lizard_tail"), tokens.subject().id());
     }
 
     @Test
-    void keepsQualifiedRationsForSubjectsThatDoNotAlreadyExpressTheCategory() {
+    void keepsTheFieldRationForEveryIngredientSubject() {
         var definition = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
-                .filter(value -> value.id().equals(InitialArchetypes.EXOTIC_RATION))
+                .filter(value -> value.id().equals(InitialArchetypes.FIELD_RATION))
                 .findFirst()
                 .orElseThrow();
         var tokens = MealNameResolver.resolve(
@@ -187,7 +189,7 @@ class MealNameResolverTest {
                 List.of()
         );
 
-        assertEquals(new NameTokenId("canned_cuisine", "exotic_ration"), tokens.archetype());
+        assertEquals(new NameTokenId("canned_cuisine", "field_ration"), tokens.archetype());
     }
 
     private static EvaluationInput input(ProfiledIngredient... ingredients) {

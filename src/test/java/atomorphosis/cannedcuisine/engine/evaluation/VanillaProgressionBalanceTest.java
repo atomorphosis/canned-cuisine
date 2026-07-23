@@ -24,7 +24,7 @@ class VanillaProgressionBalanceTest {
         double vanillaNutrition = 8.0;
         double vanillaSaturation = 7.2;
 
-        assertEquals(InitialArchetypes.VEGETABLE_RATION, archetype(meal));
+        assertEquals(InitialArchetypes.VEGETABLE_MEDLEY, archetype(meal));
         assertEquals(QualityBand.STANDARD, meal.qualityBand());
         assertTrue(totalNutrition(meal) > vanillaNutrition);
         assertTrue(totalNutrition(meal) <= vanillaNutrition * 1.5);
@@ -44,8 +44,8 @@ class VanillaProgressionBalanceTest {
 
         assertEquals(InitialArchetypes.STEW, archetype(meal));
         assertEquals(QualityBand.GOOD, meal.qualityBand());
-        assertEquals(separatelyCookedNutrition * 1.133, totalNutrition(meal), 0.0000001);
-        assertEquals(separatelyCookedSaturation * 1.133, totalSaturation(meal), 0.0000001);
+        assertEquals(separatelyCookedNutrition * 1.1021, totalNutrition(meal), 0.0000001);
+        assertEquals(separatelyCookedSaturation * 1.1021, totalSaturation(meal), 0.0000001);
     }
 
     @Test
@@ -84,14 +84,14 @@ class VanillaProgressionBalanceTest {
                 mushroomStewAndBakedPotatoSaturation
         );
 
-        assertEquals(InitialArchetypes.SOUP, archetype(meal));
+        assertEquals(InitialArchetypes.MUSHROOM_SOUP, archetype(meal));
         assertTrue(totalNutrition(meal) <= mushroomStewAndBakedPotatoNutrition);
         assertTrue(totalSaturation(meal) > mushroomStewAndBakedPotatoSaturation);
         assertTrue(combinedFoodValue(totalNutrition(meal), totalSaturation(meal)) <= vanillaCombinedValue * 1.15);
     }
 
     @Test
-    void sugarAndHoneyCreateDenseButBoundedVanillaEmergencyRations() {
+    void sugarAndHoneyCreateDenseButBoundedVanillaRations() {
         for (var preservative : new IngredientId[]{InitialVanillaProfiles.SUGAR, InitialVanillaProfiles.HONEY_BOTTLE}) {
             var meal = evaluate(
                     InitialVanillaProfiles.BEEF,
@@ -117,7 +117,7 @@ class VanillaProgressionBalanceTest {
                     .mapToDouble(id -> profiles.get(id).saturationPoints())
                     .sum();
 
-            assertEquals(InitialArchetypes.EMERGENCY_RATION, archetype(meal), preservative.toString());
+            assertEquals(InitialArchetypes.FIELD_RATION, archetype(meal), preservative.toString());
             assertTrue(totalNutrition(meal) >= ingredientNutrition);
             assertTrue(totalSaturation(meal) >= ingredientSaturation);
             assertTrue(totalNutrition(meal) <= ingredientNutrition * 1.15);

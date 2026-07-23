@@ -4,6 +4,7 @@ import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.engine.effect.InitialEffectRules;
 import atomorphosis.cannedcuisine.engine.effect.ResolvedEffect;
 import atomorphosis.cannedcuisine.engine.evaluation.EvaluationMetrics;
+import atomorphosis.cannedcuisine.engine.model.CanonicalComposition;
 import atomorphosis.cannedcuisine.engine.profile.CulinaryCategory;
 
 import java.util.EnumMap;
@@ -43,6 +44,19 @@ public final class MealAppearanceResolver {
                 ? Optional.<Integer>empty()
                 : Optional.of(effectColor(effects.getFirst().effect()));
         return new MealAppearance(labelColor(metrics), effectColor);
+    }
+
+    public static MealAppearance resolve(
+            EvaluationMetrics metrics,
+            List<ResolvedEffect> effects,
+            CanonicalComposition composition
+    ) {
+        Objects.requireNonNull(composition, "composition");
+        var resolved = resolve(metrics, effects);
+        return new MealAppearance(
+                distinguishFormula(resolved.labelColor(), composition.signature()),
+                resolved.effectColor()
+        );
     }
 
     public static int labelColor(EvaluationMetrics metrics) {
@@ -134,5 +148,23 @@ public final class MealAppearanceResolver {
                 0,
                 255
         );
+    }
+
+    private static int distinguishFormula(int baseColor, String signature) {
+        var hash = signature.hashCode();
+        var accent = rgb(
+                64 + Math.floorMod(hash, 160),
+                64 + Math.floorMod(hash >> 8, 160),
+                64 + Math.floorMod(hash >> 16, 160)
+        );
+        return rgb(
+                blendChannel(baseColor >> 16, accent >> 16),
+                blendChannel(baseColor >> 8, accent >> 8),
+                blendChannel(baseColor, accent)
+        );
+    }
+
+    private static int blendChannel(int base, int accent) {
+        return (int) Math.round((base & 0xFF) * 0.85 + (accent & 0xFF) * 0.15);
     }
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.resources.ResourceLocation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,6 +24,17 @@ class CannedMealCriterionTriggerTest {
 
         assertFalse(threeCanBatch.matches(2));
         assertTrue(threeCanBatch.matches(3));
+    }
+
+    @Test
+    void takenCriterionCanTrackAResolvedArchetype() {
+        var stew = ResourceLocation.fromNamespaceAndPath("canned_cuisine", "stew");
+        var fieldRation = ResourceLocation.fromNamespaceAndPath("canned_cuisine", "field_ration");
+        var criterion = new CannedMealTakenTrigger.TriggerInstance(Optional.empty(), 1, Optional.of(stew));
+
+        assertTrue(criterion.matches(1, Optional.of(stew)));
+        assertFalse(criterion.matches(1, Optional.of(fieldRation)));
+        assertFalse(criterion.matches(1, Optional.empty()));
     }
 
     @Test

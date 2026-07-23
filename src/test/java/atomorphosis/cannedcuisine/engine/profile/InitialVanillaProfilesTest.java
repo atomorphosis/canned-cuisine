@@ -163,7 +163,7 @@ class InitialVanillaProfilesTest {
         );
 
         assertEquals(
-                InitialArchetypes.SOUP,
+                InitialArchetypes.MUSHROOM_SOUP,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
         assertEquals(2, evaluation.canCount());
@@ -182,7 +182,7 @@ class InitialVanillaProfilesTest {
         );
 
         assertEquals(
-                InitialArchetypes.STEW,
+                InitialArchetypes.FIELD_RATION,
                 evaluation.archetypeMatch().orElseThrow().definition().id()
         );
         assertEquals(85, evaluation.qualityScore());

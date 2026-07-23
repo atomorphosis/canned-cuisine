@@ -1,9 +1,0 @@
-{
-  "id": "canned_cuisine:trail_mix",
-  "criteria": [
-    { "categories": ["fruit"], "minimum_coverage": 0.20, "maximum_coverage": 1.0 },
-    { "categories": ["grain"], "minimum_coverage": 0.20, "maximum_coverage": 1.0 },
-    { "categories": ["fat"], "minimum_coverage": 0.10, "maximum_coverage": 1.0 }
-  ],
-  "minimum_effective_diversity": 3.0
-}

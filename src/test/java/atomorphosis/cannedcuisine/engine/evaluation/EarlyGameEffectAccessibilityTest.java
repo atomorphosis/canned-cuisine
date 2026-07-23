@@ -95,7 +95,7 @@ class EarlyGameEffectAccessibilityTest {
                 InitialVanillaProfiles.CARROT
         );
 
-        assertEquals(95, meal.qualityScore());
+        assertEquals(94, meal.qualityScore());
         assertEquals(InitialEffectRules.STRENGTH, meal.effectsPerCan().getFirst().effect());
         assertEquals(900, meal.effectsPerCan().getFirst().durationTicks());
 
@@ -132,6 +132,12 @@ class EarlyGameEffectAccessibilityTest {
                 InitialVanillaProfiles.CARROT,
                 InitialVanillaProfiles.GLOW_BERRIES
         );
+        var commonComplex = evaluate(
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.COD,
+                InitialVanillaProfiles.GLOW_BERRIES
+        );
 
         assertEquals(61, ordinary.qualityScore());
         assertTrue(ordinary.effectsPerCan().isEmpty());
@@ -141,9 +147,15 @@ class EarlyGameEffectAccessibilityTest {
         assertEquals(3600, golden.effectsPerCan().getFirst().durationTicks());
         assertEquals(65, repeatedOrdinary.qualityScore());
         assertEquals(2, repeatedOrdinary.canCount());
-        assertEquals(InitialEffectRules.NIGHT_VISION, repeatedOrdinary.effectsPerCan().getFirst().effect());
-        assertEquals(3900, repeatedOrdinary.effectsPerCan().getFirst().durationTicks());
+        assertTrue(repeatedOrdinary.effectsPerCan().isEmpty());
         assertTrue(dilutedOrdinary.effectsPerCan().isEmpty());
+        assertEquals(2, commonComplex.canCount());
+        assertEquals(InitialEffectRules.NIGHT_VISION, commonComplex.effectsPerCan().getFirst().effect());
+        assertEquals(3600, commonComplex.effectsPerCan().getFirst().durationTicks());
+        assertEquals(
+                golden.canCount() * golden.effectsPerCan().getFirst().durationTicks(),
+                commonComplex.canCount() * commonComplex.effectsPerCan().getFirst().durationTicks()
+        );
     }
 
     @Test
@@ -171,6 +183,66 @@ class EarlyGameEffectAccessibilityTest {
                 InitialVanillaProfiles.POTATO,
                 InitialVanillaProfiles.PHANTOM_MEMBRANE
         );
+    }
+
+    @Test
+    void slowFallingRequiresADevelopedFormulaAroundThePhantomMembrane() {
+        var generic = evaluate(
+                InitialVanillaProfiles.BEEF,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.PHANTOM_MEMBRANE
+        );
+        var thematic = evaluate(
+                InitialVanillaProfiles.CHICKEN,
+                InitialVanillaProfiles.WHEAT,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.PHANTOM_MEMBRANE
+        );
+
+        assertTrue(generic.effectsPerCan().isEmpty());
+        assertEquals(74, thematic.qualityScore());
+        assertEquals(2, thematic.canCount());
+        assertEquals(InitialEffectRules.SLOW_FALLING, thematic.effectsPerCan().getFirst().effect());
+        assertEquals(1360, thematic.effectsPerCan().getFirst().durationTicks());
+    }
+
+    @Test
+    void repeatedFruitAndHoneyDoNotBypassTheSpeedProgression() {
+        var repeated = evaluate(
+                InitialVanillaProfiles.APPLE,
+                InitialVanillaProfiles.APPLE,
+                InitialVanillaProfiles.HONEY_BOTTLE,
+                InitialVanillaProfiles.HONEY_BOTTLE
+        );
+        var developed = evaluate(
+                InitialVanillaProfiles.APPLE,
+                InitialVanillaProfiles.SWEET_BERRIES,
+                InitialVanillaProfiles.MELON_SLICE,
+                InitialVanillaProfiles.SUGAR,
+                InitialVanillaProfiles.RABBIT_FOOT
+        );
+
+        assertTrue(repeated.effectsPerCan().isEmpty());
+        assertEquals(InitialEffectRules.SPEED, developed.effectsPerCan().getFirst().effect());
+    }
+
+    @Test
+    void commonProteinAndMushroomsDoNotOutperformMedicinalRegeneration() {
+        var common = evaluate(
+                InitialVanillaProfiles.BEEF,
+                InitialVanillaProfiles.BROWN_MUSHROOM,
+                InitialVanillaProfiles.RED_MUSHROOM,
+                InitialVanillaProfiles.HONEY_BOTTLE
+        );
+        var medicinal = evaluate(
+                InitialVanillaProfiles.APPLE,
+                InitialVanillaProfiles.SWEET_BERRIES,
+                InitialVanillaProfiles.HONEY_BOTTLE,
+                InitialVanillaProfiles.GHAST_TEAR
+        );
+
+        assertTrue(common.effectsPerCan().isEmpty());
+        assertEquals(InitialEffectRules.REGENERATION, medicinal.effectsPerCan().getFirst().effect());
     }
 
     @Test

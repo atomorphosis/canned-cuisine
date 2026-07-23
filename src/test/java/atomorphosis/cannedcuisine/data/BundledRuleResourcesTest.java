@@ -21,10 +21,8 @@ class BundledRuleResourcesTest {
                 .collect(Collectors.toSet());
 
         assertEquals(InitialArchetypes.ids(), ids);
-        assertEquals(9, ids.size());
-        assertEquals(4.0, BundledArchetypes.find(InitialArchetypes.EMERGENCY_RATION)
-                .minimumNutritionDensity());
-        assertEquals(10, BundledArchetypes.find(InitialArchetypes.EXOTIC_RATION).priority());
+        assertEquals(6, ids.size());
+        assertEquals(2, BundledArchetypes.find(InitialArchetypes.FIELD_RATION).priority());
     }
 
     @Test

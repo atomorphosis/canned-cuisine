@@ -10,3 +10,8 @@
 - Added curated discovery loot, advancements, English and Spanish localization, and development data diagnostics.
 - Hardened canonical composition validation, persistent codecs, atlas synchronization, and integrated-server data cleanup.
 - Added minimal and full compatibility builds to continuous integration.
+- Consolidated culinary matching into six clear canned preparations: Stew, Mushroom Soup, Porridge, Compote, Vegetable Medley, and Field Ration.
+- Replaced the uniform archetype food multiplier with quality progression: light processing rewards early, stronger Good and Excellent food bonuses midgame, and catalyst-gated Exceptional effects late game.
+- Prevented zero-food catalysts from creating nutrition or saturation through processing or quality bonuses.
+- Hid optional effects from JEI and EMI when their providing mod is absent.
+- Added formula-specific label variation so visually similar non-stackable meals remain distinguishable.

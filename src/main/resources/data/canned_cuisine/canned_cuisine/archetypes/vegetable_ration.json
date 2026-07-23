@@ -1,7 +1,0 @@
-{
-  "id": "canned_cuisine:vegetable_ration",
-  "criteria": [
-    { "categories": ["vegetable"], "minimum_coverage": 0.50, "maximum_coverage": 1.0 }
-  ],
-  "minimum_effective_diversity": 2.5
-}

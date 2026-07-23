@@ -11,9 +11,9 @@
 
 ### Overview
 
-**Canned Cuisine** is a NeoForge mod that turns Minecraft ingredients into procedural canned meals designed by the player.
+**Canned Cuisine** turns a cluttered Minecraft pantry into repeatable expedition food. Combine raw ingredients in one Pressure Canner, discover what they become, then mass-produce the formulas worth carrying.
 
-Combine three to six ingredients in the **Pressure Canner** and their identities and proportions will determine the result: its culinary style, localized name, quality, nutrition, yield, label color, and possible effects. Duplicate ingredients express proportions, while stack sizes determine how many times the same batch can be produced.
+Combine three to six ingredients in the **Pressure Canner** and their identities and proportions will determine the result: its culinary style, localized name, quality, nutrition, yield, label color, and possible effects. Common food gives an immediate preservation reward, coherent formulas grow stronger through quality, and related catalysts unlock expedition effects without being converted into free calories.
 
 Every experiment remains useful and readable. The canner provides a server-calculated preview before processing, production never consumes inputs unless the complete result fits, and even failed mixtures remain edible outcomes to discover. Finished meals can be eaten at full hunger and return an Empty Can after consumption.
 

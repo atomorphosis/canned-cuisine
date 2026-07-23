@@ -51,7 +51,7 @@ class BundledVanillaIngredientProfilesTest {
         assertEquals(1.0, honey.categoryWeight(CulinaryCategory.PRESERVATIVE));
         assertEquals(1.0 / 3.0, magmaCream.nutritionPoints());
         assertEquals(4.0, magmaCream.saturationPoints());
-        assertEquals(0.8, carrot.effectAffinity(
+        assertEquals(0.6, carrot.effectAffinity(
                 atomorphosis.cannedcuisine.engine.effect.InitialEffectRules.NIGHT_VISION
         ));
         assertEquals(1.0, goldenCarrot.effectAffinity(

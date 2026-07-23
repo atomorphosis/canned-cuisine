@@ -1,6 +1,6 @@
 {
   "effect": "minecraft:regeneration",
-  "minimum_affinity": 0.30,
+  "minimum_affinity": 0.40,
   "minimum_quality_score": 60,
   "minimum_duration_ticks": 160,
   "maximum_duration_ticks": 500,

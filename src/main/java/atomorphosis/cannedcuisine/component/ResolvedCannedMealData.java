@@ -252,7 +252,11 @@ public record ResolvedCannedMealData(
     ) {
         Objects.requireNonNull(evaluation, "evaluation");
         Objects.requireNonNull(effectContributions, "effectContributions");
-        var appearance = MealAppearanceResolver.resolve(evaluation.metrics(), evaluation.effectsPerCan());
+        var appearance = MealAppearanceResolver.resolve(
+                evaluation.metrics(),
+                evaluation.effectsPerCan(),
+                composition
+        );
         return new ResolvedCannedMealData(
                 CURRENT_DATA_VERSION,
                 composition,

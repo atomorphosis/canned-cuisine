@@ -32,9 +32,20 @@ class InitialArchetypesTest {
     }
 
     @Test
+    void stewAcceptsAnEvenProteinAndVegetableSplit() {
+        assertBestMatch(
+                InitialArchetypes.STEW,
+                ingredient("beef", CulinaryCategory.PROTEIN),
+                ingredient("pork", CulinaryCategory.PROTEIN),
+                ingredient("carrot", CulinaryCategory.VEGETABLE),
+                ingredient("potato", CulinaryCategory.VEGETABLE)
+        );
+    }
+
+    @Test
     void recognizesSoupFromVegetablesAndMushrooms() {
         assertBestMatch(
-                InitialArchetypes.SOUP,
+                InitialArchetypes.MUSHROOM_SOUP,
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
                 ingredient("potato", CulinaryCategory.VEGETABLE),
                 ingredient("mushroom", CulinaryCategory.MUSHROOM)
@@ -43,7 +54,7 @@ class InitialArchetypesTest {
 
     @Test
     void rejectsSoupWithoutMushrooms() {
-        var soup = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.SOUP);
+        var soup = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.MUSHROOM_SOUP);
 
         assertTrue(ArchetypeMatcher.match(metrics(
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
@@ -59,6 +70,15 @@ class InitialArchetypesTest {
                 ingredient("wheat", 2, CulinaryCategory.GRAIN),
                 ingredient("potato", CulinaryCategory.GRAIN),
                 ingredient("sugar", CulinaryCategory.SWEETENER)
+        );
+    }
+
+    @Test
+    void recognizesAThreeUnitVanillaStylePorridge() {
+        assertBestMatch(
+                InitialArchetypes.PORRIDGE,
+                ingredient("wheat", 2, CulinaryCategory.GRAIN),
+                ingredient("apple", CulinaryCategory.FRUIT)
         );
     }
 
@@ -84,6 +104,17 @@ class InitialArchetypesTest {
     }
 
     @Test
+    void rejectsCompoteWithSubstantialVegetableFiller() {
+        var compote = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.COMPOTE);
+
+        assertTrue(ArchetypeMatcher.match(metrics(
+                ingredient("apple", 2, CulinaryCategory.FRUIT),
+                ingredient("beetroot", CulinaryCategory.VEGETABLE),
+                ingredient("honey", CulinaryCategory.SWEETENER)
+        ), compote).isEmpty());
+    }
+
+    @Test
     void leavesOverSweetenedFruitWithoutAnInitialArchetype() {
         var metrics = metrics(
                 ingredient("apple", CulinaryCategory.FRUIT),
@@ -94,20 +125,20 @@ class InitialArchetypesTest {
     }
 
     @Test
-    void recognizesProteinRationFromProteinAndVegetableSupport() {
+    void recognizesFieldRationFromProteinAndGrain() {
         assertBestMatch(
-                InitialArchetypes.PROTEIN_RATION,
-                ingredient("beef", CulinaryCategory.PROTEIN),
-                ingredient("chicken", CulinaryCategory.PROTEIN),
-                ingredient("carrot", CulinaryCategory.VEGETABLE),
-                ingredient("wheat", CulinaryCategory.GRAIN)
+                InitialArchetypes.FIELD_RATION,
+                ingredient("beef", 8.0, 12.8, CulinaryCategory.PROTEIN),
+                ingredient("chicken", 6.0, 7.2, CulinaryCategory.PROTEIN),
+                ingredient("carrot", 4.0, 4.8, CulinaryCategory.VEGETABLE),
+                ingredient("wheat", 2.0, 2.0, CulinaryCategory.GRAIN)
         );
     }
 
     @Test
-    void recognizesVegetableRationFromVariedVegetables() {
+    void recognizesVegetableMedleyFromVariedVegetables() {
         assertBestMatch(
-                InitialArchetypes.VEGETABLE_RATION,
+                InitialArchetypes.VEGETABLE_MEDLEY,
                 ingredient("carrot", CulinaryCategory.VEGETABLE),
                 ingredient("beetroot", CulinaryCategory.VEGETABLE),
                 ingredient("cabbage", CulinaryCategory.VEGETABLE)
@@ -115,39 +146,32 @@ class InitialArchetypesTest {
     }
 
     @Test
-    void recognizesTrailMixWithoutLiquid() {
-        assertBestMatch(
-                InitialArchetypes.TRAIL_MIX,
+    void leavesDryFruitGrainAndFatAsAMedley() {
+        var metrics = metrics(
                 ingredient("apple", CulinaryCategory.FRUIT),
                 ingredient("berries", CulinaryCategory.FRUIT),
                 ingredient("wheat", CulinaryCategory.GRAIN),
                 ingredient("nuts", CulinaryCategory.FAT)
         );
+
+        assertTrue(ArchetypeMatcher.findBest(
+                metrics,
+                atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()
+        ).isEmpty());
     }
 
     @Test
-    void recognizesOnlyDenseEmergencyRations() {
-        var emergencyRation = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions().stream()
-                .filter(definition -> definition.id().equals(InitialArchetypes.EMERGENCY_RATION))
-                .findFirst()
-                .orElseThrow();
+    void usesRationAsTheFallbackForStructuredFood() {
+        var ration = atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.find(InitialArchetypes.FIELD_RATION);
         var denseMetrics = metrics(
                 ingredient("beef", 8.0, 12.8, CulinaryCategory.PROTEIN),
                 ingredient("wheat", 5.0, 6.0, CulinaryCategory.GRAIN),
                 ingredient("oil", 4.0, 4.0, CulinaryCategory.FAT),
                 ingredient("salt", 0.0, 0.0, CulinaryCategory.PRESERVATIVE)
         );
-        var weakMetrics = metrics(
-                ingredient("weak_protein", CulinaryCategory.PROTEIN),
-                ingredient("weak_grain", CulinaryCategory.GRAIN),
-                ingredient("weak_fat", CulinaryCategory.FAT),
-                ingredient("salt", CulinaryCategory.PRESERVATIVE)
-        );
-
-        assertTrue(ArchetypeMatcher.match(denseMetrics, emergencyRation).isPresent());
-        assertTrue(ArchetypeMatcher.match(weakMetrics, emergencyRation).isEmpty());
+        assertTrue(ArchetypeMatcher.match(denseMetrics, ration).isPresent());
         assertEquals(
-                InitialArchetypes.EMERGENCY_RATION,
+                InitialArchetypes.FIELD_RATION,
                 ArchetypeMatcher.findBest(denseMetrics, atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions())
                         .orElseThrow()
                         .definition()
@@ -156,12 +180,26 @@ class InitialArchetypesTest {
     }
 
     @Test
-    void recognizesExoticRationFromSpecialCategories() {
-        assertBestMatch(
-                InitialArchetypes.EXOTIC_RATION,
+    void exoticIngredientsDoNotCreateACulinaryStructure() {
+        var metrics = metrics(
                 ingredient("alien_fruit", 8.0, 12.8, CulinaryCategory.EXOTIC),
                 ingredient("apple", CulinaryCategory.FRUIT),
                 ingredient("wheat", CulinaryCategory.GRAIN)
+        );
+
+        assertTrue(ArchetypeMatcher.findBest(
+                metrics,
+                atomorphosis.cannedcuisine.data.archetype.BundledArchetypes.definitions()
+        ).isEmpty());
+    }
+
+    @Test
+    void proteinRichFoodDoesNotReplaceSoup() {
+        assertBestMatch(
+                InitialArchetypes.STEW,
+                ingredient("beef", CulinaryCategory.PROTEIN),
+                ingredient("carrot", CulinaryCategory.VEGETABLE),
+                ingredient("mushroom", CulinaryCategory.MUSHROOM)
         );
     }
 

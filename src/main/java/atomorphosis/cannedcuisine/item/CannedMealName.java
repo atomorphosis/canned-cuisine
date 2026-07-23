@@ -95,7 +95,8 @@ public final class CannedMealName {
         return switch (archetype.path()) {
             case "stew" -> "masculine_singular";
             case "porridge" -> "feminine_plural";
-            case "soup", "compote", "ration", "protein_ration", "vegetable_ration", "trail_mix",
+            case "soup", "mushroom_soup", "compote", "ration", "field_ration", "vegetable_medley", "medley",
+                    "protein_ration", "vegetable_ration", "trail_mix",
                     "emergency_ration", "exotic_ration", "mixture", "failed_mixture" -> "feminine_singular";
             default -> null;
         };

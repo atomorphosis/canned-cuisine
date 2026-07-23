@@ -1,8 +1,9 @@
 {
   "id": "canned_cuisine:compote",
   "criteria": [
-    { "categories": ["fruit"], "minimum_coverage": 0.40, "maximum_coverage": 1.0 },
-    { "categories": ["sweetener"], "minimum_coverage": 0.05, "maximum_coverage": 0.35 }
+    { "categories": ["fruit"], "minimum_coverage": 0.50, "maximum_coverage": 1.0 },
+    { "categories": ["sweetener"], "minimum_coverage": 0.10, "maximum_coverage": 0.34 },
+    { "categories": ["protein", "vegetable", "grain", "fat", "mushroom"], "minimum_coverage": 0.0, "maximum_coverage": 0.20 }
   ],
   "minimum_effective_diversity": 2.0
 }

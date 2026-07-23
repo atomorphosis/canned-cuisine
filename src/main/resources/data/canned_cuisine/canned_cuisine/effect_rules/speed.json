@@ -1,7 +1,7 @@
 {
   "effect": "minecraft:speed",
-  "minimum_affinity": 0.45,
-  "minimum_quality_score": 50,
+  "minimum_affinity": 0.60,
+  "minimum_quality_score": 60,
   "minimum_duration_ticks": 2400,
   "maximum_duration_ticks": 6000,
   "eligible_as_secondary": true,

@@ -18,7 +18,8 @@ public final class MealEvaluator {
     private static final double MAX_NUTRITION_POINTS_PER_CAN = 20.0;
     private static final double MAX_SATURATION_POINTS_PER_CAN = 20.0;
     private static final int MAX_UNMATCHED_BASE_QUALITY_SCORE = 79;
-    private static final int MAX_RECOGNIZED_BASE_QUALITY_SCORE = 85;
+    private static final int MAX_COMMON_RECOGNIZED_BASE_QUALITY_SCORE = 84;
+    private static final int MAX_ADVANCED_RECOGNIZED_BASE_QUALITY_SCORE = 85;
 
     private MealEvaluator() {
     }
@@ -39,13 +40,14 @@ public final class MealEvaluator {
 
         var archetypeMatch = ArchetypeMatcher.findBest(metrics, archetypes);
         var failureAssessment = FailedMixtureEvaluator.evaluate(metrics);
+        var foodMetrics = foodMetrics(input);
         var archetypeBonus = failureAssessment.failed()
                 ? ArchetypeBonus.neutral()
                 : ArchetypeBonusCalculator.calculate(archetypeMatch);
         int baseQualityScore = calculateQualityScore(
                 metrics,
                 archetypeMatch.isPresent()
-                        ? MAX_RECOGNIZED_BASE_QUALITY_SCORE
+                        ? recognizedQualityCap(metrics)
                         : MAX_UNMATCHED_BASE_QUALITY_SCORE
         );
         var qualityScore = Math.min(
@@ -59,19 +61,24 @@ public final class MealEvaluator {
             archetypeBonus = ArchetypeBonus.neutral();
             qualityScore = Math.min(baseQualityScore, 19);
         }
-        var balancedDiversity = clamp(
-                (metrics.effectiveDiversity() - 1.0) / (metrics.totalUnits() - 1.0)
+        var qualityBand = QualityBand.fromScore(qualityScore);
+        var foodQualityBand = foodQualityBand(
+                foodMetrics,
+                archetypeMatch.isPresent(),
+                archetypeBonus,
+                qualityScore,
+                failureAssessment
         );
-        var processingMultiplier = failureAssessment.failed()
-                ? 1.0
-                : 1.0 + metrics.totalUnits() * PROCESSING_BONUS_PER_UNIT * balancedDiversity;
+        var processingMultiplier = processingMultiplier(input, failureAssessment);
         var processedNutrition = metrics.totalNutritionPoints() * processingMultiplier;
         var processedSaturation = metrics.totalSaturationPoints() * processingMultiplier;
 
         processedNutrition *= archetypeBonus.foodValueMultiplier();
         processedSaturation *= archetypeBonus.foodValueMultiplier();
+        processedNutrition *= QualityFoodBonus.multiplier(foodQualityBand);
+        processedSaturation *= QualityFoodBonus.multiplier(foodQualityBand);
 
-        var dominanceEfficiency = 1.0 - dominanceLevel(metrics) * 0.25;
+        var dominanceEfficiency = 1.0 - dominanceLevel(foodMetrics) * 0.25;
         processedNutrition *= dominanceEfficiency * failureAssessment.foodValueMultiplier();
         processedSaturation *= dominanceEfficiency * failureAssessment.foodValueMultiplier();
 
@@ -82,7 +89,6 @@ public final class MealEvaluator {
                 EffectSelector.select(metrics, qualityScore, effectRules),
                 canCount
         );
-        var qualityBand = QualityBand.fromScore(qualityScore);
         var name = MealNameResolver.resolve(
                 input,
                 archetypeMatch,
@@ -136,6 +142,65 @@ public final class MealEvaluator {
                 1,
                 3
         );
+    }
+
+    private static int recognizedQualityCap(EvaluationMetrics metrics) {
+        var hasRelatedCatalyst = metrics.effectCatalystContributionTotals().values().stream()
+                .anyMatch(contribution -> contribution > 0.0);
+        return hasRelatedCatalyst
+                ? MAX_ADVANCED_RECOGNIZED_BASE_QUALITY_SCORE
+                : MAX_COMMON_RECOGNIZED_BASE_QUALITY_SCORE;
+    }
+
+    private static double processingMultiplier(
+            EvaluationInput input,
+            MixtureFailureAssessment failureAssessment
+    ) {
+        if (failureAssessment.failed()) {
+            return 1.0;
+        }
+        var foodIngredients = input.ingredients().stream()
+                .filter(ingredient -> ingredient.profile().nutritionPoints() > 0.0
+                        || ingredient.profile().saturationPoints() > 0.0)
+                .toList();
+        var foodUnits = foodIngredients.stream().mapToInt(ProfiledIngredient::count).sum();
+        if (foodUnits <= 1) {
+            return 1.0;
+        }
+        var squaredCounts = foodIngredients.stream()
+                .mapToDouble(ingredient -> (double) ingredient.count() * ingredient.count())
+                .sum();
+        var effectiveFoodDiversity = (double) foodUnits * foodUnits / squaredCounts;
+        var balancedFoodDiversity = clamp((effectiveFoodDiversity - 1.0) / (foodUnits - 1.0));
+        return 1.0 + foodUnits * PROCESSING_BONUS_PER_UNIT * balancedFoodDiversity;
+    }
+
+    private static EvaluationMetrics foodMetrics(EvaluationInput input) {
+        var foodIngredients = input.ingredients().stream()
+                .filter(ingredient -> ingredient.profile().nutritionPoints() > 0.0
+                        || ingredient.profile().saturationPoints() > 0.0)
+                .toList();
+        return EvaluationMetricsCalculator.calculate(new EvaluationInput(foodIngredients));
+    }
+
+    private static QualityBand foodQualityBand(
+            EvaluationMetrics foodMetrics,
+            boolean hasArchetype,
+            ArchetypeBonus archetypeBonus,
+            int resolvedQualityScore,
+            MixtureFailureAssessment failureAssessment
+    ) {
+        if (failureAssessment.failed()) {
+            return QualityBand.FAILED;
+        }
+        var foodQualityScore = calculateQualityScore(
+                foodMetrics,
+                hasArchetype
+                        ? recognizedQualityCap(foodMetrics)
+                        : MAX_UNMATCHED_BASE_QUALITY_SCORE
+        );
+        foodQualityScore = Math.min(foodQualityScore + archetypeBonus.qualityPoints(), 100);
+        return QualityBand.fromScore(Math.min(foodQualityScore, resolvedQualityScore));
     }
 
     private static double clamp(double value) {
