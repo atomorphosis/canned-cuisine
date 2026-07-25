@@ -1,8 +1,14 @@
 {
   "effect": "minecraft:night_vision",
-  "minimum_affinity": 0.50,
-  "minimum_quality_score": 60,
-  "minimum_duration_ticks": 3600,
-  "maximum_duration_ticks": 9600,
-  "eligible_as_secondary": true
+  "minimum_affinity": 6.0,
+  "minimum_quality_score": 40,
+  "minimum_duration_ticks": 9600,
+  "duration_step_ticks": 1200,
+  "maximum_duration_ticks": 18000,
+  "priority": 0,
+  "compatible_effects": [
+    "minecraft:haste",
+    "minecraft:speed",
+    "minecraft:water_breathing"
+  ]
 }

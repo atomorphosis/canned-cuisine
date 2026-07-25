@@ -59,7 +59,7 @@ public final class DevelopmentCommands {
         var ingredients = availableIngredients(profiles);
         var samples = new ArrayList<ItemStack>();
         for (var formula = 0; formula < SAMPLE_FORMULA_COUNT; formula++) {
-            var unitCount = random.nextIntBetweenInclusive(3, 6);
+            var unitCount = random.nextIntBetweenInclusive(1, 6);
             var inputs = new ArrayList<ItemStack>();
             for (var unit = 0; unit < unitCount; unit++) {
                 var ingredient = ingredients.get(random.nextInt(ingredients.size()));

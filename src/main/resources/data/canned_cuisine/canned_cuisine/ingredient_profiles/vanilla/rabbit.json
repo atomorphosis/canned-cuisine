@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:rabbit","nutrition":5.0,"saturation":6.0,"categories":{"protein":1.0},"effect_affinities":{"minecraft:strength":0.35,"minecraft:speed":0.2,"minecraft:jump_boost":0.25}}
+{
+  "ingredient": "minecraft:rabbit",
+  "nutrition": 5.0,
+  "saturation": 6.0,
+  "categories": {
+    "protein": 1.0,
+    "fat": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:speed",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:jump_boost",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

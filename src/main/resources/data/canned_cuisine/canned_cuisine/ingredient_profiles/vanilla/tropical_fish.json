@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:tropical_fish",
+  "nutrition": 4.0,
+  "saturation": 4.8,
+  "categories": {
+    "protein": 1.0,
+    "exotic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:speed",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

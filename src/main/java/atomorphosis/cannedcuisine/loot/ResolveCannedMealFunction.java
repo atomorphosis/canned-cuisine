@@ -23,9 +23,9 @@ import java.util.Optional;
 public final class ResolveCannedMealFunction extends LootItemConditionalFunction {
     private static final Codec<List<Holder<Item>>> FORMULA_CODEC = BuiltInRegistries.ITEM.holderByNameCodec()
             .listOf()
-            .validate(items -> items.size() >= 3 && items.size() <= 6
+            .validate(items -> !items.isEmpty() && items.size() <= 6
                     ? DataResult.success(items)
-                    : DataResult.error(() -> "A discovery formula requires 3 to 6 ingredients"));
+                    : DataResult.error(() -> "A discovery formula requires 1 to 6 ingredients"));
     public static final com.mojang.serialization.MapCodec<ResolveCannedMealFunction> CODEC =
             RecordCodecBuilder.mapCodec(instance -> commonFields(instance).and(instance.group(
                     FORMULA_CODEC.fieldOf("ingredients").forGetter(ResolveCannedMealFunction::ingredients),

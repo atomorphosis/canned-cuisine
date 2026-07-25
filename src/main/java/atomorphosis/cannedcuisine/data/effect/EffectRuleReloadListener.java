@@ -54,6 +54,19 @@ public final class EffectRuleReloadListener extends SimpleJsonResourceReloadList
         var scripted = ScriptedDataOverrides.snapshot();
         scripted.removedEffects().forEach(loaded::remove);
         loaded.putAll(scripted.effectRules());
+        loaded.values().forEach(rule -> rule.compatibleEffects().forEach(other -> {
+            var otherRule = loaded.get(other);
+            if (otherRule == null) {
+                errors.add(rule.effect() + ": compatible effect " + other + " has no rule");
+            } else if (!otherRule.compatibleEffects().contains(rule.effect())) {
+                errors.add(rule.effect() + " and " + other + " must declare compatibility symmetrically");
+            }
+        }));
+        if (!errors.isEmpty()) {
+            errors.forEach(error -> CannedCuisine.LOGGER.error("Invalid effect rule: {}", error));
+            CannedCuisine.LOGGER.error("Effect rule reload rejected; keeping the previous snapshot");
+            return;
+        }
         EffectRules.install(List.copyOf(loaded.values()));
         CannedCuisine.LOGGER.info(
                 "Loaded {} effect rules, including {} KubeJS overrides",

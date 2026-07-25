@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:salmon","nutrition":6.0,"saturation":9.6,"categories":{"protein":1.0,"fat":0.2},"effect_affinities":{"minecraft:strength":0.25,"minecraft:resistance":0.1,"minecraft:water_breathing":0.3}}
+{
+  "ingredient": "minecraft:salmon",
+  "nutrition": 6.0,
+  "saturation": 9.6,
+  "categories": {
+    "protein": 1.0,
+    "fat": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

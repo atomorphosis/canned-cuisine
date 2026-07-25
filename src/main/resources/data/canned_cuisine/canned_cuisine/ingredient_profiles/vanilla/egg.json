@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:egg",
+  "nutrition": 2.0,
+  "saturation": 2.4,
+  "categories": {
+    "protein": 1.0,
+    "fat": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:strength",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

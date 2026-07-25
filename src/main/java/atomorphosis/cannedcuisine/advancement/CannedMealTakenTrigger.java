@@ -36,7 +36,7 @@ public final class CannedMealTakenTrigger extends SimpleCriterionTrigger<CannedM
     ) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
-                Codec.intRange(1, 3).optionalFieldOf("minimum_count", 1).forGetter(TriggerInstance::minimumCount),
+                Codec.intRange(1, 16).optionalFieldOf("minimum_count", 1).forGetter(TriggerInstance::minimumCount),
                 ResourceLocation.CODEC.optionalFieldOf("archetype").forGetter(TriggerInstance::archetype)
         ).apply(instance, TriggerInstance::new));
 

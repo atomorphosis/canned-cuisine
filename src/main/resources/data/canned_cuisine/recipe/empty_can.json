@@ -2,17 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "N N",
-    "N N",
-    " N "
+    "I",
+    "I"
   ],
   "key": {
-    "N": {
-      "tag": "c:nuggets/iron"
+    "I": {
+      "tag": "c:ingots/iron"
     }
   },
   "result": {
     "id": "canned_cuisine:empty_can",
-    "count": 4
+    "count": 8
   }
 }

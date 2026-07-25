@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:potato","nutrition":5.0,"saturation":6.0,"categories":{"vegetable":1.0,"grain":0.25},"effect_affinities":{"minecraft:haste":0.15,"minecraft:resistance":0.15}}
+{
+  "ingredient": "minecraft:potato",
+  "nutrition": 5.0,
+  "saturation": 6.0,
+  "categories": {
+    "vegetable": 1.0,
+    "grain": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:haste",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

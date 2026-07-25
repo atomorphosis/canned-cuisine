@@ -1,13 +1,21 @@
 {
   "effect": "minecraft:strength",
-  "minimum_affinity": 0.35,
-  "minimum_quality_score": 75,
-  "minimum_duration_ticks": 900,
-  "maximum_duration_ticks": 3000,
-  "priority": 2,
+  "minimum_affinity": 6.0,
+  "minimum_quality_score": 60,
+  "minimum_duration_ticks": 3600,
+  "duration_step_ticks": 600,
+  "maximum_duration_ticks": 9600,
+  "priority": 0,
   "level_two": {
-    "minimum_quality_score": 90,
-    "minimum_affinity": 0.60,
-    "minimum_catalyst_contribution_per_unit": 0.20
-  }
+    "minimum_quality_score": 85,
+    "minimum_affinity": 12.0,
+    "minimum_catalyst_support": 2.0,
+    "minimum_duration_ticks": 2400,
+    "duration_step_ticks": 400,
+    "maximum_duration_ticks": 6000
+  },
+  "compatible_effects": [
+    "minecraft:fire_resistance",
+    "minecraft:resistance"
+  ]
 }

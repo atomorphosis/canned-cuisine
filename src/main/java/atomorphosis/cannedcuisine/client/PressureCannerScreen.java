@@ -132,7 +132,6 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         tooltip.addAll(foodTooltip(
                 "tooltip.canned_cuisine.preview.nutrition",
                 Integer.toString(nutritionPerCan),
-                Integer.toString(nutritionPerCan * meal.getCount()),
                 metricFormatting(nutritionPerCan, FOOD_BAR_MAXIMUM)
         ));
 
@@ -140,25 +139,26 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         tooltip.addAll(foodTooltip(
                 "tooltip.canned_cuisine.preview.saturation",
                 formatPoints(saturationPerCan),
-                formatPoints(saturationPerCan * meal.getCount()),
                 metricFormatting(saturationPerCan, FOOD_BAR_MAXIMUM)
         ));
+        if (data.temporaryHealthPoints() > 0.0) {
+            tooltip.add(Component.translatable(
+                    "tooltip.canned_cuisine.temporary_health",
+                    formatPoints(data.temporaryHealthPoints() / 2.0)
+            ).withStyle(ChatFormatting.YELLOW));
+        }
         tooltip.addAll(qualityTooltip(quality));
         return List.copyOf(tooltip);
     }
 
     private static List<Component> foodTooltip(
             String titleKey,
-            String perCan,
-            String batchTotal,
+            String value,
             ChatFormatting color
     ) {
         return List.of(
                 Component.translatable(titleKey).withStyle(color),
-                Component.translatable("tooltip.canned_cuisine.preview.per_can", perCan)
-                        .withStyle(ChatFormatting.GRAY),
-                Component.translatable("tooltip.canned_cuisine.preview.batch_total", batchTotal)
-                        .withStyle(ChatFormatting.DARK_GRAY)
+                Component.literal(value).withStyle(ChatFormatting.GRAY)
         );
     }
 

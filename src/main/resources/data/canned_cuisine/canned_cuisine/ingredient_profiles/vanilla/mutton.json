@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:mutton","nutrition":6.0,"saturation":9.6,"categories":{"protein":1.0,"fat":0.2},"effect_affinities":{"minecraft:strength":0.45,"minecraft:haste":0.15}}
+{
+  "ingredient": "minecraft:mutton",
+  "nutrition": 6.0,
+  "saturation": 9.6,
+  "categories": {
+    "protein": 1.0,
+    "fat": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:strength",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:haste",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

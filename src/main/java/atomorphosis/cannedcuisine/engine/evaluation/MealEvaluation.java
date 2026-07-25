@@ -14,10 +14,10 @@ public record MealEvaluation(
         MixtureFailureAssessment failureAssessment,
         int qualityScore,
         QualityBand qualityBand,
-        int canCount,
-        double nutritionPointsPerCan,
-        double saturationPointsPerCan,
-        List<ResolvedEffect> effectsPerCan,
+        double nutritionPoints,
+        double saturationPoints,
+        double temporaryHealthPoints,
+        List<ResolvedEffect> effects,
         MealNameTokens name
 ) {
     public MealEvaluation {
@@ -25,9 +25,9 @@ public record MealEvaluation(
         Objects.requireNonNull(archetypeMatch, "archetypeMatch");
         Objects.requireNonNull(failureAssessment, "failureAssessment");
         Objects.requireNonNull(qualityBand, "qualityBand");
-        Objects.requireNonNull(effectsPerCan, "effectsPerCan");
+        Objects.requireNonNull(effects, "effects");
         Objects.requireNonNull(name, "name");
-        effectsPerCan = List.copyOf(effectsPerCan);
+        effects = List.copyOf(effects);
 
         if (qualityScore < 0 || qualityScore > 100) {
             throw new IllegalArgumentException("Quality score must be in the range [0, 100]");
@@ -38,16 +38,40 @@ public record MealEvaluation(
         if (failureAssessment.failed() && qualityBand != QualityBand.FAILED) {
             throw new IllegalArgumentException("A failed mixture must use the failed quality band");
         }
-        if (canCount < 1 || canCount > 3) {
-            throw new IllegalArgumentException("Can count must be in the range [1, 3]");
+        requireBounded("nutritionPoints", nutritionPoints, 20.0);
+        requireBounded("saturationPoints", saturationPoints, 20.0);
+        requireBounded("temporaryHealthPoints", temporaryHealthPoints, 20.0);
+        if (failureAssessment.failed() && !effects.isEmpty()) {
+            throw new IllegalArgumentException("A failed meal cannot contain positive effects");
         }
-        requireNonNegativeFinite("nutritionPointsPerCan", nutritionPointsPerCan);
-        requireNonNegativeFinite("saturationPointsPerCan", saturationPointsPerCan);
+    }
+
+    public int canCount() {
+        return 1;
+    }
+
+    public double nutritionPointsPerCan() {
+        return nutritionPoints;
+    }
+
+    public double saturationPointsPerCan() {
+        return saturationPoints;
+    }
+
+    public List<ResolvedEffect> effectsPerCan() {
+        return effects;
     }
 
     private static void requireNonNegativeFinite(String name, double value) {
         if (!Double.isFinite(value) || value < 0.0) {
             throw new IllegalArgumentException(name + " must be finite and non-negative");
+        }
+    }
+
+    private static void requireBounded(String name, double value, double maximum) {
+        requireNonNegativeFinite(name, value);
+        if (value > maximum) {
+            throw new IllegalArgumentException(name + " must not exceed " + maximum);
         }
     }
 }

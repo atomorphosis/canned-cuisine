@@ -24,12 +24,12 @@ class EffectAffinityPagesTest {
         var pages = new EffectAffinityPages(entry(18));
 
         assertEquals(3, pages.pageCount());
-        assertEquals(1.0, pages.source(0).orElseThrow().affinity());
-        assertEquals(0.93, pages.source(7).orElseThrow().affinity(), 0.000001);
+        assertEquals(6.0, pages.source(0).orElseThrow().affinity());
+        assertEquals(5.93, pages.source(7).orElseThrow().affinity(), 0.000001);
 
         pages.next();
         assertEquals(1, pages.page());
-        assertEquals(0.92, pages.source(0).orElseThrow().affinity(), 0.000001);
+        assertEquals(5.92, pages.source(0).orElseThrow().affinity(), 0.000001);
 
         pages.next();
         assertEquals(2, pages.page());
@@ -58,14 +58,14 @@ class EffectAffinityPagesTest {
     void effectTooltipShowsLocalizedQualityBandsInsteadOfScores() {
         var rule = new EffectRule(
                 new EffectId("minecraft", "haste"),
-                0.3,
+                6.0,
                 70,
                 100,
+                20,
                 200,
                 0,
-                true,
                 Set.of(),
-                Optional.of(new LevelTwoRequirements(88, 0.6, 0.15))
+                Optional.of(new LevelTwoRequirements(88, 12.0, 2.0, 60, 10, 120))
         );
         var entry = new EffectAtlasEntry(
                 ResourceLocation.fromNamespaceAndPath("canned_cuisine", "effect/test"),
@@ -98,21 +98,24 @@ class EffectAffinityPagesTest {
         for (int index = 0; index < sourceCount; index++) {
             sources.add(new EffectAtlasEntry.AffinitySource(
                     new ItemStack(index % 2 == 0 ? Items.CARROT : Items.POTATO),
-                    1.0 - index * 0.01,
-                    0.0
+                    6.0 - index * 0.01,
+                    1.0,
+                    0.0,
+                    0
             ));
         }
         return new EffectAtlasEntry(
                 ResourceLocation.fromNamespaceAndPath("canned_cuisine", "effect/test"),
                 new EffectRule(
                         new EffectId("minecraft", "haste"),
-                        0.3,
+                        6.0,
                         40,
                         100,
+                        20,
                         200,
                         0,
-                        true,
-                        Set.of()
+                        Set.of(),
+                        Optional.empty()
                 ),
                 sources
         );

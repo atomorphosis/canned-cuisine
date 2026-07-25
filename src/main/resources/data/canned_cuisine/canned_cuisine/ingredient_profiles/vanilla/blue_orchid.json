@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:blue_orchid",
+  "nutrition": 2.0,
+  "saturation": 2.4,
+  "categories": {
+    "medicinal": 1.0,
+    "liquid": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 4.0,
+    "duration_units": 2.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

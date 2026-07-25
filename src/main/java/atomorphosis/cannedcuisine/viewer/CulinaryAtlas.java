@@ -56,7 +56,9 @@ public final class CulinaryAtlas {
                             .map(entry -> item(entry.getKey()).map(item -> new EffectAtlasEntry.AffinitySource(
                                      new ItemStack(item),
                                      entry.getValue().effectAffinity(rule.effect()),
-                                     entry.getValue().catalystStrength()
+                                     entry.getValue().effectDurationUnits(rule.effect()),
+                                     entry.getValue().rarity(),
+                                     entry.getValue().catalyticPotency()
                             )).orElse(null))
                             .filter(java.util.Objects::nonNull)
                             .toList();

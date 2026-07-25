@@ -1,5 +1,6 @@
 package atomorphosis.cannedcuisine.data.profile;
 
+import atomorphosis.cannedcuisine.engine.effect.AffinityProfile;
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import atomorphosis.cannedcuisine.engine.profile.CulinaryCategory;
@@ -28,6 +29,11 @@ public record IngredientProfileDefinition(
             id -> new EffectId(id.getNamespace(), id.getPath()),
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
     );
+    private static final Codec<AffinityProfile> AFFINITY_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            EFFECT_CODEC.fieldOf("effect").forGetter(AffinityProfile::effect),
+            Codec.doubleRange(Double.MIN_VALUE, 6.0).fieldOf("strength").forGetter(AffinityProfile::strength),
+            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("duration_units").forGetter(AffinityProfile::durationUnits)
+    ).apply(instance, AffinityProfile::new));
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("ingredient").forGetter(Serialized::ingredient),
             Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("nutrition").forGetter(Serialized::nutrition),
@@ -35,12 +41,11 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(CATEGORY_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .fieldOf("categories")
                     .forGetter(Serialized::categories),
-            Codec.unboundedMap(EFFECT_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
-                    .optionalFieldOf("effect_affinities", Map.of())
-                    .forGetter(Serialized::effectAffinities),
-            Codec.doubleRange(0.0, Double.MAX_VALUE)
-                    .optionalFieldOf("catalyst_strength", 0.0)
-                    .forGetter(Serialized::catalystStrength)
+            AFFINITY_CODEC.fieldOf("major_affinity").forGetter(Serialized::majorAffinity),
+            AFFINITY_CODEC.fieldOf("minor_affinity").forGetter(Serialized::minorAffinity),
+            Codec.doubleRange(0.0, 1.0).optionalFieldOf("toxicity", 0.0).forGetter(Serialized::toxicity),
+            Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Serialized::rarity),
+            Codec.intRange(0, 3).optionalFieldOf("catalytic_potency", 0).forGetter(Serialized::catalyticPotency)
     ).apply(instance, Serialized::new));
 
     public static final Codec<IngredientProfileDefinition> CODEC = SERIALIZED_CODEC.comapFlatMap(
@@ -55,12 +60,11 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(CATEGORY_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .fieldOf("categories")
                     .forGetter(Document::categories),
-            Codec.unboundedMap(EFFECT_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
-                    .optionalFieldOf("effect_affinities", Map.of())
-                    .forGetter(Document::effectAffinities),
-            Codec.doubleRange(0.0, Double.MAX_VALUE)
-                    .optionalFieldOf("catalyst_strength", 0.0)
-                    .forGetter(Document::catalystStrength)
+            AFFINITY_CODEC.fieldOf("major_affinity").forGetter(Document::majorAffinity),
+            AFFINITY_CODEC.fieldOf("minor_affinity").forGetter(Document::minorAffinity),
+            Codec.doubleRange(0.0, 1.0).optionalFieldOf("toxicity", 0.0).forGetter(Document::toxicity),
+            Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Document::rarity),
+            Codec.intRange(0, 3).optionalFieldOf("catalytic_potency", 0).forGetter(Document::catalyticPotency)
     ).apply(instance, Document::new));
     public static final Codec<List<IngredientProfileDefinition>> DOCUMENT_CODEC = DOCUMENT_SERIALIZED_CODEC.flatXmap(
             IngredientProfileDefinition::decodeDocument,
@@ -90,8 +94,11 @@ public record IngredientProfileDefinition(
                     serialized.nutrition(),
                     serialized.saturation(),
                     serialized.categories(),
-                    serialized.effectAffinities(),
-                    serialized.catalystStrength()
+                    Optional.of(serialized.majorAffinity()),
+                    Optional.of(serialized.minorAffinity()),
+                    serialized.toxicity(),
+                    serialized.rarity(),
+                    serialized.catalyticPotency()
             );
             return DataResult.success(new IngredientProfileDefinition(ingredient, profile));
         } catch (IllegalArgumentException exception) {
@@ -110,8 +117,11 @@ public record IngredientProfileDefinition(
                 profile.nutritionPoints(),
                 profile.saturationPoints(),
                 profile.categoryWeights(),
-                profile.effectAffinities(),
-                profile.catalystStrength()
+                profile.majorAffinity().orElseThrow(),
+                profile.minorAffinity().orElseThrow(),
+                profile.toxicity(),
+                profile.rarity(),
+                profile.catalyticPotency()
         );
     }
 
@@ -131,8 +141,11 @@ public record IngredientProfileDefinition(
                     document.nutrition(),
                     document.saturation(),
                     document.categories(),
-                    document.effectAffinities(),
-                    document.catalystStrength()
+                    Optional.of(document.majorAffinity()),
+                    Optional.of(document.minorAffinity()),
+                    document.toxicity(),
+                    document.rarity(),
+                    document.catalyticPotency()
             );
             return DataResult.success(locations.stream()
                     .map(location -> new IngredientProfileDefinition(
@@ -165,8 +178,11 @@ public record IngredientProfileDefinition(
                 profile.nutritionPoints(),
                 profile.saturationPoints(),
                 profile.categoryWeights(),
-                profile.effectAffinities(),
-                profile.catalystStrength()
+                profile.majorAffinity().orElseThrow(),
+                profile.minorAffinity().orElseThrow(),
+                profile.toxicity(),
+                profile.rarity(),
+                profile.catalyticPotency()
         ));
     }
 
@@ -175,8 +191,11 @@ public record IngredientProfileDefinition(
             double nutrition,
             double saturation,
             Map<CulinaryCategory, Double> categories,
-            Map<EffectId, Double> effectAffinities,
-            double catalystStrength
+            AffinityProfile majorAffinity,
+            AffinityProfile minorAffinity,
+            double toxicity,
+            double rarity,
+            int catalyticPotency
     ) {
     }
 
@@ -186,8 +205,11 @@ public record IngredientProfileDefinition(
             double nutrition,
             double saturation,
             Map<CulinaryCategory, Double> categories,
-            Map<EffectId, Double> effectAffinities,
-            double catalystStrength
+            AffinityProfile majorAffinity,
+            AffinityProfile minorAffinity,
+            double toxicity,
+            double rarity,
+            int catalyticPotency
     ) {
     }
 }

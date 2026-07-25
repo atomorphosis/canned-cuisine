@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:warped_fungus",
+  "nutrition": 2.0,
+  "saturation": 2.4,
+  "categories": {
+    "mushroom": 1.0,
+    "exotic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:slow_falling",
+    "strength": 4.0,
+    "duration_units": 2.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

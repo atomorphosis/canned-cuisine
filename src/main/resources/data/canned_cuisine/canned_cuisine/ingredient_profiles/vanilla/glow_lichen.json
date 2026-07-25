@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:glow_lichen",
+  "nutrition": 1.0,
+  "saturation": 0.6,
+  "categories": {
+    "mushroom": 1.0,
+    "exotic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

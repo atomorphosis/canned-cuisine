@@ -25,8 +25,7 @@ public final class InitialEffectRules {
             NIGHT_VISION,
             WATER_BREATHING,
             JUMP_BOOST,
-            SLOW_FALLING,
-            NOURISHMENT
+            SLOW_FALLING
     );
 
     private InitialEffectRules() {

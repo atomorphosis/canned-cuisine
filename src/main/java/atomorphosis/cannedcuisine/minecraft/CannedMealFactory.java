@@ -54,7 +54,7 @@ public final class CannedMealFactory {
 
         var input = ((EvaluationInputResolution.Success) resolution).input();
         var evaluation = MealEvaluator.evaluate(input, archetypes, effectRules);
-        var output = new ItemStack(ModItems.CANNED_MEAL.get(), evaluation.canCount());
+        var output = new ItemStack(ModItems.CANNED_MEAL.get(), 1);
         output.set(
                 ModDataComponents.RESOLVED_CANNED_MEAL.get(),
                 ResolvedCannedMealData.from(

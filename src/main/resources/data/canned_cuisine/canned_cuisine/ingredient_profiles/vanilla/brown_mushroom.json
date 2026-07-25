@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:brown_mushroom","nutrition":2.25,"saturation":3.0,"categories":{"mushroom":1.0},"effect_affinities":{"minecraft:regeneration":0.6,"minecraft:night_vision":0.5}}
+{
+  "ingredient": "minecraft:brown_mushroom",
+  "nutrition": 3.0,
+  "saturation": 3.6,
+  "categories": {
+    "mushroom": 1.0,
+    "medicinal": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

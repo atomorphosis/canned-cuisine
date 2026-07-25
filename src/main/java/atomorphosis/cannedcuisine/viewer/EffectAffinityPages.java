@@ -68,13 +68,23 @@ public final class EffectAffinityPages {
         var tooltip = new ArrayList<Component>();
         int effectColor = MealAppearanceResolver.effectColor(entry.rule().effect());
         tooltip.add(Component.translatable(
-                "atlas.canned_cuisine.tooltip.affinity",
-                Math.round(source.affinity() * 100.0)
+                 "atlas.canned_cuisine.tooltip.affinity",
+                 source.affinity()
         ).withStyle(Style.EMPTY.withColor(effectColor)));
-        if (source.catalystStrength() > 0.0) {
+        tooltip.add(Component.translatable(
+                "atlas.canned_cuisine.tooltip.duration_support",
+                source.durationUnits()
+        ).withStyle(ChatFormatting.GRAY));
+        if (source.rarity() > 0.0) {
+            tooltip.add(Component.translatable(
+                    "atlas.canned_cuisine.tooltip.rarity",
+                    source.rarity()
+            ).withStyle(ChatFormatting.AQUA));
+        }
+        if (source.catalyticPotency() > 0) {
              tooltip.add(Component.translatable(
-                     "atlas.canned_cuisine.tooltip.catalyst_strength",
-                     source.catalystStrength()
+                      "atlas.canned_cuisine.tooltip.catalyst_strength",
+                      source.catalyticPotency()
              ).withColor(0xFFE18A));
          }
         return List.copyOf(tooltip);
@@ -91,8 +101,8 @@ public final class EffectAffinityPages {
         int effectColor = MealAppearanceResolver.effectColor(rule.effect());
         tooltip.add(effectName.copy().withStyle(Style.EMPTY.withColor(effectColor)));
         tooltip.add(Component.translatable(
-                "atlas.canned_cuisine.tooltip.minimum_affinity",
-                Math.round(rule.minimumAffinity() * 100.0)
+                 "atlas.canned_cuisine.tooltip.minimum_affinity",
+                 rule.minimumAffinity()
         ).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable(
                 "atlas.canned_cuisine.tooltip.minimum_quality",
@@ -108,8 +118,8 @@ public final class EffectAffinityPages {
         rule.levelTwoRequirements().ifPresent(requirements -> {
             tooltip.add(Component.translatable(
                     "atlas.canned_cuisine.tooltip.level_two",
-                    qualityName(requirements.minimumQualityScore()),
-                    Math.round(requirements.minimumAffinity() * 100.0)
+                     qualityName(requirements.minimumQualityScore()),
+                     requirements.minimumAffinity()
             ).withStyle(ChatFormatting.GOLD));
              tooltip.add(Component.translatable(
                      "atlas.canned_cuisine.tooltip.level_two_advanced",

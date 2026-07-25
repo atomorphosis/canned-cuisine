@@ -4,11 +4,19 @@
   "saturation": 1.2,
   "categories": {
     "fruit": 1.0,
-    "medicinal": 1.0,
-    "exotic": 0.25
+    "medicinal": 0.5
   },
-  "effect_affinities": {
-    "minecraft:regeneration": 0.75
+  "major_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 6.0,
+    "duration_units": 3.0
   },
-  "catalyst_strength": 1.0
+  "minor_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 2.0,
+    "duration_units": 1.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 1
 }

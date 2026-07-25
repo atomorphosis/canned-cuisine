@@ -1,14 +1,21 @@
 {
   "effect": "minecraft:jump_boost",
-  "minimum_affinity": 0.30,
-  "minimum_quality_score": 65,
-  "minimum_duration_ticks": 900,
-  "maximum_duration_ticks": 3000,
-  "priority": 1,
-  "eligible_as_secondary": true,
+  "minimum_affinity": 6.0,
+  "minimum_quality_score": 50,
+  "minimum_duration_ticks": 12000,
+  "duration_step_ticks": 1200,
+  "maximum_duration_ticks": 24000,
+  "priority": 0,
   "level_two": {
-    "minimum_quality_score": 88,
-    "minimum_affinity": 0.30,
-    "minimum_catalyst_contribution_per_unit": 0.20
-  }
+    "minimum_quality_score": 85,
+    "minimum_affinity": 12.0,
+    "minimum_catalyst_support": 2.0,
+    "minimum_duration_ticks": 4800,
+    "duration_step_ticks": 600,
+    "maximum_duration_ticks": 9600
+  },
+  "compatible_effects": [
+    "minecraft:speed",
+    "minecraft:slow_falling"
+  ]
 }

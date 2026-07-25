@@ -1,26 +1,31 @@
 package atomorphosis.cannedcuisine.engine.profile;
 
+import atomorphosis.cannedcuisine.engine.effect.AffinityProfile;
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
 
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public record IngredientProfile(
         double nutritionPoints,
-         double saturationPoints,
-         Map<CulinaryCategory, Double> categoryWeights,
-         Map<EffectId, Double> effectAffinities,
-         double catalystStrength
+        double saturationPoints,
+        Map<CulinaryCategory, Double> categoryWeights,
+        Optional<AffinityProfile> majorAffinity,
+        Optional<AffinityProfile> minorAffinity,
+        double toxicity,
+        double rarity,
+        int catalyticPotency
 ) {
     public IngredientProfile(
             double nutritionPoints,
             double saturationPoints,
             Map<CulinaryCategory, Double> categoryWeights
     ) {
-        this(nutritionPoints, saturationPoints, categoryWeights, Map.of(), 0.0);
+        this(nutritionPoints, saturationPoints, categoryWeights, Optional.empty(), Optional.empty(), 0.0, 0.0, 0);
     }
 
     public IngredientProfile(
@@ -32,10 +37,33 @@ public record IngredientProfile(
         this(nutritionPoints, saturationPoints, categoryWeights, effectAffinities, 0.0);
     }
 
+    public IngredientProfile(
+            double nutritionPoints,
+            double saturationPoints,
+            Map<CulinaryCategory, Double> categoryWeights,
+            Map<EffectId, Double> effectAffinities,
+            double catalystStrength
+    ) {
+        this(
+                nutritionPoints,
+                saturationPoints,
+                categoryWeights,
+                affinity(effectAffinities, 0),
+                affinity(effectAffinities, 1),
+                0.0,
+                0.0,
+                (int) Math.round(catalystStrength)
+        );
+    }
+
     public IngredientProfile {
         nutritionPoints = requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         saturationPoints = requireNonNegativeFinite("saturationPoints", saturationPoints);
-        catalystStrength = requireNonNegativeFinite("catalystStrength", catalystStrength);
+        toxicity = requireRange("toxicity", toxicity, 0.0, 1.0);
+        rarity = requireRange("rarity", rarity, 0.0, 1.0);
+        if (catalyticPotency < 0 || catalyticPotency > 3) {
+            throw new IllegalArgumentException("Catalytic potency must be in the range [0, 3]");
+        }
         Objects.requireNonNull(categoryWeights, "categoryWeights");
 
         if (categoryWeights.isEmpty()) {
@@ -55,19 +83,12 @@ public record IngredientProfile(
         });
         categoryWeights = Collections.unmodifiableMap(immutableWeights);
 
-        Objects.requireNonNull(effectAffinities, "effectAffinities");
-        var immutableAffinities = new TreeMap<EffectId, Double>();
-        effectAffinities.forEach((effect, affinity) -> {
-            Objects.requireNonNull(effect, "effect");
-            Objects.requireNonNull(affinity, "affinity");
-
-            if (!Double.isFinite(affinity) || affinity <= 0.0 || affinity > 1.0) {
-                throw new IllegalArgumentException("Effect affinity must be finite and in the range (0, 1]");
-            }
-
-            immutableAffinities.put(effect, affinity);
-        });
-        effectAffinities = Collections.unmodifiableMap(immutableAffinities);
+        Objects.requireNonNull(majorAffinity, "majorAffinity");
+        Objects.requireNonNull(minorAffinity, "minorAffinity");
+        if (majorAffinity.isPresent() && minorAffinity.isPresent()
+                && majorAffinity.get().effect().equals(minorAffinity.get().effect())) {
+            throw new IllegalArgumentException("Major and minor affinities must reference different effects");
+        }
     }
 
     public double categoryWeight(CulinaryCategory category) {
@@ -77,7 +98,33 @@ public record IngredientProfile(
 
     public double effectAffinity(EffectId effect) {
         Objects.requireNonNull(effect, "effect");
-        return effectAffinities.getOrDefault(effect, 0.0);
+        return effectAffinities().getOrDefault(effect, 0.0);
+    }
+
+    public double effectDurationUnits(EffectId effect) {
+        Objects.requireNonNull(effect, "effect");
+        return affinities().stream()
+                .filter(affinity -> affinity.effect().equals(effect))
+                .mapToDouble(AffinityProfile::durationUnits)
+                .findFirst()
+                .orElse(0.0);
+    }
+
+    public Map<EffectId, Double> effectAffinities() {
+        var affinities = new TreeMap<EffectId, Double>();
+        affinities().forEach(affinity -> affinities.put(affinity.effect(), affinity.strength()));
+        return Collections.unmodifiableMap(affinities);
+    }
+
+    public java.util.List<AffinityProfile> affinities() {
+        var affinities = new java.util.ArrayList<AffinityProfile>(2);
+        majorAffinity.ifPresent(affinities::add);
+        minorAffinity.ifPresent(affinities::add);
+        return java.util.List.copyOf(affinities);
+    }
+
+    public double catalystStrength() {
+        return catalyticPotency;
     }
 
     private static double requireNonNegativeFinite(String name, double value) {
@@ -85,5 +132,25 @@ public record IngredientProfile(
             throw new IllegalArgumentException(name + " must be finite and non-negative");
         }
         return value;
+    }
+
+    private static double requireRange(String name, double value, double minimum, double maximum) {
+        if (!Double.isFinite(value) || value < minimum || value > maximum) {
+            throw new IllegalArgumentException(name + " must be finite and in the range [" + minimum + ", " + maximum + "]");
+        }
+        return value;
+    }
+
+    private static Optional<AffinityProfile> affinity(Map<EffectId, Double> affinities, int index) {
+        Objects.requireNonNull(affinities, "effectAffinities");
+        if (affinities.size() > 2) {
+            throw new IllegalArgumentException("An ingredient supports exactly one major and one minor affinity");
+        }
+        var entries = new TreeMap<>(affinities).entrySet().stream().toList();
+        if (index >= entries.size()) {
+            return Optional.empty();
+        }
+        var entry = entries.get(index);
+        return Optional.of(new AffinityProfile(entry.getKey(), entry.getValue(), 0.0));
     }
 }

@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:seagrass",
+  "nutrition": 1.0,
+  "saturation": 0.6,
+  "categories": {
+    "vegetable": 1.0,
+    "liquid": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:speed",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

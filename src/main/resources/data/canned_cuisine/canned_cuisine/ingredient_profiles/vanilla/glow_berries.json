@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:glow_berries","nutrition":2.0,"saturation":0.4,"categories":{"fruit":1.0,"exotic":0.25},"effect_affinities":{"minecraft:night_vision":0.6,"minecraft:regeneration":0.2}}
+{
+  "ingredient": "minecraft:glow_berries",
+  "nutrition": 2.0,
+  "saturation": 0.4,
+  "categories": {
+    "fruit": 1.0,
+    "exotic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 4.0,
+    "duration_units": 2.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.25,
+  "catalytic_potency": 0
+}

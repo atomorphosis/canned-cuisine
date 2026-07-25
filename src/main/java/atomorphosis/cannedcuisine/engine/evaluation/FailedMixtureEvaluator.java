@@ -1,7 +1,5 @@
 package atomorphosis.cannedcuisine.engine.evaluation;
 
-import atomorphosis.cannedcuisine.engine.profile.CulinaryCategory;
-
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -27,7 +25,7 @@ public final class FailedMixtureEvaluator {
             reasons.add(MixtureFailureReason.INSUFFICIENT_FOOD_VALUE);
         }
 
-        var toxicCoverage = metrics.categoryTotal(CulinaryCategory.TOXIC) / metrics.totalUnits();
+        var toxicCoverage = metrics.totalToxicity() / metrics.totalUnits();
         if (toxicCoverage >= MAXIMUM_SAFE_TOXIC_COVERAGE) {
             reasons.add(MixtureFailureReason.EXCESSIVE_TOXICITY);
         }

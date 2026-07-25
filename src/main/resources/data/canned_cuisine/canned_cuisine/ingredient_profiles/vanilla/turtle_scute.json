@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:turtle_scute",
+  "nutrition": 0.0,
+  "saturation": 0.0,
+  "categories": {
+    "medicinal": 1.0,
+    "exotic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 6.0,
+    "duration_units": 3.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 2.0,
+    "duration_units": 1.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.5,
+  "catalytic_potency": 2
+}

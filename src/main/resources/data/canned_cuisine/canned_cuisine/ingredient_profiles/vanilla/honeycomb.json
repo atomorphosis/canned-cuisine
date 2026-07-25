@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:honeycomb",
+  "nutrition": 1.0,
+  "saturation": 1.2,
+  "categories": {
+    "preservative": 1.0,
+    "sweetener": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 3.0,
+    "duration_units": 2.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 1.0,
+    "duration_units": 1.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

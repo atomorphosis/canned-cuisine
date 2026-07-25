@@ -40,6 +40,10 @@ public final class CannedMealItem extends Item {
         boolean wasFull = livingEntity instanceof ServerPlayer player && player.getFoodData().getFoodLevel() >= 20;
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (data != null && livingEntity instanceof ServerPlayer player) {
+            player.setAbsorptionAmount(Math.max(
+                    player.getAbsorptionAmount(),
+                    (float) data.temporaryHealthPoints()
+            ));
             var applicableEffects = data.effects().stream()
                     .filter(effect -> CannedMealFoodProperties.resolveEffect(effect).isPresent())
                     .toList();
@@ -60,10 +64,11 @@ public final class CannedMealItem extends Item {
         return data == null
                 ? Optional.empty()
                 : Optional.of(new CannedMealCompositionTooltip(
-                        data.composition().ingredients(),
-                        QualityBand.fromScore(data.qualityScore()),
-                        data.effectContributions()
-                ));
+                         data.composition().ingredients(),
+                         QualityBand.fromScore(data.qualityScore()),
+                         data.effectContributions(),
+                         data.temporaryHealthPoints()
+                 ));
     }
 
     @Override

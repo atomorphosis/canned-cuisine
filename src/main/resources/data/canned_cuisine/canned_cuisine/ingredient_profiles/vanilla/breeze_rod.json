@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:breeze_rod",
+  "nutrition": 0.0,
+  "saturation": 0.0,
+  "categories": {
+    "exotic": 1.0,
+    "medicinal": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:jump_boost",
+    "strength": 6.0,
+    "duration_units": 3.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:slow_falling",
+    "strength": 2.0,
+    "duration_units": 1.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.5,
+  "catalytic_potency": 1
+}

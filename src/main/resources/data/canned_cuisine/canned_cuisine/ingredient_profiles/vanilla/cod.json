@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:cod","nutrition":5.0,"saturation":6.0,"categories":{"protein":1.0},"effect_affinities":{"minecraft:haste":0.2,"minecraft:night_vision":0.2,"minecraft:water_breathing":0.25}}
+{
+  "ingredient": "minecraft:cod",
+  "nutrition": 5.0,
+  "saturation": 6.0,
+  "categories": {
+    "protein": 1.0,
+    "liquid": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

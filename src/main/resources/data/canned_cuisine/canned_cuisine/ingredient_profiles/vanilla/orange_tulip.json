@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:orange_tulip",
+  "nutrition": 1.0,
+  "saturation": 0.6,
+  "categories": {
+    "medicinal": 1.0,
+    "spice": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:fire_resistance",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:strength",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:spider_eye","nutrition":2.0,"saturation":3.2,"categories":{"exotic":1.0,"medicinal":0.25,"toxic":1.0}}
+{
+  "ingredient": "minecraft:spider_eye",
+  "nutrition": 2.0,
+  "saturation": 3.2,
+  "categories": {
+    "protein": 1.0,
+    "toxic": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:strength",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 1.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

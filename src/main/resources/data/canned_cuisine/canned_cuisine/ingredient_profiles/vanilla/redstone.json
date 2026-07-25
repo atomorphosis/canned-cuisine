@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:redstone",
+  "nutrition": 0.0,
+  "saturation": 0.0,
+  "categories": {
+    "exotic": 1.0,
+    "preservative": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:haste",
+    "strength": 6.0,
+    "duration_units": 6.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:speed",
+    "strength": 2.0,
+    "duration_units": 3.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 1
+}

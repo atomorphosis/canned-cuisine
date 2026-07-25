@@ -1,0 +1,22 @@
+{
+  "ingredient": "minecraft:ink_sac",
+  "nutrition": 0.0,
+  "saturation": 0.0,
+  "categories": {
+    "spice": 1.0,
+    "liquid": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:water_breathing",
+    "strength": 3.0,
+    "duration_units": 2.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:night_vision",
+    "strength": 1.0,
+    "duration_units": 1.0
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

@@ -16,10 +16,30 @@ public record EvaluationMetrics(
         double effectiveDiversity,
         double totalNutritionPoints,
         double totalSaturationPoints,
-         Map<CulinaryCategory, Double> categoryTotals,
-         Map<EffectId, Double> effectAffinityTotals,
-         Map<EffectId, Double> effectCatalystContributionTotals
+        double totalToxicity,
+        Map<CulinaryCategory, Double> categoryTotals,
+        Map<EffectId, Double> effectAffinityTotals,
+        Map<EffectId, Double> effectDurationTotals,
+        Map<EffectId, Double> effectCatalystContributionTotals
 ) {
+    public EvaluationMetrics(
+            int totalUnits,
+            int distinctIngredients,
+            int dominantIngredientUnits,
+            double effectiveDiversity,
+            double totalNutritionPoints,
+            double totalSaturationPoints,
+            Map<CulinaryCategory, Double> categoryTotals,
+            Map<EffectId, Double> effectAffinityTotals,
+            Map<EffectId, Double> effectCatalystContributionTotals
+    ) {
+        this(
+                totalUnits, distinctIngredients, dominantIngredientUnits, effectiveDiversity,
+                totalNutritionPoints, totalSaturationPoints, 0.0, categoryTotals, effectAffinityTotals,
+                Map.of(), effectCatalystContributionTotals
+        );
+    }
+
     public EvaluationMetrics {
         if (totalUnits < 0) {
             throw new IllegalArgumentException("Total units must be non-negative");
@@ -36,6 +56,7 @@ public record EvaluationMetrics(
         requireNonNegativeFinite("effectiveDiversity", effectiveDiversity);
         requireNonNegativeFinite("totalNutritionPoints", totalNutritionPoints);
         requireNonNegativeFinite("totalSaturationPoints", totalSaturationPoints);
+        requireNonNegativeFinite("totalToxicity", totalToxicity);
         Objects.requireNonNull(categoryTotals, "categoryTotals");
 
         var immutableTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
@@ -48,6 +69,7 @@ public record EvaluationMetrics(
         categoryTotals = Collections.unmodifiableMap(immutableTotals);
 
         effectAffinityTotals = immutableEffectTotals("effect affinity total", effectAffinityTotals);
+        effectDurationTotals = immutableEffectTotals("effect duration total", effectDurationTotals);
         effectCatalystContributionTotals = immutableEffectTotals(
                 "effect catalyst contribution total",
                 effectCatalystContributionTotals
@@ -86,6 +108,11 @@ public record EvaluationMetrics(
     public double effectCatalystContributionTotal(EffectId effect) {
         Objects.requireNonNull(effect, "effect");
         return effectCatalystContributionTotals.getOrDefault(effect, 0.0);
+    }
+
+    public double effectDurationTotal(EffectId effect) {
+        Objects.requireNonNull(effect, "effect");
+        return effectDurationTotals.getOrDefault(effect, 0.0);
     }
 
     private static void requireNonNegativeFinite(String name, double value) {

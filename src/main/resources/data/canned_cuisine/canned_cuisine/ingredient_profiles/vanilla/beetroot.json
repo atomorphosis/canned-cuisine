@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:beetroot","nutrition":1.0,"saturation":1.2,"categories":{"vegetable":1.0},"effect_affinities":{"minecraft:regeneration":0.2}}
+{
+  "ingredient": "minecraft:beetroot",
+  "nutrition": 1.0,
+  "saturation": 1.2,
+  "categories": {
+    "vegetable": 1.0,
+    "medicinal": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:regeneration",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:resistance",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

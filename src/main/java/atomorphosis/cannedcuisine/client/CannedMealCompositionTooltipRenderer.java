@@ -20,9 +20,12 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
     private static final int CARD_PADDING = 3;
     private static final int CARD_HEIGHT = 23;
     private static final int LABEL_HEIGHT = 11;
+    private static final int HEART_ROW_HEIGHT = 10;
     private static final int BACKGROUND_COLOR = 0xA0181818;
     private static final int SLOT_COLOR = 0x70303030;
     private static final Component LABEL = Component.translatable("tooltip.canned_cuisine.composition");
+    private static final ResourceLocation ABSORBING_FULL = ResourceLocation.withDefaultNamespace("hud/heart/absorbing_full");
+    private static final ResourceLocation ABSORBING_HALF = ResourceLocation.withDefaultNamespace("hud/heart/absorbing_half");
 
     private final CannedMealCompositionTooltip tooltip;
     private final List<ItemStack> ingredientStacks;
@@ -50,7 +53,7 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
 
     @Override
     public int getHeight() {
-        return LABEL_HEIGHT + CARD_HEIGHT + 2;
+        return LABEL_HEIGHT + CARD_HEIGHT + (tooltip.temporaryHealthPoints() > 0.0 ? HEART_ROW_HEIGHT : 0) + 2;
     }
 
     @Override
@@ -91,6 +94,22 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
         }
         for (var index = 0; index < ingredientContributions.size(); index++) {
             renderContributionBands(guiGraphics, groupX + index * ICON_STEP, cardY, ingredientContributions.get(index));
+        }
+        renderTemporaryHealth(font, x, cardY + CARD_HEIGHT, guiGraphics);
+    }
+
+    private void renderTemporaryHealth(Font font, int x, int y, GuiGraphics guiGraphics) {
+        int healthPoints = Math.clamp((int) Math.round(tooltip.temporaryHealthPoints()), 0, 20);
+        if (healthPoints == 0) {
+            return;
+        }
+        guiGraphics.drawString(font, "+", x, y + 1, 0xFFFFD54A, false);
+        int fullHearts = healthPoints / 2;
+        for (int index = 0; index < fullHearts; index++) {
+            guiGraphics.blitSprite(ABSORBING_FULL, x + 7 + index * 9, y, 9, 9);
+        }
+        if ((healthPoints & 1) != 0) {
+            guiGraphics.blitSprite(ABSORBING_HALF, x + 7 + fullHearts * 9, y, 9, 9);
         }
     }
 

@@ -9,52 +9,29 @@ public record EffectRule(
         double minimumAffinity,
         int minimumQualityScore,
         int minimumDurationTicks,
+        int durationStepTicks,
         int maximumDurationTicks,
         int priority,
-        boolean eligibleAsSecondary,
-        Set<EffectId> incompatibleEffects,
+        Set<EffectId> compatibleEffects,
         Optional<LevelTwoRequirements> levelTwoRequirements
 ) {
-    public EffectRule(
-            EffectId effect,
-            double minimumAffinity,
-            int minimumQualityScore,
-            int minimumDurationTicks,
-            int maximumDurationTicks,
-            int priority,
-            boolean eligibleAsSecondary,
-            Set<EffectId> incompatibleEffects
-    ) {
-        this(
-                effect,
-                minimumAffinity,
-                minimumQualityScore,
-                minimumDurationTicks,
-                maximumDurationTicks,
-                priority,
-                eligibleAsSecondary,
-                incompatibleEffects,
-                Optional.empty()
-        );
-    }
-
     public EffectRule {
         Objects.requireNonNull(effect, "effect");
-        Objects.requireNonNull(incompatibleEffects, "incompatibleEffects");
+        Objects.requireNonNull(compatibleEffects, "compatibleEffects");
         Objects.requireNonNull(levelTwoRequirements, "levelTwoRequirements");
-        incompatibleEffects = Set.copyOf(incompatibleEffects);
+        compatibleEffects = Set.copyOf(compatibleEffects);
 
-        if (!Double.isFinite(minimumAffinity) || minimumAffinity <= 0.0 || minimumAffinity > 1.0) {
-            throw new IllegalArgumentException("Minimum affinity must be finite and in the range (0, 1]");
+        if (!Double.isFinite(minimumAffinity) || minimumAffinity <= 0.0) {
+            throw new IllegalArgumentException("Minimum affinity must be finite and positive");
         }
         if (minimumQualityScore < 0 || minimumQualityScore > 100) {
             throw new IllegalArgumentException("Minimum quality score must be in the range [0, 100]");
         }
-        if (minimumDurationTicks < 1 || maximumDurationTicks < minimumDurationTicks) {
+        if (minimumDurationTicks < 1 || durationStepTicks < 1 || maximumDurationTicks < minimumDurationTicks) {
             throw new IllegalArgumentException("Effect duration bounds are invalid");
         }
-        if (incompatibleEffects.contains(effect)) {
-            throw new IllegalArgumentException("An effect cannot be incompatible with itself");
+        if (compatibleEffects.contains(effect)) {
+            throw new IllegalArgumentException("An effect cannot declare itself compatible");
         }
     }
 }

@@ -65,4 +65,5 @@ public final class CannedMealTooltip {
             case EXCEPTIONAL -> ChatFormatting.LIGHT_PURPLE;
         };
     }
+
 }

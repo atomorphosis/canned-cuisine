@@ -35,13 +35,14 @@ public record ResolvedCannedMealData(
         Set<MixtureFailureReason> failureReasons,
         double nutritionPoints,
         double saturationPoints,
+        double temporaryHealthPoints,
         List<ResolvedEffect> effects,
         List<IngredientEffectContribution> effectContributions,
         int labelColor,
         Optional<Integer> effectColor,
         MealNameTokens name
 ) {
-    public static final int CURRENT_DATA_VERSION = 3;
+    public static final int CURRENT_DATA_VERSION = 4;
 
     private static final Codec<IngredientId> INGREDIENT_ID_CODEC = ResourceLocation.CODEC.xmap(
             id -> new IngredientId(id.getNamespace(), id.getPath()),
@@ -125,6 +126,8 @@ public record ResolvedCannedMealData(
             FAILURE_REASONS_CODEC.optionalFieldOf("failures", Set.of()).forGetter(Serialized::failureReasons),
             Codec.DOUBLE.fieldOf("nutrition").forGetter(Serialized::nutritionPoints),
             Codec.DOUBLE.fieldOf("saturation").forGetter(Serialized::saturationPoints),
+            Codec.doubleRange(0.0, 20.0).optionalFieldOf("temporary_health", 0.0)
+                    .forGetter(Serialized::temporaryHealthPoints),
             EFFECTS_CODEC.optionalFieldOf("effects", List.of()).forGetter(Serialized::effects),
             EFFECT_CONTRIBUTIONS_CODEC
                     .optionalFieldOf("effect_contributions", List.of())
@@ -153,11 +156,12 @@ public record ResolvedCannedMealData(
         effects = List.copyOf(effects);
         effectContributions = List.copyOf(effectContributions);
 
-        if (dataVersion < 1) {
-            throw new IllegalArgumentException("Data version must be positive");
+        if (dataVersion < 1 || dataVersion > CURRENT_DATA_VERSION) {
+            throw new IllegalArgumentException("Data version must be in the supported range [1, "
+                    + CURRENT_DATA_VERSION + "]");
         }
-        if (composition.totalUnits() < 3 || composition.totalUnits() > 6) {
-            throw new IllegalArgumentException("Composition must contain between 3 and 6 units");
+        if (composition.totalUnits() < 1 || composition.totalUnits() > 6) {
+            throw new IllegalArgumentException("Composition must contain between 1 and 6 units");
         }
         if (composition.ingredients().isEmpty() || composition.ingredients().size() > 6) {
             throw new IllegalArgumentException("Composition must contain between 1 and 6 ingredients");
@@ -176,6 +180,10 @@ public record ResolvedCannedMealData(
         }
         requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         requireNonNegativeFinite("saturationPoints", saturationPoints);
+        requireNonNegativeFinite("temporaryHealthPoints", temporaryHealthPoints);
+        if (nutritionPoints > 20.0 || saturationPoints > 20.0 || temporaryHealthPoints > 20.0) {
+            throw new IllegalArgumentException("Resolved food and temporary health values cannot exceed 20");
+        }
         if (effects.size() > 2) {
             throw new IllegalArgumentException("A canned meal supports at most two effects");
         }
@@ -231,6 +239,7 @@ public record ResolvedCannedMealData(
                 failureReasons,
                 nutritionPoints,
                 saturationPoints,
+                0.0,
                 effects,
                 List.of(),
                 MealAppearanceResolver.NEUTRAL_LABEL_COLOR,
@@ -264,6 +273,7 @@ public record ResolvedCannedMealData(
                 evaluation.failureAssessment().reasons(),
                 evaluation.nutritionPointsPerCan(),
                 evaluation.saturationPointsPerCan(),
+                evaluation.temporaryHealthPoints(),
                 evaluation.effectsPerCan(),
                 effectContributions,
                 appearance.labelColor(),
@@ -312,6 +322,7 @@ public record ResolvedCannedMealData(
             Set<MixtureFailureReason> failureReasons,
             double nutritionPoints,
             double saturationPoints,
+            double temporaryHealthPoints,
             List<ResolvedEffect> effects,
             List<IngredientEffectContribution> effectContributions,
             int labelColor,
@@ -321,7 +332,8 @@ public record ResolvedCannedMealData(
         private static Serialized from(ResolvedCannedMealData data) {
             return new Serialized(
                     data.dataVersion(), data.composition(), data.qualityScore(), data.failureReasons(),
-                    data.nutritionPoints(), data.saturationPoints(), data.effects(), data.effectContributions(),
+                    data.nutritionPoints(), data.saturationPoints(), data.temporaryHealthPoints(),
+                    data.effects(), data.effectContributions(),
                     data.labelColor(), data.effectColor(), data.name()
             );
         }
@@ -329,7 +341,7 @@ public record ResolvedCannedMealData(
         private ResolvedCannedMealData toData() {
             return new ResolvedCannedMealData(
                     dataVersion, composition, qualityScore, failureReasons, nutritionPoints, saturationPoints,
-                    effects, effectContributions, labelColor, effectColor, name
+                    temporaryHealthPoints, effects, effectContributions, labelColor, effectColor, name
             );
         }
     }

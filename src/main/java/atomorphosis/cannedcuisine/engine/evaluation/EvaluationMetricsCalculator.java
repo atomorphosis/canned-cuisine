@@ -14,13 +14,15 @@ public final class EvaluationMetricsCalculator {
     public static EvaluationMetrics calculate(EvaluationInput input) {
         Objects.requireNonNull(input, "input");
 
-         var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
-         var effectAffinityTotals = new TreeMap<EffectId, Double>();
+        var categoryTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
+        var effectAffinityTotals = new TreeMap<EffectId, Double>();
+        var effectDurationTotals = new TreeMap<EffectId, Double>();
         var effectCatalystContributionTotals = new TreeMap<EffectId, Double>();
         var totalUnits = 0;
         var dominantIngredientUnits = 0;
         var totalNutritionPoints = 0.0;
         var totalSaturationPoints = 0.0;
+        var totalToxicity = 0.0;
         var squaredProportionNumerator = 0.0;
 
         for (var ingredient : input.ingredients()) {
@@ -32,16 +34,18 @@ public final class EvaluationMetricsCalculator {
             squaredProportionNumerator += (double) count * count;
             totalNutritionPoints += profile.nutritionPoints() * count;
             totalSaturationPoints += profile.saturationPoints() * count;
+            totalToxicity += profile.toxicity() * count;
 
             profile.categoryWeights().forEach((category, weight) ->
                     categoryTotals.merge(category, weight * count, Double::sum)
             );
             profile.effectAffinities().forEach((effect, affinity) -> {
                 effectAffinityTotals.merge(effect, affinity * count, Double::sum);
+                effectDurationTotals.merge(effect, profile.effectDurationUnits(effect) * count, Double::sum);
                 effectCatalystContributionTotals.merge(
-                         effect,
-                         affinity * profile.catalystStrength() * count,
-                         Double::sum
+                        effect,
+                        (double) profile.catalyticPotency() * count,
+                        Double::sum
                 );
             });
         }
@@ -57,9 +61,11 @@ public final class EvaluationMetricsCalculator {
                 effectiveDiversity,
                 totalNutritionPoints,
                 totalSaturationPoints,
-                 categoryTotals,
-                 effectAffinityTotals,
-                 effectCatalystContributionTotals
+                totalToxicity,
+                categoryTotals,
+                effectAffinityTotals,
+                effectDurationTotals,
+                effectCatalystContributionTotals
         );
     }
 }

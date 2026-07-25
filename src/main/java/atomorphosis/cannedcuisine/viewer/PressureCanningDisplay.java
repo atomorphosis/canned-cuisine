@@ -62,12 +62,12 @@ public final class PressureCanningDisplay {
             List<ItemStack> fuels,
             long cycle
     ) {
-        if (candidates.size() < 3) {
+        if (candidates.isEmpty()) {
             return new Frame(Collections.nCopies(6, ItemStack.EMPTY), ItemStack.EMPTY, fallbackFuel(fuels));
         }
 
         Random random = new Random(cycle * 0x9E3779B97F4A7C15L + 0x6A09E667F3BCC909L);
-        int ingredientCount = 3 + random.nextInt(4);
+        int ingredientCount = 1 + random.nextInt(6);
         var slots = new ArrayList<ItemStack>(Collections.nCopies(6, ItemStack.EMPTY));
         for (int index = 0; index < ingredientCount; index++) {
             slots.set(index, candidates.get(random.nextInt(candidates.size())).copyWithCount(1));

@@ -1,1 +1,22 @@
-{"ingredient":"minecraft:beef","nutrition":8.0,"saturation":12.8,"categories":{"protein":1.0},"effect_affinities":{"minecraft:strength":0.55,"minecraft:haste":0.15,"minecraft:resistance":0.2}}
+{
+  "ingredient": "minecraft:beef",
+  "nutrition": 8.0,
+  "saturation": 12.8,
+  "categories": {
+    "protein": 1.0,
+    "fat": 0.5
+  },
+  "major_affinity": {
+    "effect": "minecraft:strength",
+    "strength": 3.0,
+    "duration_units": 1.0
+  },
+  "minor_affinity": {
+    "effect": "minecraft:haste",
+    "strength": 1.0,
+    "duration_units": 0.5
+  },
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

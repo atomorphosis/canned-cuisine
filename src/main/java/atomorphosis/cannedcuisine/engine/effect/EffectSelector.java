@@ -10,13 +10,19 @@ import java.util.Objects;
 
 public final class EffectSelector {
     private static final int MINIMUM_POSITIVE_EFFECT_QUALITY = 40;
-    private static final int SECONDARY_EFFECT_QUALITY = 80;
-    private static final double DURATION_EPSILON = 0.0000001;
 
     private EffectSelector() {
     }
 
     public static EffectSelection select(
+            EvaluationMetrics metrics,
+            int qualityScore,
+            Collection<EffectRule> rules
+    ) {
+        return resolve(metrics, qualityScore, rules).selection();
+    }
+
+    public static EffectResolution resolve(
             EvaluationMetrics metrics,
             int qualityScore,
             Collection<EffectRule> rules
@@ -35,12 +41,12 @@ public final class EffectSelector {
             }
         }
         if (metrics.totalUnits() == 0 || qualityScore < MINIMUM_POSITIVE_EFFECT_QUALITY) {
-            return EffectSelection.empty();
+            return EffectResolution.empty();
         }
 
         var candidates = new ArrayList<Candidate>();
         for (var rule : rules) {
-            var affinity = Math.min(metrics.effectAffinityTotal(rule.effect()) / metrics.totalUnits(), 1.0);
+            var affinity = metrics.effectAffinityTotal(rule.effect());
             if (qualityScore >= rule.minimumQualityScore() && affinity >= rule.minimumAffinity()) {
                 var levelTwo = rule.levelTwoRequirements()
                         .filter(requirements -> requirements.qualifies(
@@ -50,7 +56,12 @@ public final class EffectSelector {
                                 affinity
                         ))
                         .isPresent();
-                candidates.add(new Candidate(rule, affinity, levelTwo));
+                candidates.add(new Candidate(
+                        rule,
+                        affinity,
+                        metrics.effectDurationTotal(rule.effect()),
+                        levelTwo
+                ));
             }
         }
 
@@ -62,45 +73,76 @@ public final class EffectSelector {
                 .thenComparing(candidate -> candidate.rule().effect()));
 
         if (candidates.isEmpty()) {
-            return EffectSelection.empty();
+            return EffectResolution.empty();
         }
 
-        var selected = new ArrayList<ResolvedEffect>();
-        var primary = candidates.getFirst();
-        selected.add(resolve(primary, false));
+        if (candidates.size() == 1) {
+            return new EffectResolution(new EffectSelection(java.util.List.of(resolve(candidates.getFirst()))), false);
+        }
 
-        if (qualityScore >= SECONDARY_EFFECT_QUALITY) {
-            for (var candidate : candidates.subList(1, candidates.size())) {
-                if (candidate.rule().eligibleAsSecondary() && compatible(primary.rule(), candidate.rule())) {
-                    selected.add(resolve(candidate, true));
-                    break;
+        Candidate first = null;
+        Candidate second = null;
+        double bestScore = Double.NEGATIVE_INFINITY;
+        for (int left = 0; left < candidates.size() - 1; left++) {
+            for (int right = left + 1; right < candidates.size(); right++) {
+                var leftCandidate = candidates.get(left);
+                var rightCandidate = candidates.get(right);
+                if (!compatible(leftCandidate.rule(), rightCandidate.rule())) {
+                    continue;
+                }
+                var score = pairScore(leftCandidate, rightCandidate, metrics);
+                if (score > bestScore) {
+                    bestScore = score;
+                    first = leftCandidate;
+                    second = rightCandidate;
                 }
             }
         }
-
-        return new EffectSelection(selected);
+        if (first == null) {
+            return new EffectResolution(EffectSelection.empty(), true);
+        }
+        return new EffectResolution(new EffectSelection(java.util.List.of(resolve(first), resolve(second))), false);
     }
 
-    private static ResolvedEffect resolve(Candidate candidate, boolean secondary) {
+    private static ResolvedEffect resolve(Candidate candidate) {
         var rule = candidate.rule();
-        var affinityProgress = rule.minimumAffinity() == 1.0
-                ? 1.0
-                : (candidate.affinity() - rule.minimumAffinity()) / (1.0 - rule.minimumAffinity());
-        var duration = rule.minimumDurationTicks() + (int) Math.floor(
-                affinityProgress * (rule.maximumDurationTicks() - rule.minimumDurationTicks())
-                        + DURATION_EPSILON
+        var levelTwoRule = candidate.levelTwo() ? rule.levelTwoRequirements().orElseThrow() : null;
+        var minimumDuration = levelTwoRule == null
+                ? rule.minimumDurationTicks()
+                : levelTwoRule.minimumDurationTicks();
+        var durationStep = levelTwoRule == null
+                ? rule.durationStepTicks()
+                : levelTwoRule.durationStepTicks();
+        var maximumDuration = levelTwoRule == null
+                ? rule.maximumDurationTicks()
+                : levelTwoRule.maximumDurationTicks();
+        var duration = Math.min(
+                maximumDuration,
+                minimumDuration + (int) Math.floor(
+                        candidate.durationUnits() * durationStep
+                )
         );
-        if (secondary) {
-            duration = Math.max(1, duration / 2);
-        }
-        return new ResolvedEffect(rule.effect(), candidate.affinity(), candidate.levelTwo() ? 1 : 0, duration);
+        return new ResolvedEffect(
+                rule.effect(),
+                Math.min(candidate.affinity() / rule.minimumAffinity(), 1.0),
+                candidate.levelTwo() ? 1 : 0,
+                duration
+        );
     }
 
     private static boolean compatible(EffectRule first, EffectRule second) {
-        return !first.incompatibleEffects().contains(second.effect())
-                && !second.incompatibleEffects().contains(first.effect());
+        return first.compatibleEffects().contains(second.effect())
+                && second.compatibleEffects().contains(first.effect());
     }
 
-    private record Candidate(EffectRule rule, double affinity, boolean levelTwo) {
+    private static double pairScore(Candidate first, Candidate second, EvaluationMetrics metrics) {
+        var firstScore = first.affinity() / first.rule().minimumAffinity();
+        var secondScore = second.affinity() / second.rule().minimumAffinity();
+        var durationScore = metrics.effectDurationTotal(first.rule().effect())
+                + metrics.effectDurationTotal(second.rule().effect());
+        return 2.0 * Math.min(firstScore, secondScore) + Math.max(firstScore, secondScore) + durationScore;
+    }
+
+    private record Candidate(EffectRule rule, double affinity, double durationUnits, boolean levelTwo) {
     }
 }

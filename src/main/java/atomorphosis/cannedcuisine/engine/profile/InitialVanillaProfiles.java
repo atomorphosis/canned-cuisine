@@ -40,6 +40,49 @@ public final class InitialVanillaProfiles {
     public static final IngredientId GOLDEN_APPLE = id("golden_apple");
     public static final IngredientId KELP = id("kelp");
     public static final IngredientId PHANTOM_MEMBRANE = id("phantom_membrane");
+    public static final IngredientId PUMPKIN = id("pumpkin");
+    public static final IngredientId CHORUS_FRUIT = id("chorus_fruit");
+    public static final IngredientId EGG = id("egg");
+    public static final IngredientId HONEYCOMB = id("honeycomb");
+    public static final IngredientId CRIMSON_FUNGUS = id("crimson_fungus");
+    public static final IngredientId WARPED_FUNGUS = id("warped_fungus");
+    public static final IngredientId SEAGRASS = id("seagrass");
+    public static final IngredientId SEA_PICKLE = id("sea_pickle");
+    public static final IngredientId CACTUS = id("cactus");
+    public static final IngredientId DEAD_BUSH = id("dead_bush");
+    public static final IngredientId GLOW_LICHEN = id("glow_lichen");
+    public static final IngredientId TROPICAL_FISH = id("tropical_fish");
+    public static final IngredientId PUFFERFISH = id("pufferfish");
+    public static final IngredientId ROTTEN_FLESH = id("rotten_flesh");
+    public static final IngredientId INK_SAC = id("ink_sac");
+    public static final IngredientId GLOW_INK_SAC = id("glow_ink_sac");
+    public static final IngredientId DANDELION = id("dandelion");
+    public static final IngredientId POPPY = id("poppy");
+    public static final IngredientId BLUE_ORCHID = id("blue_orchid");
+    public static final IngredientId ALLIUM = id("allium");
+    public static final IngredientId AZURE_BLUET = id("azure_bluet");
+    public static final IngredientId RED_TULIP = id("red_tulip");
+    public static final IngredientId ORANGE_TULIP = id("orange_tulip");
+    public static final IngredientId WHITE_TULIP = id("white_tulip");
+    public static final IngredientId PINK_TULIP = id("pink_tulip");
+    public static final IngredientId OXEYE_DAISY = id("oxeye_daisy");
+    public static final IngredientId CORNFLOWER = id("cornflower");
+    public static final IngredientId LILY_OF_THE_VALLEY = id("lily_of_the_valley");
+    public static final IngredientId WITHER_ROSE = id("wither_rose");
+    public static final IngredientId TORCHFLOWER = id("torchflower");
+    public static final IngredientId SUNFLOWER = id("sunflower");
+    public static final IngredientId LILAC = id("lilac");
+    public static final IngredientId ROSE_BUSH = id("rose_bush");
+    public static final IngredientId PEONY = id("peony");
+    public static final IngredientId PITCHER_PLANT = id("pitcher_plant");
+    public static final IngredientId REDSTONE = id("redstone");
+    public static final IngredientId TURTLE_SCUTE = id("turtle_scute");
+    public static final IngredientId ARMADILLO_SCUTE = id("armadillo_scute");
+    public static final IngredientId AMETHYST_SHARD = id("amethyst_shard");
+    public static final IngredientId PRISMARINE_CRYSTALS = id("prismarine_crystals");
+    public static final IngredientId NAUTILUS_SHELL = id("nautilus_shell");
+    public static final IngredientId BREEZE_ROD = id("breeze_rod");
+    public static final IngredientId NETHER_STAR = id("nether_star");
 
     private static final Set<IngredientId> INGREDIENTS = Set.of(
             BEEF,
@@ -62,7 +105,6 @@ public final class InitialVanillaProfiles {
             RED_MUSHROOM,
             SPIDER_EYE,
             SUGAR,
-            HONEY_BOTTLE,
             BLAZE_POWDER,
             MAGMA_CREAM,
             GHAST_TEAR,
@@ -76,7 +118,15 @@ public final class InitialVanillaProfiles {
             GLISTERING_MELON_SLICE,
             GOLDEN_APPLE,
             KELP,
-            PHANTOM_MEMBRANE
+            PHANTOM_MEMBRANE,
+            PUMPKIN, CHORUS_FRUIT, EGG, HONEYCOMB, CRIMSON_FUNGUS, WARPED_FUNGUS,
+            SEAGRASS, SEA_PICKLE, CACTUS, DEAD_BUSH, GLOW_LICHEN, TROPICAL_FISH,
+            PUFFERFISH, ROTTEN_FLESH, INK_SAC, GLOW_INK_SAC, DANDELION, POPPY,
+            BLUE_ORCHID, ALLIUM, AZURE_BLUET, RED_TULIP, ORANGE_TULIP, WHITE_TULIP,
+            PINK_TULIP, OXEYE_DAISY, CORNFLOWER, LILY_OF_THE_VALLEY, WITHER_ROSE,
+            TORCHFLOWER, SUNFLOWER, LILAC, ROSE_BUSH, PEONY, PITCHER_PLANT, REDSTONE,
+            TURTLE_SCUTE, ARMADILLO_SCUTE, AMETHYST_SHARD, PRISMARINE_CRYSTALS,
+            NAUTILUS_SHELL, BREEZE_ROD, NETHER_STAR
     );
 
     private InitialVanillaProfiles() {

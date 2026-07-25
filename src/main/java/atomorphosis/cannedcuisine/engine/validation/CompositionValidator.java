@@ -5,7 +5,7 @@ import atomorphosis.cannedcuisine.engine.model.CanonicalComposition;
 import java.util.Objects;
 
 public final class CompositionValidator {
-    public static final int MIN_UNITS = 3;
+    public static final int MIN_UNITS = 1;
     public static final int MAX_UNITS = 6;
 
     private CompositionValidator() {
