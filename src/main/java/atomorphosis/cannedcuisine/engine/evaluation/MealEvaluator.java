@@ -92,7 +92,9 @@ public final class MealEvaluator {
         processedSaturation *= dominanceEfficiency * failureAssessment.foodValueMultiplier();
 
         var nutrition = Math.min(processedNutrition, MAX_NUTRITION_POINTS_PER_CAN);
-        var temporaryHealth = Math.min(Math.max(processedNutrition - MAX_NUTRITION_POINTS_PER_CAN, 0.0), 20.0);
+        var temporaryHealth = failureAssessment.failed()
+                ? 0.0
+                : Math.min(Math.max(processedNutrition - MAX_NUTRITION_POINTS_PER_CAN, 0.0), 20.0);
         var saturation = Math.min(processedSaturation, MAX_SATURATION_POINTS_PER_CAN);
         var effects = failureAssessment.failed()
                 ? java.util.List.<atomorphosis.cannedcuisine.engine.effect.ResolvedEffect>of()

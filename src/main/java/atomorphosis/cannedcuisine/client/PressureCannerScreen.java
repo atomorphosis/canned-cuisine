@@ -228,9 +228,9 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         ));
         if (data.temporaryHealthPoints() > 0.0) {
             tooltip.add(Component.translatable(
-                    "tooltip.canned_cuisine.temporary_health",
+                    "tooltip.canned_cuisine.reserve_health",
                     formatPoints(data.temporaryHealthPoints() / 2.0)
-            ).withStyle(ChatFormatting.YELLOW));
+            ).withStyle(ChatFormatting.AQUA));
         }
         tooltip.addAll(qualityTooltip(quality));
         return List.copyOf(tooltip);

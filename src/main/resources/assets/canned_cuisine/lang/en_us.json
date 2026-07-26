@@ -19,7 +19,7 @@
   "tooltip.canned_cuisine.preview.nutrition": "Nutrition",
   "tooltip.canned_cuisine.preview.saturation": "Saturation",
   "tooltip.canned_cuisine.preview.funded_cycles": "Ingredient-funded cycles: %s",
-  "tooltip.canned_cuisine.temporary_health": "+%s temporary hearts",
+  "tooltip.canned_cuisine.reserve_health": "+%s reserve hearts",
   "tooltip.canned_cuisine.preview.per_can": "Per can: %s",
   "tooltip.canned_cuisine.preview.batch_total": "Complete batch: %s",
   "commands.canned_cuisine.samples.success": "Sample cans added: %s",

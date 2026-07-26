@@ -40,7 +40,7 @@ public final class CannedMealItem extends Item {
         boolean wasFull = livingEntity instanceof ServerPlayer player && player.getFoodData().getFoodLevel() >= 20;
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (data != null && livingEntity instanceof ServerPlayer player) {
-            TemporaryHealth.grant(player, data.temporaryHealthPoints());
+            ReserveHealth.grant(player, data.temporaryHealthPoints());
             var applicableEffects = data.effects().stream()
                     .filter(effect -> CannedMealFoodProperties.resolveEffect(effect).isPresent())
                     .toList();

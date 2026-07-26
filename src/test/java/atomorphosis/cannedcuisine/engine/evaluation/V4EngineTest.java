@@ -68,6 +68,7 @@ final class V4EngineTest {
 
         assertTrue(meal.failureAssessment().has(MixtureFailureReason.INCOMPATIBLE_EFFECTS));
         assertTrue(meal.effects().isEmpty());
+        assertEquals(0.0, meal.temporaryHealthPoints());
         assertEquals(QualityBand.FAILED, meal.qualityBand());
     }
 

@@ -176,6 +176,7 @@ dependencies {
     }
 
     compileOnly "maven.modrinth:jade:${jade_version}"
+    compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}"
     if (includeUiRuntime) {
         localRuntime "maven.modrinth:jade:${jade_version}"
         localRuntime "squeek.appleskin:appleskin-neoforge:${appleskin_version}"

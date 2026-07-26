@@ -24,8 +24,6 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
     private static final int BACKGROUND_COLOR = 0xA0181818;
     private static final int SLOT_COLOR = 0x70303030;
     private static final Component LABEL = Component.translatable("tooltip.canned_cuisine.composition");
-    private static final ResourceLocation ABSORBING_FULL = ResourceLocation.withDefaultNamespace("hud/heart/absorbing_full");
-    private static final ResourceLocation ABSORBING_HALF = ResourceLocation.withDefaultNamespace("hud/heart/absorbing_half");
 
     private final CannedMealCompositionTooltip tooltip;
     private final List<ItemStack> ingredientStacks;
@@ -58,7 +56,8 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
 
     @Override
     public int getWidth(Font font) {
-        return Math.max(cardContentWidth() + CARD_PADDING * 2, font.width(LABEL) + 12);
+        int reserveWidth = tooltip.temporaryHealthPoints() > 0.0 ? 97 : 0;
+        return Math.max(Math.max(cardContentWidth() + CARD_PADDING * 2, font.width(LABEL) + 12), reserveWidth);
     }
 
     @Override
@@ -99,17 +98,17 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
     }
 
     private void renderTemporaryHealth(Font font, int x, int y, GuiGraphics guiGraphics) {
-        int healthPoints = Math.clamp((int) Math.round(tooltip.temporaryHealthPoints()), 0, 20);
+        int healthPoints = Math.clamp((int) Math.ceil(tooltip.temporaryHealthPoints()), 0, 20);
         if (healthPoints == 0) {
             return;
         }
-        guiGraphics.drawString(font, "+", x, y + 1, 0xFFFFD54A, false);
+        guiGraphics.drawString(font, "+", x, y + 1, 0xFF55C7B8, false);
         int fullHearts = healthPoints / 2;
         for (int index = 0; index < fullHearts; index++) {
-            guiGraphics.blitSprite(ABSORBING_FULL, x + 7 + index * 9, y, 9, 9);
+            ReserveHeartRenderer.render(guiGraphics, x + 7 + index * 9, y, false);
         }
         if ((healthPoints & 1) != 0) {
-            guiGraphics.blitSprite(ABSORBING_HALF, x + 7 + fullHearts * 9, y, 9, 9);
+            ReserveHeartRenderer.render(guiGraphics, x + 7 + fullHearts * 9, y, true);
         }
     }
 
