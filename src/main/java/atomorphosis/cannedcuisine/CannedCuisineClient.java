@@ -8,7 +8,6 @@ import atomorphosis.cannedcuisine.client.PressureCannerScreen;
 import atomorphosis.cannedcuisine.client.PressureCannerRenderer;
 import atomorphosis.cannedcuisine.client.ReserveHealthHud;
 import atomorphosis.cannedcuisine.compat.appleskin.AppleSkinCompat;
-import atomorphosis.cannedcuisine.item.ReserveHealth;
 import atomorphosis.cannedcuisine.item.CannedMealCompositionTooltip;
 import atomorphosis.cannedcuisine.registry.ModBlockEntities;
 import atomorphosis.cannedcuisine.registry.ModItems;
@@ -63,20 +62,34 @@ public final class CannedCuisineClient {
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
+        event.wrapLayer(VanillaGuiLayers.PLAYER_HEALTH, original -> (graphics, deltaTracker) ->
+                ReserveHealthHud.renderVanillaHealth(original, graphics, deltaTracker));
         event.registerAbove(
-                VanillaGuiLayers.ARMOR_LEVEL,
+                VanillaGuiLayers.PLAYER_HEALTH,
                 net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CannedCuisine.MOD_ID, "reserve_health"),
                 ReserveHealthHud::render
         );
-        event.wrapLayer(VanillaGuiLayers.SELECTED_ITEM_NAME, original -> (graphics, deltaTracker) -> {
+        event.wrapLayer(VanillaGuiLayers.ARMOR_LEVEL, original -> (graphics, deltaTracker) -> {
             var player = net.minecraft.client.Minecraft.getInstance().player;
-            boolean moveAboveReserve = player != null && ReserveHealth.points(player) > 0.0F;
-            if (moveAboveReserve) {
+            int verticalOffset = player == null ? 0 : ReserveHealthHud.verticalOffset(player);
+            if (verticalOffset > 0) {
                 graphics.pose().pushPose();
-                graphics.pose().translate(0.0F, -10.0F, 0.0F);
+                graphics.pose().translate(0.0F, -verticalOffset, 0.0F);
             }
             original.render(graphics, deltaTracker);
-            if (moveAboveReserve) {
+            if (verticalOffset > 0) {
+                graphics.pose().popPose();
+            }
+        });
+        event.wrapLayer(VanillaGuiLayers.SELECTED_ITEM_NAME, original -> (graphics, deltaTracker) -> {
+            var player = net.minecraft.client.Minecraft.getInstance().player;
+            int verticalOffset = player == null ? 0 : ReserveHealthHud.verticalOffset(player);
+            if (verticalOffset > 0) {
+                graphics.pose().pushPose();
+                graphics.pose().translate(0.0F, -verticalOffset, 0.0F);
+            }
+            original.render(graphics, deltaTracker);
+            if (verticalOffset > 0) {
                 graphics.pose().popPose();
             }
         });
