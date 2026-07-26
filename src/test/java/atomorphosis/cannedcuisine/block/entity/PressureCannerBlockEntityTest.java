@@ -229,18 +229,33 @@ class PressureCannerBlockEntityTest {
         canner.setItem(1, new ItemStack(Items.CARROT, 2));
         assertTrue(canner.toggleFormulaLock());
         assertTrue(canner.hasConsumableIngredientStock());
+        assertEquals(1, canner.fundedIngredientCycles());
 
         ItemStack removed = canner.removeItem(0, 64);
 
         assertEquals(1, removed.getCount());
         assertEquals(1, canner.getItem(0).getCount());
         assertFalse(canner.hasConsumableIngredientStock());
+        assertEquals(0, canner.fundedIngredientCycles());
         assertTrue(canner.removeItem(0, 1).isEmpty());
         assertFalse(canner.canTakeItemThroughFace(0, canner.getItem(0), Direction.DOWN));
 
         assertTrue(canner.toggleFormulaLock());
         assertEquals(1, canner.removeItem(0, 1).getCount());
         assertTrue(canner.getItem(0).isEmpty());
+    }
+
+    @Test
+    void fundedCyclesUseTheLeastStockedIngredientSlot() {
+        var canner = canner();
+        canner.setItem(0, new ItemStack(Items.APPLE, 64));
+        canner.setItem(1, new ItemStack(Items.APPLE, 12));
+        canner.setItem(2, new ItemStack(Items.CARROT, 40));
+
+        assertEquals(12, canner.fundedIngredientCycles());
+        assertTrue(canner.toggleFormulaLock());
+        assertEquals(11, canner.fundedIngredientCycles());
+        assertEquals(11, canner.data().get(11));
     }
 
     @Test

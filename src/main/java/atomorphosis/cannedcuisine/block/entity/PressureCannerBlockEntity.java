@@ -89,6 +89,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
                 case 3 -> burnTimeTotal;
                 case 4 -> lockedFormula == null ? 0 : 1;
                 case 5, 6, 7, 8, 9, 10 -> lockedIngredientSlots[index - 5] == null ? 0 : 1;
+                case 11 -> fundedIngredientCycles();
                 default -> 0;
             };
         }
@@ -106,7 +107,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
         @Override
         public int getCount() {
-            return 11;
+            return 12;
         }
     };
 
@@ -622,6 +623,21 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
             }
         }
         return true;
+    }
+
+    int fundedIngredientCycles() {
+        int cycles = Integer.MAX_VALUE;
+        boolean hasIngredient = false;
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack stack = items.get(slot);
+            boolean active = lockedFormula == null ? !stack.isEmpty() : lockedIngredientSlots[slot] != null;
+            if (active) {
+                int reserved = lockedFormula == null ? 0 : 1;
+                cycles = Math.min(cycles, Math.max(0, stack.getCount() - reserved));
+                hasIngredient = true;
+            }
+        }
+        return hasIngredient ? cycles : 0;
     }
 
     private boolean isReservedIngredientSlot(int slot) {

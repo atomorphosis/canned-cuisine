@@ -46,6 +46,9 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
     private static final double FOOD_BAR_MAXIMUM = 20.0;
     private static final int DISABLED_SLOT_TEXTURE_X = 176;
     private static final int DISABLED_SLOT_TEXTURE_Y = 40;
+    private static final int CYCLE_COUNT_RIGHT = 124;
+    private static final int CYCLE_COUNT_Y = 59;
+    private static final int CYCLE_COUNT_HEIGHT = 9;
     private FormulaLockButton formulaLockButton;
 
     public PressureCannerScreen(PressureCannerMenu menu, Inventory inventory, Component title) {
@@ -105,6 +108,7 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
         renderBarTooltip(graphics, mouseX, mouseY);
+        renderCycleCountTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
@@ -142,7 +146,42 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
                     metricBarTextureY(data.saturationPoints(), FOOD_BAR_MAXIMUM));
             renderBar(graphics, QUALITY_BAR_Y, data.qualityScore(), 100.0,
                     qualityBarTextureY(QualityBand.fromScore(data.qualityScore())));
+            String cycles = cycleCountText(menu.fundedIngredientCycles());
+            graphics.drawString(
+                    font,
+                    cycles,
+                    leftPos + CYCLE_COUNT_RIGHT - font.width(cycles),
+                    topPos + CYCLE_COUNT_Y,
+                    0x404040,
+                    false
+            );
         }
+    }
+
+    private void renderCycleCountTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (menu.previewStack().isEmpty()) {
+            return;
+        }
+        String cycles = cycleCountText(menu.fundedIngredientCycles());
+        int left = CYCLE_COUNT_RIGHT - font.width(cycles);
+        int relativeX = mouseX - leftPos;
+        int relativeY = mouseY - topPos;
+        if (relativeX >= left && relativeX < CYCLE_COUNT_RIGHT
+                && relativeY >= CYCLE_COUNT_Y && relativeY < CYCLE_COUNT_Y + CYCLE_COUNT_HEIGHT) {
+            graphics.renderTooltip(
+                    font,
+                    Component.translatable(
+                            "tooltip.canned_cuisine.preview.funded_cycles",
+                            menu.fundedIngredientCycles()
+                    ),
+                    mouseX,
+                    mouseY
+            );
+        }
+    }
+
+    static String cycleCountText(int cycles) {
+        return "\u00d7" + Math.max(0, cycles);
     }
 
     private void renderBar(GuiGraphics graphics, int y, double value, double maximum, int textureY) {

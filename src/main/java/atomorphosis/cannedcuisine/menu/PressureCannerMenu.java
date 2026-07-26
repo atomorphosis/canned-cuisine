@@ -28,7 +28,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
     private final SimpleContainer previewContainer = new SimpleContainer(1);
 
     public PressureCannerMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(MACHINE_SLOT_COUNT), new SimpleContainerData(11));
+        this(containerId, playerInventory, new SimpleContainer(MACHINE_SLOT_COUNT), new SimpleContainerData(12));
     }
 
     public PressureCannerMenu(
@@ -39,7 +39,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
     ) {
         super(ModMenus.PRESSURE_CANNER.get(), containerId);
         checkContainerSize(container, MACHINE_SLOT_COUNT);
-        checkContainerDataCount(data, 11);
+        checkContainerDataCount(data, 12);
         this.container = container;
         this.data = data;
         container.startOpen(playerInventory.player);
@@ -182,6 +182,10 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
 
     public boolean formulaLocked() {
         return data.get(4) != 0;
+    }
+
+    public int fundedIngredientCycles() {
+        return Math.max(0, data.get(11));
     }
 
     public boolean ingredientSlotEnabled(int slot) {
