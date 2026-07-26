@@ -83,7 +83,8 @@ public enum PressureCannerJadeProvider implements
         return switch (status) {
             case PROCESSING, READY -> ChatFormatting.GREEN;
             case INCOMPLETE_FORMULA -> ChatFormatting.GRAY;
-            case MISSING_CANS, MISSING_FUEL -> ChatFormatting.GOLD;
+            case FORMULA_LOCK_MISMATCH -> ChatFormatting.RED;
+            case MISSING_INGREDIENTS, MISSING_CANS, MISSING_FUEL -> ChatFormatting.GOLD;
             case OUTPUT_BLOCKED -> ChatFormatting.RED;
         };
     }

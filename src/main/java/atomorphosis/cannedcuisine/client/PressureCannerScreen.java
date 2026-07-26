@@ -6,11 +6,13 @@ import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
 import atomorphosis.cannedcuisine.menu.PressureCannerMenu;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -42,6 +44,9 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
     private static final int YELLOW_BAR_TEXTURE_Y = 33;
     private static final int HIGH_BAR_TEXTURE_Y = 36;
     private static final double FOOD_BAR_MAXIMUM = 20.0;
+    private static final int DISABLED_SLOT_TEXTURE_X = 176;
+    private static final int DISABLED_SLOT_TEXTURE_Y = 40;
+    private FormulaLockButton formulaLockButton;
 
     public PressureCannerScreen(PressureCannerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -51,6 +56,47 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         titleLabelY = 6;
         inventoryLabelX = 8;
         inventoryLabelY = 73;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        formulaLockButton = addRenderableWidget(new FormulaLockButton(
+                leftPos + 151,
+                topPos + 5,
+                button -> minecraft.gameMode.handleInventoryButtonClick(
+                        menu.containerId,
+                        PressureCannerMenu.TOGGLE_FORMULA_LOCK_BUTTON
+                )
+        ));
+        formulaLockButton.setLocked(menu.formulaLocked());
+    }
+
+    @Override
+    public void renderSlot(GuiGraphics graphics, Slot slot) {
+        if (menu.isDisabledIngredientSlot(slot)) {
+            graphics.blit(
+                    TEXTURE,
+                    slot.x - 1,
+                    slot.y - 1,
+                    DISABLED_SLOT_TEXTURE_X,
+                    DISABLED_SLOT_TEXTURE_Y,
+                    18,
+                    18,
+                    256,
+                    256
+            );
+            return;
+        }
+        super.renderSlot(graphics, slot);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (formulaLockButton != null) {
+            formulaLockButton.setLocked(menu.formulaLocked());
+        }
     }
 
     @Override
@@ -222,6 +268,43 @@ public final class PressureCannerScreen extends AbstractContainerScreen<Pressure
         return value == Math.rint(value)
                 ? Integer.toString((int) value)
                 : String.format(Locale.ROOT, "%.1f", value);
+    }
+
+    private static final class FormulaLockButton extends Button {
+        private boolean locked;
+
+        private FormulaLockButton(int x, int y, OnPress onPress) {
+            super(
+                    x,
+                    y,
+                    20,
+                    20,
+                    Component.translatable("gui.canned_cuisine.pressure_canner.lock_formula"),
+                    onPress,
+                    DEFAULT_NARRATION
+            );
+        }
+
+        private void setLocked(boolean locked) {
+            this.locked = locked;
+            setMessage(Component.translatable(locked
+                    ? "gui.canned_cuisine.pressure_canner.unlock_formula"
+                    : "gui.canned_cuisine.pressure_canner.lock_formula"));
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            int textureX;
+            int textureY;
+            if (locked) {
+                textureX = isHoveredOrFocused() ? 176 : 151;
+                textureY = isHoveredOrFocused() ? 58 : 5;
+            } else {
+                textureX = 176;
+                textureY = isHoveredOrFocused() ? 98 : 78;
+            }
+            graphics.blit(TEXTURE, getX(), getY(), textureX, textureY, 20, 20, 256, 256);
+        }
     }
 
 }

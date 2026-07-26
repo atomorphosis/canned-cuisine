@@ -17,6 +17,7 @@ import atomorphosis.cannedcuisine.registry.ModMenus;
 import atomorphosis.cannedcuisine.registry.ModLootFunctions;
 import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
 import atomorphosis.cannedcuisine.network.AtlasNetworking;
+import atomorphosis.cannedcuisine.item.TemporaryHealth;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
@@ -48,6 +49,8 @@ public final class CannedCuisine {
         NeoForge.EVENT_BUS.addListener(AtlasNetworking::sync);
         NeoForge.EVENT_BUS.addListener(DataCommands::register);
         NeoForge.EVENT_BUS.addListener(CannedCuisine::clearServerData);
+        NeoForge.EVENT_BUS.addListener(TemporaryHealth::tick);
+        NeoForge.EVENT_BUS.addListener(TemporaryHealth::logout);
         if (!FMLEnvironment.production) {
             NeoForge.EVENT_BUS.addListener(DevelopmentCommands::register);
         }

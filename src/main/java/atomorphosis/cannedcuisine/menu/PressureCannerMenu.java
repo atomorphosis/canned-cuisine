@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public final class PressureCannerMenu extends AbstractContainerMenu {
+    public static final int TOGGLE_FORMULA_LOCK_BUTTON = 0;
     private static final int MACHINE_SLOT_COUNT = 9;
     private static final int PREVIEW_SLOT = 9;
     private static final int PLAYER_START = 10;
@@ -27,7 +28,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
     private final SimpleContainer previewContainer = new SimpleContainer(1);
 
     public PressureCannerMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(MACHINE_SLOT_COUNT), new SimpleContainerData(4));
+        this(containerId, playerInventory, new SimpleContainer(MACHINE_SLOT_COUNT), new SimpleContainerData(11));
     }
 
     public PressureCannerMenu(
@@ -38,7 +39,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
     ) {
         super(ModMenus.PRESSURE_CANNER.get(), containerId);
         checkContainerSize(container, MACHINE_SLOT_COUNT);
-        checkContainerDataCount(data, 4);
+        checkContainerDataCount(data, 11);
         this.container = container;
         this.data = data;
         container.startOpen(playerInventory.player);
@@ -179,6 +180,32 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
         return previewContainer.getItem(0);
     }
 
+    public boolean formulaLocked() {
+        return data.get(4) != 0;
+    }
+
+    public boolean ingredientSlotEnabled(int slot) {
+        if (slot < 0 || slot >= PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT) {
+            return true;
+        }
+        return !formulaLocked() || data.get(5 + slot) != 0;
+    }
+
+    public boolean isDisabledIngredientSlot(Slot slot) {
+        int menuSlot = slots.indexOf(slot);
+        return menuSlot >= 0
+                && menuSlot < PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT
+                && !ingredientSlotEnabled(menuSlot);
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id != TOGGLE_FORMULA_LOCK_BUTTON || !(container instanceof PressureCannerBlockEntity canner)) {
+            return false;
+        }
+        return canner.toggleFormulaLock();
+    }
+
     private final class FilteredSlot extends Slot {
         private FilteredSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);
@@ -190,11 +217,22 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
                 return container.canPlaceItem(getContainerSlot(), stack);
             }
             int slot = getContainerSlot();
+            if (slot < PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT && !ingredientSlotEnabled(slot)) {
+                return false;
+            }
             return slot < PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT
                     ? !stack.isEmpty() && !stack.is(ModItems.EMPTY_CAN.get())
                     : slot == PressureCannerBlockEntity.CAN_SLOT
                     ? stack.is(ModItems.EMPTY_CAN.get())
                     : PressureCannerBlockEntity.isFuel(stack);
         }
+
+        @Override
+        public boolean mayPickup(Player player) {
+            int slot = getContainerSlot();
+            return (slot >= PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT || !formulaLocked())
+                    && super.mayPickup(player);
+        }
+
     }
 }

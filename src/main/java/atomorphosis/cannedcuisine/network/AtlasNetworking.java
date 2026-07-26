@@ -14,6 +14,10 @@ public final class AtlasNetworking {
                 AtlasSyncPayload.TYPE,
                 AtlasSyncPayload.STREAM_CODEC,
                 (payload, context) -> CulinaryAtlasData.install(payload.snapshot())
+        ).playToClient(
+                TemporaryHealthPayload.TYPE,
+                TemporaryHealthPayload.STREAM_CODEC,
+                TemporaryHealthPayload::handle
         );
     }
 

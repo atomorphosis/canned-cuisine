@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.block.entity;
 
 import atomorphosis.cannedcuisine.registry.ModBlocks;
 import atomorphosis.cannedcuisine.registry.ModItems;
+import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -158,11 +159,120 @@ class PressureCannerBlockEntityTest {
         );
     }
 
+    @Test
+    void formulaLockPreservesCanonicalMultiplicitiesAndCanBeReleased() {
+        var canner = canner();
+        canner.setItem(0, new ItemStack(Items.APPLE));
+        canner.setItem(1, new ItemStack(Items.APPLE));
+        canner.setItem(2, new ItemStack(Items.CARROT));
+
+        assertTrue(canner.toggleFormulaLock());
+        assertEquals(1, canner.data().get(4));
+        assertEquals("minecraft:apple*2|minecraft:carrot*1", canner.lockedFormula().orElseThrow().signature());
+        assertArrayEquals(new int[]{1, 1, 1, 0, 0, 0}, lockedSlotData(canner));
+        assertFalse(canner.lockedIngredientSlotEnabled(3));
+
+        var top = canner.itemHandler(Direction.UP);
+        assertTrue(top.insertItem(3, new ItemStack(Items.APPLE), false).is(Items.APPLE));
+        assertFalse(canner.canPlaceItem(3, new ItemStack(Items.APPLE)));
+
+        canner.setItem(1, ItemStack.EMPTY);
+        var apple = new IngredientId("minecraft", "apple");
+        var carrot = new IngredientId("minecraft", "carrot");
+        var potato = new IngredientId("minecraft", "potato");
+        assertTrue(canner.canPlaceLockedIngredient(0, apple));
+        assertTrue(canner.canPlaceLockedIngredient(1, apple));
+        assertFalse(canner.canPlaceLockedIngredient(1, carrot));
+        assertFalse(canner.canPlaceLockedIngredient(1, potato));
+        assertTrue(top.insertItem(1, new ItemStack(Items.CARROT), false).is(Items.CARROT));
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.FORMULA_LOCK_MISMATCH,
+                canner.operationalStatus()
+        );
+
+        assertTrue(canner.toggleFormulaLock());
+        assertTrue(canner.lockedFormula().isEmpty());
+        assertEquals(0, canner.data().get(4));
+        assertArrayEquals(new int[]{0, 0, 0, 0, 0, 0}, lockedSlotData(canner));
+        assertTrue(canner.lockedIngredientSlotEnabled(3));
+    }
+
+    @Test
+    void emptyMachineCannotCreateAFormulaLock() {
+        var canner = canner();
+
+        assertFalse(canner.toggleFormulaLock());
+        assertTrue(canner.lockedFormula().isEmpty());
+    }
+
+    @Test
+    void formulaLockRejectsAReorderedCanonicalMatch() {
+        var canner = canner();
+        canner.setItem(0, new ItemStack(Items.APPLE));
+        canner.setItem(1, new ItemStack(Items.CARROT));
+        canner.setItem(2, new ItemStack(Items.POTATO));
+        assertTrue(canner.toggleFormulaLock());
+
+        canner.setItem(0, new ItemStack(Items.CARROT));
+        canner.setItem(1, new ItemStack(Items.APPLE));
+
+        assertEquals(
+                PressureCannerBlockEntity.OperationalStatus.FORMULA_LOCK_MISMATCH,
+                canner.operationalStatus()
+        );
+    }
+
+    @Test
+    void formulaLockReservesTheLastIngredientUntilUnlocked() {
+        var canner = canner();
+        canner.setItem(0, new ItemStack(Items.APPLE, 2));
+        canner.setItem(1, new ItemStack(Items.CARROT, 2));
+        assertTrue(canner.toggleFormulaLock());
+        assertTrue(canner.hasConsumableIngredientStock());
+
+        ItemStack removed = canner.removeItem(0, 64);
+
+        assertEquals(1, removed.getCount());
+        assertEquals(1, canner.getItem(0).getCount());
+        assertFalse(canner.hasConsumableIngredientStock());
+        assertTrue(canner.removeItem(0, 1).isEmpty());
+        assertFalse(canner.canTakeItemThroughFace(0, canner.getItem(0), Direction.DOWN));
+
+        assertTrue(canner.toggleFormulaLock());
+        assertEquals(1, canner.removeItem(0, 1).getCount());
+        assertTrue(canner.getItem(0).isEmpty());
+    }
+
+    @Test
+    void lockedDuplicateIngredientsPreferTheLeastStockedSlot() {
+        var canner = canner();
+        canner.setItem(0, new ItemStack(Items.CARROT, 3));
+        canner.setItem(1, new ItemStack(Items.CARROT));
+        canner.setItem(2, new ItemStack(Items.APPLE, 2));
+        assertTrue(canner.toggleFormulaLock());
+        var carrot = new IngredientId("minecraft", "carrot");
+
+        assertFalse(canner.preferredLockedInsertionSlot(0, carrot));
+        assertTrue(canner.preferredLockedInsertionSlot(1, carrot));
+
+        canner.setItem(1, new ItemStack(Items.CARROT, 3));
+        assertTrue(canner.preferredLockedInsertionSlot(0, carrot));
+        assertTrue(canner.preferredLockedInsertionSlot(1, carrot));
+    }
+
     private static PressureCannerBlockEntity canner() {
         return new PressureCannerBlockEntity(
                 BlockPos.ZERO,
                 ModBlocks.PRESSURE_CANNER.get().defaultBlockState()
         );
+    }
+
+    private static int[] lockedSlotData(PressureCannerBlockEntity canner) {
+        var enabled = new int[PressureCannerBlockEntity.INGREDIENT_SLOT_COUNT];
+        for (int slot = 0; slot < enabled.length; slot++) {
+            enabled[slot] = canner.data().get(5 + slot);
+        }
+        return enabled;
     }
 
 }

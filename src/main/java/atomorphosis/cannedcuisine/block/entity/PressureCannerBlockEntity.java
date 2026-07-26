@@ -8,6 +8,11 @@ import atomorphosis.cannedcuisine.menu.PressureCannerMenu;
 import atomorphosis.cannedcuisine.minecraft.CannedMealCreationResult;
 import atomorphosis.cannedcuisine.minecraft.CannedMealFactory;
 import atomorphosis.cannedcuisine.minecraft.MinecraftEvaluationResolver;
+import atomorphosis.cannedcuisine.engine.model.CanonicalComposition;
+import atomorphosis.cannedcuisine.engine.model.IngredientCount;
+import atomorphosis.cannedcuisine.engine.model.IngredientId;
+import atomorphosis.cannedcuisine.engine.validation.CompositionValidationResult;
+import atomorphosis.cannedcuisine.engine.validation.CompositionValidator;
 import atomorphosis.cannedcuisine.registry.ModBlockEntities;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
 import atomorphosis.cannedcuisine.registry.ModItems;
@@ -16,6 +21,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -43,6 +50,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public final class PressureCannerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     public static final int INGREDIENT_SLOT_COUNT = 6;
@@ -68,6 +76,8 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     private Object ingredientSnapshot;
     private Object archetypeSnapshot;
     private Object effectSnapshot;
+    private CanonicalComposition lockedFormula;
+    private final IngredientId[] lockedIngredientSlots = new IngredientId[INGREDIENT_SLOT_COUNT];
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -77,6 +87,8 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
                 case 1 -> PROCESS_TIME;
                 case 2 -> burnTime;
                 case 3 -> burnTimeTotal;
+                case 4 -> lockedFormula == null ? 0 : 1;
+                case 5, 6, 7, 8, 9, 10 -> lockedIngredientSlots[index - 5] == null ? 0 : 1;
                 default -> 0;
             };
         }
@@ -94,7 +106,7 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
         @Override
         public int getCount() {
-            return 4;
+            return 11;
         }
     };
 
@@ -147,9 +159,20 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
             return cachedPreview.copy();
         }
 
-        List<ItemStack> ingredientSlots = new ArrayList<>(INGREDIENT_SLOT_COUNT);
-        for (int slot : INGREDIENT_SLOTS) {
-            ingredientSlots.add(items.get(slot));
+        List<ItemStack> ingredientSlots = ingredientSlots();
+        if (!matchesLockedFormula(ingredientSlots)) {
+            cachedPreview = ItemStack.EMPTY;
+            if (previewLabelColor != -1) {
+                previewLabelColor = -1;
+                if (level != null && !level.isClientSide) {
+                    setChangedAndSync();
+                }
+            }
+            ingredientSnapshot = ingredients;
+            archetypeSnapshot = archetypes;
+            effectSnapshot = effects;
+            planDirty = false;
+            return ItemStack.EMPTY;
         }
         CannedMealCreationResult result = CannedMealFactory.create(ingredientSlots, IngredientProfiles.lookup());
         cachedPreview = result instanceof CannedMealCreationResult.Success success
@@ -174,7 +197,13 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     }
 
     public OperationalStatus operationalStatus() {
+        if (!matchesLockedFormula(ingredientSlots())) {
+            return OperationalStatus.FORMULA_LOCK_MISMATCH;
+        }
         ItemStack plan = previewStack();
+        if (!plan.isEmpty() && !hasConsumableIngredientStock()) {
+            return OperationalStatus.MISSING_INGREDIENTS;
+        }
         boolean hasCans = !plan.isEmpty()
                 && items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get())
                 && items.get(CAN_SLOT).getCount() >= plan.getCount();
@@ -211,7 +240,8 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     private boolean canProcess(ItemStack result) {
         if (result.isEmpty() || items.get(CAN_SLOT).getCount() < result.getCount()
-                || !items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get())) {
+                || !items.get(CAN_SLOT).is(ModItems.EMPTY_CAN.get())
+                || !hasConsumableIngredientStock()) {
             return false;
         }
         return canMergeOutput(items.get(OUTPUT_SLOT), result);
@@ -316,6 +346,35 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         return data;
     }
 
+    public Optional<CanonicalComposition> lockedFormula() {
+        return Optional.ofNullable(lockedFormula);
+    }
+
+    public boolean toggleFormulaLock() {
+        if (lockedFormula != null) {
+            lockedFormula = null;
+            java.util.Arrays.fill(lockedIngredientSlots, null);
+            invalidatePlan();
+            setChangedAndSync();
+            return true;
+        }
+        CanonicalComposition composition = currentComposition();
+        if (CompositionValidator.validate(composition) != CompositionValidationResult.VALID) {
+            return false;
+        }
+        lockedFormula = composition;
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack stack = items.get(slot);
+            lockedIngredientSlots[slot] = stack.isEmpty()
+                    ? null
+                    : MinecraftEvaluationResolver.ingredientId(stack);
+        }
+        progress = 0;
+        invalidatePlan();
+        setChangedAndSync();
+        return true;
+    }
+
     public int previewLabelColor() {
         return previewLabelColor;
     }
@@ -365,6 +424,10 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         tag.putInt("BurnTime", burnTime);
         tag.putInt("BurnTimeTotal", burnTimeTotal);
         tag.putInt("PreviewLabelColor", previewLabelColor);
+        if (lockedFormula != null) {
+            tag.put("LockedFormula", encodeFormula(lockedFormula));
+            tag.put("LockedIngredientSlots", encodeLockedSlots());
+        }
     }
 
     @Override
@@ -376,6 +439,12 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         burnTime = Math.max(0, tag.getInt("BurnTime"));
         burnTimeTotal = Math.max(0, tag.getInt("BurnTimeTotal"));
         previewLabelColor = tag.contains("PreviewLabelColor") ? tag.getInt("PreviewLabelColor") : -1;
+        lockedFormula = decodeFormula(tag);
+        decodeLockedSlots(tag);
+        if (lockedFormula == null || !lockedSlotsMatchFormula()) {
+            lockedFormula = null;
+            java.util.Arrays.fill(lockedIngredientSlots, null);
+        }
         invalidatePlan();
     }
 
@@ -398,6 +467,12 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
+        if (isReservedIngredientSlot(slot)) {
+            amount = Math.min(amount, Math.max(0, items.get(slot).getCount() - 1));
+            if (amount == 0) {
+                return ItemStack.EMPTY;
+            }
+        }
         ItemStack previous = items.get(slot).copy();
         ItemStack removed = super.removeItem(slot, amount);
         if (!removed.isEmpty()) {
@@ -449,7 +524,11 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         if (slot < INGREDIENT_SLOT_COUNT) {
-            return !stack.isEmpty() && IngredientProfiles.find(MinecraftEvaluationResolver.ingredientId(stack)).isPresent();
+            if (stack.isEmpty()) {
+                return false;
+            }
+            IngredientId ingredient = MinecraftEvaluationResolver.ingredientId(stack);
+            return IngredientProfiles.find(ingredient).isPresent() && canPlaceLockedIngredient(slot, ingredient);
         }
         if (slot == CAN_SLOT) {
             return stack.is(ModItems.EMPTY_CAN.get());
@@ -468,7 +547,10 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
         if (side == Direction.UP) {
-            return slot < INGREDIENT_SLOT_COUNT && canPlaceItem(slot, stack);
+            if (slot >= INGREDIENT_SLOT_COUNT || !canPlaceItem(slot, stack)) {
+                return false;
+            }
+            return preferredLockedInsertionSlot(slot, MinecraftEvaluationResolver.ingredientId(stack));
         }
         return side != null && side.getAxis().isHorizontal()
                 && (slot == CAN_SLOT || slot == FUEL_SLOT)
@@ -483,6 +565,9 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
         if (slot == OUTPUT_SLOT || slot == FUEL_SLOT && !isFuel(stack)) {
             return true;
         }
+        if (isReservedIngredientSlot(slot)) {
+            return false;
+        }
         return slot < INGREDIENT_SLOT_COUNT && !canPlaceItem(slot, stack);
     }
 
@@ -493,11 +578,181 @@ public final class PressureCannerBlockEntity extends BaseContainerBlockEntity im
 
     public enum OperationalStatus {
         INCOMPLETE_FORMULA,
+        FORMULA_LOCK_MISMATCH,
+        MISSING_INGREDIENTS,
         MISSING_CANS,
         OUTPUT_BLOCKED,
         MISSING_FUEL,
         READY,
         PROCESSING
+    }
+
+    boolean canPlaceLockedIngredient(int targetSlot, IngredientId ingredient) {
+        if (lockedFormula == null) {
+            return true;
+        }
+        IngredientId expected = lockedIngredientSlots[targetSlot];
+        if (!ingredient.equals(expected)) {
+            return false;
+        }
+        ItemStack target = items.get(targetSlot);
+        return target.isEmpty() || MinecraftEvaluationResolver.ingredientId(target).equals(ingredient);
+    }
+
+    boolean preferredLockedInsertionSlot(int targetSlot, IngredientId ingredient) {
+        if (lockedFormula == null) {
+            return true;
+        }
+        int targetCount = items.get(targetSlot).getCount();
+        for (int slot : INGREDIENT_SLOTS) {
+            if (ingredient.equals(lockedIngredientSlots[slot]) && items.get(slot).getCount() < targetCount) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean hasConsumableIngredientStock() {
+        if (lockedFormula == null) {
+            return true;
+        }
+        for (int slot : INGREDIENT_SLOTS) {
+            if (lockedIngredientSlots[slot] != null && items.get(slot).getCount() <= 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isReservedIngredientSlot(int slot) {
+        return lockedFormula != null
+                && slot >= 0
+                && slot < INGREDIENT_SLOT_COUNT
+                && lockedIngredientSlots[slot] != null;
+    }
+
+    public boolean lockedIngredientSlotEnabled(int slot) {
+        if (slot < 0 || slot >= INGREDIENT_SLOT_COUNT) {
+            throw new IndexOutOfBoundsException("Ingredient slot must be in the range [0, 5]");
+        }
+        return lockedFormula == null || lockedIngredientSlots[slot] != null;
+    }
+
+    private boolean matchesLockedFormula(List<ItemStack> ingredientSlots) {
+        if (lockedFormula == null) {
+            return true;
+        }
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack stack = ingredientSlots.get(slot);
+            IngredientId actual = stack.isEmpty() ? null : MinecraftEvaluationResolver.ingredientId(stack);
+            if (!java.util.Objects.equals(lockedIngredientSlots[slot], actual)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private CanonicalComposition currentComposition() {
+        return MinecraftEvaluationResolver.composition(ingredientSlots());
+    }
+
+    private List<ItemStack> ingredientSlots() {
+        List<ItemStack> ingredientSlots = new ArrayList<>(INGREDIENT_SLOT_COUNT);
+        for (int slot : INGREDIENT_SLOTS) {
+            ingredientSlots.add(items.get(slot));
+        }
+        return ingredientSlots;
+    }
+
+    private static ListTag encodeFormula(CanonicalComposition formula) {
+        var encoded = new ListTag();
+        formula.ingredients().forEach(entry -> {
+            var ingredient = new CompoundTag();
+            ingredient.putString("Ingredient", entry.ingredient().toString());
+            ingredient.putInt("Count", entry.count());
+            encoded.add(ingredient);
+        });
+        return encoded;
+    }
+
+    private static CanonicalComposition decodeFormula(CompoundTag tag) {
+        if (!tag.contains("LockedFormula", Tag.TAG_LIST)) {
+            return null;
+        }
+        try {
+            ListTag encoded = tag.getList("LockedFormula", Tag.TAG_COMPOUND);
+            var ingredients = new ArrayList<IngredientCount>(encoded.size());
+            for (int index = 0; index < encoded.size(); index++) {
+                CompoundTag entry = encoded.getCompound(index);
+                var id = net.minecraft.resources.ResourceLocation.tryParse(entry.getString("Ingredient"));
+                if (id == null) {
+                    return null;
+                }
+                ingredients.add(new IngredientCount(
+                        new IngredientId(id.getNamespace(), id.getPath()),
+                        entry.getInt("Count")
+                ));
+            }
+            CanonicalComposition formula = new CanonicalComposition(ingredients);
+            return CompositionValidator.validate(formula) == CompositionValidationResult.VALID ? formula : null;
+        } catch (RuntimeException exception) {
+            return null;
+        }
+    }
+
+    private ListTag encodeLockedSlots() {
+        var encoded = new ListTag();
+        for (int slot : INGREDIENT_SLOTS) {
+            IngredientId expected = lockedIngredientSlots[slot];
+            if (expected != null) {
+                var entry = new CompoundTag();
+                entry.putInt("Slot", slot);
+                entry.putString("Ingredient", expected.toString());
+                encoded.add(entry);
+            }
+        }
+        return encoded;
+    }
+
+    private void decodeLockedSlots(CompoundTag tag) {
+        java.util.Arrays.fill(lockedIngredientSlots, null);
+        if (lockedFormula == null) {
+            return;
+        }
+        if (!tag.contains("LockedIngredientSlots", Tag.TAG_LIST)) {
+            for (int slot : INGREDIENT_SLOTS) {
+                ItemStack stack = items.get(slot);
+                lockedIngredientSlots[slot] = stack.isEmpty()
+                        ? null
+                        : MinecraftEvaluationResolver.ingredientId(stack);
+            }
+            return;
+        }
+        ListTag encoded = tag.getList("LockedIngredientSlots", Tag.TAG_COMPOUND);
+        for (int index = 0; index < encoded.size(); index++) {
+            CompoundTag entry = encoded.getCompound(index);
+            int slot = entry.getInt("Slot");
+            var id = net.minecraft.resources.ResourceLocation.tryParse(entry.getString("Ingredient"));
+            if (slot >= 0 && slot < INGREDIENT_SLOT_COUNT && id != null) {
+                lockedIngredientSlots[slot] = new IngredientId(id.getNamespace(), id.getPath());
+            }
+        }
+    }
+
+    private boolean lockedSlotsMatchFormula() {
+        if (lockedFormula == null) {
+            return true;
+        }
+        var counts = new java.util.TreeMap<IngredientId, Integer>();
+        for (IngredientId ingredient : lockedIngredientSlots) {
+            if (ingredient != null) {
+                counts.merge(ingredient, 1, Integer::sum);
+            }
+        }
+        var entries = counts.entrySet().stream()
+                .map(entry -> new IngredientCount(entry.getKey(), entry.getValue()))
+                .toList();
+        return !entries.isEmpty() && lockedFormula.equals(new CanonicalComposition(entries));
     }
 
     record FuelConsumption(ItemStack fuelSlot, ItemStack externalRemainder) {
