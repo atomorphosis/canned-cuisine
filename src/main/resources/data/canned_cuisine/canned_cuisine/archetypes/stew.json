@@ -5,6 +5,6 @@
     { "categories": ["vegetable"], "minimum_coverage": 0.30, "maximum_coverage": 1.0 },
     { "categories": ["sweetener"], "minimum_coverage": 0.0, "maximum_coverage": 0.15 }
   ],
-  "minimum_effective_diversity": 2.0,
+  "minimum_distinct_ingredients": 2,
   "priority": 3
 }

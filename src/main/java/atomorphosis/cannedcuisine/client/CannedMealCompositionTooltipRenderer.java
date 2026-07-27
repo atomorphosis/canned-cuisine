@@ -154,13 +154,11 @@ public final class CannedMealCompositionTooltipRenderer implements ClientTooltip
     }
 
     private int accentColor() {
-        return switch (tooltip.quality()) {
-            case FAILED -> 0xFFD04444;
-            case QUESTIONABLE -> 0xFFE06A56;
-            case STANDARD -> 0xFF8E949B;
-            case GOOD -> 0xFF65B96E;
-            case EXCELLENT -> 0xFF58BED1;
-            case EXCEPTIONAL -> 0xFFC86ED7;
+        return switch (tooltip.rarity()) {
+            case COMMON -> 0xFF8E949B;
+            case UNCOMMON -> 0xFFFFFF55;
+            case RARE -> 0xFF55FFFF;
+            case EPIC -> 0xFFFF55FF;
         };
     }
 }

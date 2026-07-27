@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.registry;
 
 import atomorphosis.cannedcuisine.CannedCuisine;
 import atomorphosis.cannedcuisine.item.ReserveHealthValue;
+import atomorphosis.cannedcuisine.knowledge.PlayerIngredientKnowledge;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -23,7 +24,16 @@ public final class ModAttachments {
                             ReserveHealthValue.STREAM_CODEC
                     )
                     .build());
-
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerIngredientKnowledge>> INGREDIENT_KNOWLEDGE =
+            ATTACHMENTS.register("ingredient_knowledge", () -> AttachmentType.builder(() -> PlayerIngredientKnowledge.EMPTY)
+                    .serialize(PlayerIngredientKnowledge.CODEC, knowledge ->
+                            !knowledge.discoveryOrder().isEmpty() || knowledge.initialManualGranted())
+                    .copyOnDeath()
+                    .sync(
+                            (holder, recipient) -> holder instanceof ServerPlayer owner && owner == recipient,
+                            PlayerIngredientKnowledge.STREAM_CODEC
+                    )
+                    .build());
     private ModAttachments() {
     }
 

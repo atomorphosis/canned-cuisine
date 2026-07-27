@@ -6,7 +6,7 @@ import java.util.Objects;
 public record ArchetypeDefinition(
         ArchetypeId id,
         List<CategoryCriterion> criteria,
-        double minimumEffectiveDiversity,
+        int minimumDistinctIngredients,
         int priority,
         double minimumNutritionDensity,
         double minimumFoodValueDensity
@@ -14,13 +14,13 @@ public record ArchetypeDefinition(
     public ArchetypeDefinition(
             ArchetypeId id,
             List<CategoryCriterion> criteria,
-            double minimumEffectiveDiversity,
+            int minimumDistinctIngredients,
             int priority
     ) {
         this(
                 id,
                 criteria,
-                minimumEffectiveDiversity,
+                minimumDistinctIngredients,
                 priority,
                 0.0,
                 0.0
@@ -34,7 +34,9 @@ public record ArchetypeDefinition(
         if (criteria.isEmpty()) {
             throw new IllegalArgumentException("An archetype requires at least one category criterion");
         }
-        requireNonNegativeFinite("minimumEffectiveDiversity", minimumEffectiveDiversity);
+        if (minimumDistinctIngredients < 1 || minimumDistinctIngredients > 6) {
+            throw new IllegalArgumentException("Minimum distinct ingredients must be in the range [1, 6]");
+        }
         requireNonNegativeFinite("minimumNutritionDensity", minimumNutritionDensity);
         requireNonNegativeFinite("minimumFoodValueDensity", minimumFoodValueDensity);
     }

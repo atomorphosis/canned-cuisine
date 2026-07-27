@@ -18,18 +18,12 @@ public final class EffectRuleCodec {
             id -> ResourceLocation.fromNamespaceAndPath(id.namespace(), id.path())
     );
     private static final Codec<LevelTwoRequirements> LEVEL_TWO_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-             Codec.intRange(0, 100).fieldOf("minimum_quality_score").forGetter(LevelTwoRequirements::minimumQualityScore),
              Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_affinity").forGetter(LevelTwoRequirements::minimumAffinity),
-             Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_catalyst_support").forGetter(LevelTwoRequirements::minimumCatalystContributionPerUnit),
-             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("minimum_duration_ticks").forGetter(LevelTwoRequirements::minimumDurationTicks),
-             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("duration_step_ticks").forGetter(LevelTwoRequirements::durationStepTicks),
-             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("maximum_duration_ticks").forGetter(LevelTwoRequirements::maximumDurationTicks)
+             Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_catalyst_support").forGetter(LevelTwoRequirements::minimumCatalystContributionPerUnit)
     ).apply(instance, LevelTwoRequirements::new));
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("effect").forGetter(Serialized::effect),
             Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("minimum_affinity").forGetter(Serialized::minimumAffinity),
-            Codec.intRange(0, 100).fieldOf("minimum_quality_score").forGetter(Serialized::minimumQualityScore),
-            Codec.intRange(1, Integer.MAX_VALUE).fieldOf("minimum_duration_ticks").forGetter(Serialized::minimumDurationTicks),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("duration_step_ticks").forGetter(Serialized::durationStepTicks),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("maximum_duration_ticks").forGetter(Serialized::maximumDurationTicks),
             Codec.INT.optionalFieldOf("priority", 0).forGetter(Serialized::priority),
@@ -51,8 +45,6 @@ public final class EffectRuleCodec {
             return DataResult.success(new EffectRule(
                     effect,
                     value.minimumAffinity(),
-                    value.minimumQualityScore(),
-                    value.minimumDurationTicks(),
                     value.durationStepTicks(),
                     value.maximumDurationTicks(),
                     value.priority(),
@@ -68,8 +60,6 @@ public final class EffectRuleCodec {
         return new Serialized(
                 ResourceLocation.fromNamespaceAndPath(value.effect().namespace(), value.effect().path()),
                 value.minimumAffinity(),
-                value.minimumQualityScore(),
-                value.minimumDurationTicks(),
                 value.durationStepTicks(),
                 value.maximumDurationTicks(),
                 value.priority(),
@@ -81,8 +71,6 @@ public final class EffectRuleCodec {
     private record Serialized(
             ResourceLocation effect,
             double minimumAffinity,
-            int minimumQualityScore,
-            int minimumDurationTicks,
             int durationStepTicks,
             int maximumDurationTicks,
             int priority,

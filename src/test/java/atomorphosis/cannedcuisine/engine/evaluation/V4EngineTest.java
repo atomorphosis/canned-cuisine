@@ -1,6 +1,8 @@
 package atomorphosis.cannedcuisine.engine.evaluation;
 
 import atomorphosis.cannedcuisine.data.profile.BundledVanillaProfiles;
+import atomorphosis.cannedcuisine.data.archetype.BundledArchetypes;
+import atomorphosis.cannedcuisine.data.effect.BundledEffectRules;
 import atomorphosis.cannedcuisine.engine.effect.InitialEffectRules;
 import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import atomorphosis.cannedcuisine.engine.profile.InitialVanillaProfiles;
@@ -69,7 +71,7 @@ final class V4EngineTest {
         assertTrue(meal.failureAssessment().has(MixtureFailureReason.INCOMPATIBLE_EFFECTS));
         assertTrue(meal.effects().isEmpty());
         assertEquals(0.0, meal.temporaryHealthPoints());
-        assertEquals(QualityBand.FAILED, meal.qualityBand());
+        assertTrue(meal.failureAssessment().failed());
     }
 
     @Test
@@ -84,9 +86,71 @@ final class V4EngineTest {
         );
 
         assertEquals(2, meal.effects().size());
-        assertTrue(meal.effects().stream().anyMatch(effect -> effect.effect().equals(InitialEffectRules.HASTE)));
-        assertTrue(meal.effects().stream().anyMatch(effect -> effect.effect().equals(InitialEffectRules.NIGHT_VISION)));
-        assertTrue(meal.effects().stream().allMatch(effect -> effect.durationTicks() >= 9_600));
+        assertEquals(12_000, resolvedEffect(meal, InitialEffectRules.HASTE).durationTicks());
+        assertEquals(7_200, resolvedEffect(meal, InitialEffectRules.NIGHT_VISION).durationTicks());
+    }
+
+    @Test
+    void durationIsEntirelyFundedByAdditiveIngredientSupport() {
+        var common = evaluate(
+                InitialVanillaProfiles.CHICKEN,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.POTATO
+        );
+        var focused = evaluate(
+                InitialVanillaProfiles.SUNFLOWER,
+                InitialVanillaProfiles.SUNFLOWER,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.POTATO
+        );
+        var advanced = evaluate(
+                InitialVanillaProfiles.REDSTONE,
+                InitialVanillaProfiles.AMETHYST_SHARD,
+                InitialVanillaProfiles.SUNFLOWER,
+                InitialVanillaProfiles.POTATO,
+                InitialVanillaProfiles.BEEF,
+                InitialVanillaProfiles.WHEAT
+        );
+
+        assertEquals(4_800, resolvedEffect(common, InitialEffectRules.HASTE).durationTicks());
+        assertEquals(14_400, resolvedEffect(focused, InitialEffectRules.HASTE).durationTicks());
+        assertEquals(32_400, resolvedEffect(advanced, InitialEffectRules.HASTE).durationTicks());
+        assertEquals(1, resolvedEffect(advanced, InitialEffectRules.HASTE).amplifier());
+    }
+
+    @Test
+    void archetypesAndRepetitionDoNotModifyResolvedFoodValues() {
+        var profiles = BundledVanillaProfiles.profiles();
+        var input = new EvaluationInput(java.util.List.of(
+                new ProfiledIngredient(InitialVanillaProfiles.CHICKEN, 1, profiles.get(InitialVanillaProfiles.CHICKEN)),
+                new ProfiledIngredient(InitialVanillaProfiles.POTATO, 2, profiles.get(InitialVanillaProfiles.POTATO))
+        ));
+        var recognized = MealEvaluator.evaluate(input, BundledArchetypes.definitions(), BundledEffectRules.rules());
+        var generic = MealEvaluator.evaluate(input, java.util.List.of(), BundledEffectRules.rules());
+
+        assertTrue(recognized.archetypeMatch().isPresent());
+        assertTrue(generic.archetypeMatch().isEmpty());
+        assertEquals(18.4, recognized.nutritionPoints(), 0.0000001);
+        assertEquals(20.0, recognized.saturationPoints());
+        assertEquals(recognized.nutritionPoints(), generic.nutritionPoints());
+        assertEquals(recognized.saturationPoints(), generic.saturationPoints());
+        assertEquals(recognized.temporaryHealthPoints(), generic.temporaryHealthPoints());
+    }
+
+    @Test
+    void repeatedFoodKeepsItsAdditivePressureCookedPotentialUntilTheCanCaps() {
+        var meal = evaluate(
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT,
+                InitialVanillaProfiles.CARROT
+        );
+
+        assertEquals(20.0, meal.nutritionPoints());
+        assertEquals(20.0, meal.saturationPoints());
+        assertEquals(0.7, meal.temporaryHealthPoints(), 0.0000001);
     }
 
     @Test
@@ -159,5 +223,15 @@ final class V4EngineTest {
         assertTrue(meal.effects().stream().anyMatch(resolved ->
                 resolved.effect().equals(effect) && resolved.amplifier() == 1
         ), effect + " in " + meal);
+    }
+
+    private static atomorphosis.cannedcuisine.engine.effect.ResolvedEffect resolvedEffect(
+            MealEvaluation meal,
+            atomorphosis.cannedcuisine.engine.effect.EffectId effect
+    ) {
+        return meal.effects().stream()
+                .filter(resolved -> resolved.effect().equals(effect))
+                .findFirst()
+                .orElseThrow();
     }
 }

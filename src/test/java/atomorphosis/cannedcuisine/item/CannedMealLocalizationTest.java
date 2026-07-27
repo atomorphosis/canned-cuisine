@@ -93,11 +93,6 @@ class CannedMealLocalizationTest {
             "glistering_melon_slice",
             "golden_apple"
     );
-    private static final Set<String> CANNED_CUISINE_PROFILES = Set.of(
-            "failed",
-            "questionable",
-            "excellent"
-    );
     private static final Set<String> COMPATIBILITY_INGREDIENTS = Set.of(
             "farmersdelight.rice",
             "farmersdelight.minced_beef",
@@ -157,7 +152,6 @@ class CannedMealLocalizationTest {
             COMPATIBILITY_INGREDIENTS.forEach(value -> assertTrue(
                     catalog.has("name.canned_cuisine.ingredient." + value)
             ));
-            CANNED_CUISINE_PROFILES.forEach(value -> assertProfile(catalog, "canned_cuisine", value));
             MINECRAFT_PROFILES.forEach(value -> assertProfile(catalog, "minecraft", value));
             assertProfile(catalog, "farmersdelight", "nourishment");
         }
@@ -189,12 +183,12 @@ class CannedMealLocalizationTest {
                 format(spanish, "profile_subject_archetype", "Compota", "nutritiva", "manzana")
         );
         assertEquals(
-                "Excellent Vegetable Ration",
-                format(english, "profile_archetype", "Vegetable Ration", "Excellent", "Vegetable")
+                "Energizing Vegetable Ration",
+                format(english, "profile_archetype", "Vegetable Ration", "Energizing", "Vegetable")
         );
         assertEquals(
-                "Ración vegetal excelente",
-                format(spanish, "profile_archetype", "Ración vegetal", "excelente", "verduras")
+                "Ración vegetal vigorizante",
+                format(spanish, "profile_archetype", "Ración vegetal", "vigorizante", "verduras")
         );
         assertEquals(
                 "Fireproof Exotic Ration",
@@ -243,7 +237,6 @@ class CannedMealLocalizationTest {
         var data = new ResolvedCannedMealData(
                 ResolvedCannedMealData.CURRENT_DATA_VERSION,
                 new CanonicalComposition(List.of(new IngredientCount(new IngredientId("minecraft", "wheat"), 3))),
-                80,
                 Set.of(),
                 10.0,
                 10.0,

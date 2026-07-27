@@ -4,6 +4,7 @@ import atomorphosis.cannedcuisine.client.CannedMealItemColor;
 import atomorphosis.cannedcuisine.client.CannedMealCompositionTooltipRenderer;
 import atomorphosis.cannedcuisine.client.CompactFoodTooltip;
 import atomorphosis.cannedcuisine.client.CompactFoodTooltipRenderer;
+import atomorphosis.cannedcuisine.client.IngredientProfileTooltip;
 import atomorphosis.cannedcuisine.client.PressureCannerScreen;
 import atomorphosis.cannedcuisine.client.PressureCannerRenderer;
 import atomorphosis.cannedcuisine.client.ReserveHealthHud;
@@ -38,6 +39,7 @@ public final class CannedCuisineClient {
         modEventBus.addListener(CannedCuisineClient::registerGuiLayers);
         NeoForge.EVENT_BUS.addListener(CannedCuisineClient::clearAtlasData);
         NeoForge.EVENT_BUS.addListener(CannedCuisineClient::refreshFuelDisplay);
+        NeoForge.EVENT_BUS.addListener(IngredientProfileTooltip::append);
         if (ModList.get().isLoaded("appleskin")) {
             AppleSkinCompat.register();
         }
@@ -50,7 +52,9 @@ public final class CannedCuisineClient {
 
     private static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(CannedMealCompositionTooltip.class, CannedMealCompositionTooltipRenderer::new);
-        event.register(CompactFoodTooltip.class, CompactFoodTooltipRenderer::new);
+        if (ModList.get().isLoaded("appleskin")) {
+            event.register(CompactFoodTooltip.class, CompactFoodTooltipRenderer::new);
+        }
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {

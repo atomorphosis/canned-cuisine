@@ -78,7 +78,7 @@ class ArchetypeReloadListenerTest {
                      "minimum_coverage": 0.2,
                      "maximum_coverage": 1.0
                    }],
-                   "minimum_effective_diversity": 1.0,
+                   "minimum_distinct_ingredients": 1,
                    "priority": %s
                 }
                 """.formatted(archetype, priority));

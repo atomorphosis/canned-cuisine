@@ -17,9 +17,11 @@ import atomorphosis.cannedcuisine.registry.ModBlockEntities;
 import atomorphosis.cannedcuisine.registry.ModBlocks;
 import atomorphosis.cannedcuisine.registry.ModMenus;
 import atomorphosis.cannedcuisine.registry.ModLootFunctions;
+import atomorphosis.cannedcuisine.registry.ModLootModifiers;
 import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
 import atomorphosis.cannedcuisine.network.AtlasNetworking;
 import atomorphosis.cannedcuisine.item.ReserveHealth;
+import atomorphosis.cannedcuisine.knowledge.KnowledgeEvents;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
@@ -48,6 +50,7 @@ public final class CannedCuisine {
         ModBlockEntities.register(modEventBus);
         ModMenus.register(modEventBus);
         ModLootFunctions.register(modEventBus);
+        ModLootModifiers.register(modEventBus);
         ModCriterionTriggers.register(modEventBus);
         modEventBus.addListener(ModBlockEntities::registerCapabilities);
         modEventBus.addListener(AtlasNetworking::registerPayloads);
@@ -58,6 +61,9 @@ public final class CannedCuisine {
         NeoForge.EVENT_BUS.addListener(CannedCuisine::clearServerData);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, ReserveHealth::absorbDamage);
         NeoForge.EVENT_BUS.addListener(ReserveHealth::migrateLegacyCapacity);
+        NeoForge.EVENT_BUS.addListener(KnowledgeEvents::login);
+        NeoForge.EVENT_BUS.addListener(KnowledgeEvents::tick);
+        NeoForge.EVENT_BUS.addListener(KnowledgeEvents::pickup);
         if (!FMLEnvironment.production) {
             NeoForge.EVENT_BUS.addListener(DevelopmentCommands::register);
         }
@@ -67,6 +73,7 @@ public final class CannedCuisine {
     private static void addCreativeTabItems(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.EMPTY_CAN);
+            event.accept(ModItems.ROCK_SALT);
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModItems.PRESSURE_CANNER);

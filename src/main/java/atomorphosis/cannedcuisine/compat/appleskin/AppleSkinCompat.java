@@ -2,6 +2,7 @@ package atomorphosis.cannedcuisine.compat.appleskin;
 
 import atomorphosis.cannedcuisine.client.CompactFoodTooltip;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
+import atomorphosis.cannedcuisine.registry.ModItems;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -21,7 +22,8 @@ public final class AppleSkinCompat {
     }
 
     private static void cancelExpandedTooltip(TooltipOverlayEvent.Pre event) {
-        if (event.itemStack.has(ModDataComponents.RESOLVED_CANNED_MEAL.get())) {
+        if (event.itemStack.is(ModItems.CANNED_MEAL.get())
+                && event.itemStack.has(ModDataComponents.RESOLVED_CANNED_MEAL.get())) {
             PENDING_STACK.set(event.itemStack);
             event.setCanceled(true);
         }
@@ -30,14 +32,12 @@ public final class AppleSkinCompat {
     private static void addCompactTooltip(RenderTooltipEvent.GatherComponents event) {
         ItemStack pending = PENDING_STACK.get();
         PENDING_STACK.remove();
-        if (pending != event.getItemStack()) {
-            return;
-        }
-        var data = pending.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        var stack = event.getItemStack();
+        var data = pending == stack ? stack.get(ModDataComponents.RESOLVED_CANNED_MEAL.get()) : null;
         if (data != null) {
             event.getTooltipElements().add(Either.right(new CompactFoodTooltip(
                     Math.clamp((int) Math.round(data.nutritionPoints()), 0, 20),
-                    (float) Math.clamp(data.saturationPoints(), 0.0, 20.0)
+                    Math.clamp(data.saturationPoints(), 0.0, 20.0)
             )));
         }
     }

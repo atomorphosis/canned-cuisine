@@ -3,8 +3,6 @@ package atomorphosis.cannedcuisine.item;
 import atomorphosis.cannedcuisine.component.ResolvedCannedMealData;
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
 import atomorphosis.cannedcuisine.engine.effect.EffectId;
-import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -14,7 +12,6 @@ import net.minecraft.world.effect.MobEffectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class CannedMealTooltip {
     private CannedMealTooltip() {
@@ -22,12 +19,6 @@ public final class CannedMealTooltip {
 
     public static List<Component> create(ResolvedCannedMealData data) {
         var lines = new ArrayList<Component>();
-        var quality = QualityBand.fromScore(data.qualityScore());
-        var qualityName = Component.translatable(
-                "tooltip.canned_cuisine.quality." + quality.name().toLowerCase(Locale.ROOT)
-        ).withStyle(qualityColor(quality));
-        lines.add(Component.translatable("tooltip.canned_cuisine.quality", qualityName)
-                .withStyle(ChatFormatting.GRAY));
         CannedMealFoodProperties.resolveEffects(data).stream()
                 .map(CannedMealTooltip::effectLine)
                 .forEach(lines::add);
@@ -53,17 +44,6 @@ public final class CannedMealTooltip {
         var id = BuiltInRegistries.MOB_EFFECT.getKey(effect.getEffect().value());
         var color = MealAppearanceResolver.effectColor(new EffectId(id.getNamespace(), id.getPath()));
         return name.withStyle(Style.EMPTY.withColor(color));
-    }
-
-    private static ChatFormatting qualityColor(QualityBand quality) {
-        return switch (quality) {
-            case FAILED -> ChatFormatting.DARK_RED;
-            case QUESTIONABLE -> ChatFormatting.RED;
-            case STANDARD -> ChatFormatting.WHITE;
-            case GOOD -> ChatFormatting.GREEN;
-            case EXCELLENT -> ChatFormatting.AQUA;
-            case EXCEPTIONAL -> ChatFormatting.LIGHT_PURPLE;
-        };
     }
 
 }

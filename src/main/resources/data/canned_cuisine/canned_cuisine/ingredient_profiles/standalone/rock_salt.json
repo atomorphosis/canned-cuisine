@@ -1,0 +1,13 @@
+{
+  "ingredient": "canned_cuisine:rock_salt",
+  "nutrition": 0.0,
+  "saturation": 0.0,
+  "categories": {
+    "preservative": 1.0,
+    "spice": 0.75
+  },
+  "universal_duration_units": 2.0,
+  "toxicity": 0.0,
+  "rarity": 0.0,
+  "catalytic_potency": 0
+}

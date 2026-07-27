@@ -6,7 +6,6 @@ import atomorphosis.cannedcuisine.engine.evaluation.EvaluationInput;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureAssessment;
 import atomorphosis.cannedcuisine.engine.evaluation.MixtureFailureReason;
 import atomorphosis.cannedcuisine.engine.evaluation.ProfiledIngredient;
-import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
 import atomorphosis.cannedcuisine.engine.profile.CulinaryCategory;
 
 import java.util.Comparator;
@@ -26,16 +25,14 @@ public final class MealNameResolver {
             EvaluationInput input,
             Optional<ArchetypeMatch> archetypeMatch,
             MixtureFailureAssessment failureAssessment,
-            QualityBand qualityBand,
             List<ResolvedEffect> effects
     ) {
         Objects.requireNonNull(input, "input");
         Objects.requireNonNull(archetypeMatch, "archetypeMatch");
         Objects.requireNonNull(failureAssessment, "failureAssessment");
-        Objects.requireNonNull(qualityBand, "qualityBand");
         Objects.requireNonNull(effects, "effects");
 
-        var resolvedArchetype = qualityBand == QualityBand.FAILED
+        var resolvedArchetype = failureAssessment.failed()
                 ? InitialMealNames.FAILED_MIXTURE
                 : archetypeMatch
                         .map(match -> new NameTokenId(
@@ -47,9 +44,9 @@ public final class MealNameResolver {
                 ? MealNameSubject.category(CulinaryCategory.TOXIC)
                 : resolveSubject(input);
         var archetype = simplifyRationArchetype(resolvedArchetype, subject, input);
-        var profile = qualityBand == QualityBand.FAILED
+        var profile = failureAssessment.failed()
                 ? Optional.<NameTokenId>empty()
-                : resolveProfile(qualityBand, effects);
+                : resolveProfile(effects);
         var includeSubject = !isRedundantSubject(archetype, subject);
 
         return new MealNameTokens(
@@ -149,22 +146,10 @@ public final class MealNameResolver {
                 .orElseGet(MealNameSubject::mixed);
     }
 
-    private static Optional<NameTokenId> resolveProfile(
-            QualityBand qualityBand,
-            List<ResolvedEffect> effects
-    ) {
-        if (qualityBand == QualityBand.FAILED) {
-            return Optional.of(InitialMealNames.FAILED);
-        }
-        if (qualityBand == QualityBand.QUESTIONABLE) {
-            return Optional.of(InitialMealNames.QUESTIONABLE);
-        }
+    private static Optional<NameTokenId> resolveProfile(List<ResolvedEffect> effects) {
         if (!effects.isEmpty()) {
             var effect = effects.getFirst().effect();
             return Optional.of(new NameTokenId(effect.namespace(), effect.path()));
-        }
-        if (qualityBand == QualityBand.EXCELLENT || qualityBand == QualityBand.EXCEPTIONAL) {
-            return Optional.of(InitialMealNames.EXCELLENT);
         }
         return Optional.empty();
     }

@@ -2,7 +2,8 @@ package atomorphosis.cannedcuisine.item;
 
 import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
 import atomorphosis.cannedcuisine.registry.ModDataComponents;
-import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
+import atomorphosis.cannedcuisine.knowledge.PlayerKnowledge;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +25,15 @@ public final class CannedMealItem extends Item {
     }
 
     @Override
+    public void verifyComponentsAfterLoad(ItemStack stack) {
+        super.verifyComponentsAfterLoad(stack);
+        var data = stack.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
+        if (data != null) {
+            stack.set(DataComponents.RARITY, CannedMealRarity.resolve(data));
+        }
+    }
+
+    @Override
     public @Nullable FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
         var data = stack.get(ModDataComponents.RESOLVED_CANNED_MEAL.get());
         return data == null ? null : CannedMealFoodProperties.create(data);
@@ -40,6 +50,10 @@ public final class CannedMealItem extends Item {
         boolean wasFull = livingEntity instanceof ServerPlayer player && player.getFoodData().getFoodLevel() >= 20;
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (data != null && livingEntity instanceof ServerPlayer player) {
+            PlayerKnowledge.discoverIngredients(
+                    player,
+                    data.composition().ingredients().stream().map(ingredient -> ingredient.ingredient()).toList()
+            );
             ReserveHealth.grant(player, data.temporaryHealthPoints());
             var applicableEffects = data.effects().stream()
                     .filter(effect -> CannedMealFoodProperties.resolveEffect(effect).isPresent())
@@ -62,7 +76,7 @@ public final class CannedMealItem extends Item {
                 ? Optional.empty()
                 : Optional.of(new CannedMealCompositionTooltip(
                          data.composition().ingredients(),
-                         QualityBand.fromScore(data.qualityScore()),
+                         stack.getRarity(),
                          data.effectContributions(),
                          data.temporaryHealthPoints()
                  ));

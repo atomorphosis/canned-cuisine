@@ -19,22 +19,20 @@ public final class EvaluationMetricsCalculator {
         var effectDurationTotals = new TreeMap<EffectId, Double>();
         var effectCatalystContributionTotals = new TreeMap<EffectId, Double>();
         var totalUnits = 0;
-        var dominantIngredientUnits = 0;
         var totalNutritionPoints = 0.0;
         var totalSaturationPoints = 0.0;
         var totalToxicity = 0.0;
-        var squaredProportionNumerator = 0.0;
+        var universalDurationUnits = 0.0;
 
         for (var ingredient : input.ingredients()) {
             var count = ingredient.count();
             var profile = ingredient.profile();
 
             totalUnits += count;
-            dominantIngredientUnits = Math.max(dominantIngredientUnits, count);
-            squaredProportionNumerator += (double) count * count;
             totalNutritionPoints += profile.nutritionPoints() * count;
             totalSaturationPoints += profile.saturationPoints() * count;
             totalToxicity += profile.toxicity() * count;
+            universalDurationUnits += profile.fundedUniversalDurationUnits(count);
 
             profile.categoryWeights().forEach((category, weight) ->
                     categoryTotals.merge(category, weight * count, Double::sum)
@@ -50,18 +48,13 @@ public final class EvaluationMetricsCalculator {
             });
         }
 
-        var effectiveDiversity = totalUnits == 0
-                ? 0.0
-                : (double) totalUnits * totalUnits / squaredProportionNumerator;
-
         return new EvaluationMetrics(
                 totalUnits,
                 input.ingredients().size(),
-                dominantIngredientUnits,
-                effectiveDiversity,
                 totalNutritionPoints,
                 totalSaturationPoints,
                 totalToxicity,
+                universalDurationUnits,
                 categoryTotals,
                 effectAffinityTotals,
                 effectDurationTotals,

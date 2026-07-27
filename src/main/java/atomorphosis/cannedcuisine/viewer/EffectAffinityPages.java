@@ -1,7 +1,6 @@
 package atomorphosis.cannedcuisine.viewer;
 
 import atomorphosis.cannedcuisine.engine.appearance.MealAppearanceResolver;
-import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -12,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 public final class EffectAffinityPages {
@@ -75,12 +73,6 @@ public final class EffectAffinityPages {
                 "atlas.canned_cuisine.tooltip.duration_support",
                 source.durationUnits()
         ).withStyle(ChatFormatting.GRAY));
-        if (source.rarity() > 0.0) {
-            tooltip.add(Component.translatable(
-                    "atlas.canned_cuisine.tooltip.rarity",
-                    source.rarity()
-            ).withStyle(ChatFormatting.AQUA));
-        }
         if (source.catalyticPotency() > 0) {
              tooltip.add(Component.translatable(
                       "atlas.canned_cuisine.tooltip.catalyst_strength",
@@ -104,22 +96,17 @@ public final class EffectAffinityPages {
                  "atlas.canned_cuisine.tooltip.minimum_affinity",
                  rule.minimumAffinity()
         ).withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable(
-                "atlas.canned_cuisine.tooltip.minimum_quality",
-                qualityName(rule.minimumQualityScore())
-        ).withStyle(ChatFormatting.GRAY));
         holder.ifPresent(value -> tooltip.add(Component.translatable(
-                "atlas.canned_cuisine.tooltip.duration_range",
+                "atlas.canned_cuisine.tooltip.duration_funding",
                 MobEffectUtil.formatDuration(
-                        new MobEffectInstance(value, rule.minimumDurationTicks()), 1.0F, 20.0F),
+                        new MobEffectInstance(value, rule.durationStepTicks()), 1.0F, 20.0F),
                 MobEffectUtil.formatDuration(
                         new MobEffectInstance(value, rule.maximumDurationTicks()), 1.0F, 20.0F)
         ).withStyle(ChatFormatting.GRAY)));
         rule.levelTwoRequirements().ifPresent(requirements -> {
             tooltip.add(Component.translatable(
                     "atlas.canned_cuisine.tooltip.level_two",
-                     qualityName(requirements.minimumQualityScore()),
-                     requirements.minimumAffinity()
+                    requirements.minimumAffinity()
             ).withStyle(ChatFormatting.GOLD));
              tooltip.add(Component.translatable(
                      "atlas.canned_cuisine.tooltip.level_two_advanced",
@@ -129,9 +116,4 @@ public final class EffectAffinityPages {
         return List.copyOf(tooltip);
     }
 
-    private static Component qualityName(int score) {
-        var quality = QualityBand.fromScore(score);
-        return Component.translatable(
-                "tooltip.canned_cuisine.quality." + quality.name().toLowerCase(Locale.ROOT));
-    }
 }

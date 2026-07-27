@@ -27,7 +27,7 @@ class ArchetypeMatcherTest {
                          0.5,
                          1.0
                  )),
-                 1.0,
+                 1,
                  0
         );
         var metrics = metrics(
@@ -43,14 +43,14 @@ class ArchetypeMatcherTest {
     }
 
     @Test
-    void rejectsMissingMinimumExcessiveMaximumAndInsufficientDiversity() {
+    void rejectsMissingMinimumExcessiveMaximumAndTooFewDistinctIngredients() {
         var definition = new ArchetypeDefinition(
                  new ArchetypeId("canned_cuisine", "strict_fruit"),
                  List.of(
                          CategoryCriterion.of(CulinaryCategory.FRUIT, 0.4, 1.0),
                          CategoryCriterion.of(CulinaryCategory.SWEETENER, 0.0, 0.35)
                  ),
-                 2.0,
+                 2,
                  0
         );
 
@@ -64,8 +64,7 @@ class ArchetypeMatcherTest {
                 ingredient("sugar", 2, CulinaryCategory.SWEETENER)
         ), definition).isEmpty());
         assertTrue(ArchetypeMatcher.match(metrics(
-                ingredient("apple", 2, CulinaryCategory.FRUIT),
-                ingredient("sugar", CulinaryCategory.SWEETENER)
+                ingredient("apple", 3, CulinaryCategory.FRUIT)
         ), definition).isEmpty());
     }
 
@@ -93,7 +92,7 @@ class ArchetypeMatcherTest {
          var definition = new ArchetypeDefinition(
                  new ArchetypeId("canned_cuisine", "fruit_test"),
                  List.of(CategoryCriterion.of(CulinaryCategory.FRUIT, 0.1, 1.0)),
-                 1.0,
+                 1,
                  0
          );
          var matchingMetrics = metrics(
@@ -115,7 +114,7 @@ class ArchetypeMatcherTest {
         return new ArchetypeDefinition(
                  new ArchetypeId("canned_cuisine", path),
                  List.of(CategoryCriterion.of(CulinaryCategory.FRUIT, 0.1, 1.0)),
-                 1.0,
+                 1,
                  priority
         );
     }

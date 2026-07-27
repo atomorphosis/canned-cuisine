@@ -4,6 +4,7 @@ import atomorphosis.cannedcuisine.block.entity.PressureCannerBlockEntity;
 import atomorphosis.cannedcuisine.registry.ModItems;
 import atomorphosis.cannedcuisine.registry.ModMenus;
 import atomorphosis.cannedcuisine.registry.ModCriterionTriggers;
+import atomorphosis.cannedcuisine.knowledge.PlayerKnowledge;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -62,6 +63,7 @@ public final class PressureCannerMenu extends AbstractContainerMenu {
             public void onTake(Player player, ItemStack stack) {
                 super.onTake(player, stack);
                 if (player instanceof ServerPlayer serverPlayer && !stack.isEmpty()) {
+                    PlayerKnowledge.observeStack(serverPlayer, stack);
                     ModCriterionTriggers.CANNED_MEAL_TAKEN.get().trigger(serverPlayer, stack);
                 }
             }

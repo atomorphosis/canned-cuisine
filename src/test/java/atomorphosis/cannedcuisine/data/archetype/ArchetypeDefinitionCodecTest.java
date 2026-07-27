@@ -22,7 +22,7 @@ class ArchetypeDefinitionCodecTest {
                        "maximum_coverage": 1.0
                      }
                    ],
-                   "minimum_effective_diversity": 2.0,
+                   "minimum_distinct_ingredients": 2,
                    "priority": 4,
                   "minimum_nutrition_density": 3.0,
                   "minimum_food_value_density": 5.0
@@ -47,7 +47,7 @@ class ArchetypeDefinitionCodecTest {
                  {
                    "id": "examplemod:test",
                    "criteria": [],
-                   "minimum_effective_diversity": 1.0
+                   "minimum_distinct_ingredients": 1
                  }
                  """;
 
@@ -68,7 +68,7 @@ class ArchetypeDefinitionCodecTest {
                      "minimum_coverage": 0.25,
                      "maximum_coverage": 1.0
                    }],
-                   "minimum_effective_diversity": 1.0
+                   "minimum_distinct_ingredients": 1
                  }
                 """;
     }

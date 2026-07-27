@@ -55,17 +55,15 @@ class EffectAffinityPagesTest {
     }
 
     @Test
-    void effectTooltipShowsLocalizedQualityBandsInsteadOfScores() {
+    void effectTooltipShowsObjectiveLevelTwoRequirements() {
         var rule = new EffectRule(
                 new EffectId("minecraft", "haste"),
                 6.0,
-                70,
-                100,
                 20,
                 200,
                 0,
                 Set.of(),
-                Optional.of(new LevelTwoRequirements(88, 12.0, 2.0, 60, 10, 120))
+                Optional.of(new LevelTwoRequirements(12.0, 2.0))
         );
         var entry = new EffectAtlasEntry(
                 ResourceLocation.fromNamespaceAndPath("canned_cuisine", "effect/test"),
@@ -74,23 +72,12 @@ class EffectAffinityPagesTest {
         );
 
         var tooltip = EffectAffinityPages.effectTooltip(entry);
-        var minimumQuality = translation(tooltip.stream()
-                .filter(line -> translation(line).getKey().equals("atlas.canned_cuisine.tooltip.minimum_quality"))
-                .findFirst()
-                .orElseThrow());
         var levelTwo = translation(tooltip.stream()
                 .filter(line -> translation(line).getKey().equals("atlas.canned_cuisine.tooltip.level_two"))
                 .findFirst()
                 .orElseThrow());
 
-        assertEquals(
-                "tooltip.canned_cuisine.quality.good",
-                translation(assertInstanceOf(Component.class, minimumQuality.getArgs()[0])).getKey()
-        );
-        assertEquals(
-                "tooltip.canned_cuisine.quality.excellent",
-                translation(assertInstanceOf(Component.class, levelTwo.getArgs()[0])).getKey()
-        );
+        assertEquals(12.0, levelTwo.getArgs()[0]);
     }
 
     private static EffectAtlasEntry entry(int sourceCount) {
@@ -109,8 +96,6 @@ class EffectAffinityPagesTest {
                 new EffectRule(
                         new EffectId("minecraft", "haste"),
                         6.0,
-                        40,
-                        100,
                         20,
                         200,
                         0,

@@ -1,0 +1,9 @@
+{
+  "type": "canned_cuisine:rock_salt_from_ore",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.125
+    }
+  ]
+}

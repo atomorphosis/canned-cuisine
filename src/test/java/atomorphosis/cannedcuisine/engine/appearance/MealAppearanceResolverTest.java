@@ -100,8 +100,6 @@ class MealAppearanceResolverTest {
         return new EvaluationMetrics(
                 3,
                 3,
-                1,
-                3.0,
                 3.0,
                 3.0,
                  categories,

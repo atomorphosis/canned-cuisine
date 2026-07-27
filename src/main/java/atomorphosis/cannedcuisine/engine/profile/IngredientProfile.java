@@ -16,6 +16,7 @@ public record IngredientProfile(
         Map<CulinaryCategory, Double> categoryWeights,
         Optional<AffinityProfile> majorAffinity,
         Optional<AffinityProfile> minorAffinity,
+        double universalDurationUnits,
         double toxicity,
         double rarity,
         int catalyticPotency
@@ -25,7 +26,7 @@ public record IngredientProfile(
             double saturationPoints,
             Map<CulinaryCategory, Double> categoryWeights
     ) {
-        this(nutritionPoints, saturationPoints, categoryWeights, Optional.empty(), Optional.empty(), 0.0, 0.0, 0);
+        this(nutritionPoints, saturationPoints, categoryWeights, Optional.empty(), Optional.empty(), 0.0, 0.0, 0.0, 0);
     }
 
     public IngredientProfile(
@@ -52,6 +53,7 @@ public record IngredientProfile(
                 affinity(effectAffinities, 1),
                 0.0,
                 0.0,
+                0.0,
                 (int) Math.round(catalystStrength)
         );
     }
@@ -59,6 +61,12 @@ public record IngredientProfile(
     public IngredientProfile {
         nutritionPoints = requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         saturationPoints = requireNonNegativeFinite("saturationPoints", saturationPoints);
+        universalDurationUnits = requireRange(
+                "universalDurationUnits",
+                universalDurationUnits,
+                0.0,
+                AffinityProfile.MAX_DURATION_UNITS
+        );
         toxicity = requireRange("toxicity", toxicity, 0.0, 1.0);
         rarity = requireRange("rarity", rarity, 0.0, 1.0);
         if (catalyticPotency < 0 || catalyticPotency > 3) {
@@ -85,10 +93,36 @@ public record IngredientProfile(
 
         Objects.requireNonNull(majorAffinity, "majorAffinity");
         Objects.requireNonNull(minorAffinity, "minorAffinity");
+        if (majorAffinity.isPresent() != minorAffinity.isPresent()) {
+            throw new IllegalArgumentException("Major and minor affinities must both be present or both be absent");
+        }
         if (majorAffinity.isPresent() && minorAffinity.isPresent()
                 && majorAffinity.get().effect().equals(minorAffinity.get().effect())) {
             throw new IllegalArgumentException("Major and minor affinities must reference different effects");
         }
+    }
+
+    public IngredientProfile(
+            double nutritionPoints,
+            double saturationPoints,
+            Map<CulinaryCategory, Double> categoryWeights,
+            Optional<AffinityProfile> majorAffinity,
+            Optional<AffinityProfile> minorAffinity,
+            double toxicity,
+            double rarity,
+            int catalyticPotency
+    ) {
+        this(
+                nutritionPoints,
+                saturationPoints,
+                categoryWeights,
+                majorAffinity,
+                minorAffinity,
+                0.0,
+                toxicity,
+                rarity,
+                catalyticPotency
+        );
     }
 
     public double categoryWeight(CulinaryCategory category) {
@@ -108,6 +142,16 @@ public record IngredientProfile(
                 .mapToDouble(AffinityProfile::durationUnits)
                 .findFirst()
                 .orElse(0.0);
+    }
+
+    public double fundedUniversalDurationUnits(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("Ingredient count must be non-negative");
+        }
+        if (count == 0 || universalDurationUnits == 0.0) {
+            return 0.0;
+        }
+        return universalDurationUnits * (1.0 + 0.5 * (count - 1));
     }
 
     public Map<EffectId, Double> effectAffinities() {

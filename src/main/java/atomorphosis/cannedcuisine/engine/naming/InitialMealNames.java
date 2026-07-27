@@ -9,10 +9,6 @@ public final class InitialMealNames {
     public static final NameTokenId MIXTURE = id("mixture");
     public static final NameTokenId RATION = id("ration");
     public static final NameTokenId FAILED_MIXTURE = id("failed_mixture");
-    public static final NameTokenId FAILED = id("failed");
-    public static final NameTokenId QUESTIONABLE = id("questionable");
-    public static final NameTokenId EXCELLENT = id("excellent");
-
     private InitialMealNames() {
     }
 

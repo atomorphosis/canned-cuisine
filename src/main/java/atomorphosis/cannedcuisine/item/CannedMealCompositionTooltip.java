@@ -1,30 +1,30 @@
 package atomorphosis.cannedcuisine.item;
 
 import atomorphosis.cannedcuisine.engine.model.IngredientCount;
-import atomorphosis.cannedcuisine.engine.evaluation.QualityBand;
 import atomorphosis.cannedcuisine.engine.effect.IngredientEffectContribution;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.Rarity;
 
 import java.util.List;
 import java.util.Objects;
 
 public record CannedMealCompositionTooltip(
         List<IngredientCount> ingredients,
-        QualityBand quality,
+        Rarity rarity,
         List<IngredientEffectContribution> effectContributions,
         double temporaryHealthPoints
 ) implements TooltipComponent {
     public CannedMealCompositionTooltip(
             List<IngredientCount> ingredients,
-            QualityBand quality,
+            Rarity rarity,
             List<IngredientEffectContribution> effectContributions
     ) {
-        this(ingredients, quality, effectContributions, 0.0);
+        this(ingredients, rarity, effectContributions, 0.0);
     }
 
     public CannedMealCompositionTooltip {
         Objects.requireNonNull(ingredients, "ingredients");
-        Objects.requireNonNull(quality, "quality");
+        Objects.requireNonNull(rarity, "rarity");
         Objects.requireNonNull(effectContributions, "effectContributions");
         ingredients = List.copyOf(ingredients);
         effectContributions = List.copyOf(effectContributions);

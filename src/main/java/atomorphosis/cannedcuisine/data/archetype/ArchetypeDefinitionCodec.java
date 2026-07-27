@@ -33,7 +33,7 @@ public final class ArchetypeDefinitionCodec {
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(Serialized::id),
             CRITERION_CODEC.listOf().fieldOf("criteria").forGetter(Serialized::criteria),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("minimum_effective_diversity").forGetter(Serialized::minimumEffectiveDiversity),
+            Codec.intRange(1, 6).fieldOf("minimum_distinct_ingredients").forGetter(Serialized::minimumDistinctIngredients),
             Codec.INT.optionalFieldOf("priority", 0).forGetter(Serialized::priority),
             Codec.doubleRange(0.0, Double.MAX_VALUE).optionalFieldOf("minimum_nutrition_density", 0.0).forGetter(Serialized::minimumNutritionDensity),
             Codec.doubleRange(0.0, Double.MAX_VALUE).optionalFieldOf("minimum_food_value_density", 0.0).forGetter(Serialized::minimumFoodValueDensity)
@@ -60,7 +60,7 @@ public final class ArchetypeDefinitionCodec {
             return DataResult.success(new ArchetypeDefinition(
                     new ArchetypeId(value.id().getNamespace(), value.id().getPath()),
                     value.criteria(),
-                    value.minimumEffectiveDiversity(),
+                    value.minimumDistinctIngredients(),
                     value.priority(),
                     value.minimumNutritionDensity(),
                     value.minimumFoodValueDensity()
@@ -92,7 +92,7 @@ public final class ArchetypeDefinitionCodec {
         return new Serialized(
                 ResourceLocation.fromNamespaceAndPath(value.id().namespace(), value.id().path()),
                 value.criteria(),
-                value.minimumEffectiveDiversity(),
+                value.minimumDistinctIngredients(),
                 value.priority(),
                 value.minimumNutritionDensity(),
                 value.minimumFoodValueDensity()
@@ -102,7 +102,7 @@ public final class ArchetypeDefinitionCodec {
     private record Serialized(
             ResourceLocation id,
             List<CategoryCriterion> criteria,
-            double minimumEffectiveDiversity,
+            int minimumDistinctIngredients,
             int priority,
             double minimumNutritionDensity,
             double minimumFoodValueDensity

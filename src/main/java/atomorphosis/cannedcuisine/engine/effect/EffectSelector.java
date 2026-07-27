@@ -9,30 +9,23 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public final class EffectSelector {
-    private static final int MINIMUM_POSITIVE_EFFECT_QUALITY = 40;
-
     private EffectSelector() {
     }
 
     public static EffectSelection select(
             EvaluationMetrics metrics,
-            int qualityScore,
             Collection<EffectRule> rules
     ) {
-        return resolve(metrics, qualityScore, rules).selection();
+        return resolve(metrics, rules).selection();
     }
 
     public static EffectResolution resolve(
             EvaluationMetrics metrics,
-            int qualityScore,
             Collection<EffectRule> rules
     ) {
         Objects.requireNonNull(metrics, "metrics");
         Objects.requireNonNull(rules, "rules");
 
-        if (qualityScore < 0 || qualityScore > 100) {
-            throw new IllegalArgumentException("Quality score must be in the range [0, 100]");
-        }
         var effectIds = new HashSet<EffectId>();
         for (var rule : rules) {
             Objects.requireNonNull(rule, "rule");
@@ -40,26 +33,30 @@ public final class EffectSelector {
                 throw new IllegalArgumentException("Effect rules must have unique effect identifiers");
             }
         }
-        if (metrics.totalUnits() == 0 || qualityScore < MINIMUM_POSITIVE_EFFECT_QUALITY) {
+        if (metrics.totalUnits() == 0) {
             return EffectResolution.empty();
         }
 
         var candidates = new ArrayList<Candidate>();
         for (var rule : rules) {
             var affinity = metrics.effectAffinityTotal(rule.effect());
-            if (qualityScore >= rule.minimumQualityScore() && affinity >= rule.minimumAffinity()) {
+            if (affinity >= rule.minimumAffinity()) {
+                var specificDurationUnits = metrics.effectDurationTotal(rule.effect());
+                if (fundedDurationTicks(rule, specificDurationUnits) < 1) {
+                    continue;
+                }
+                var durationUnits = specificDurationUnits + metrics.universalDurationUnits();
                 var levelTwo = rule.levelTwoRequirements()
                         .filter(requirements -> requirements.qualifies(
-                                metrics,
-                                rule.effect(),
-                                qualityScore,
-                                affinity
+                                 metrics,
+                                 rule.effect(),
+                                 affinity
                         ))
                         .isPresent();
                 candidates.add(new Candidate(
                         rule,
                         affinity,
-                        metrics.effectDurationTotal(rule.effect()),
+                        durationUnits,
                         levelTwo
                 ));
             }
@@ -90,7 +87,7 @@ public final class EffectSelector {
                 if (!compatible(leftCandidate.rule(), rightCandidate.rule())) {
                     continue;
                 }
-                var score = pairScore(leftCandidate, rightCandidate, metrics);
+                var score = pairScore(leftCandidate, rightCandidate);
                 if (score > bestScore) {
                     bestScore = score;
                     first = leftCandidate;
@@ -106,27 +103,18 @@ public final class EffectSelector {
 
     private static ResolvedEffect resolve(Candidate candidate) {
         var rule = candidate.rule();
-        var levelTwoRule = candidate.levelTwo() ? rule.levelTwoRequirements().orElseThrow() : null;
-        var minimumDuration = levelTwoRule == null
-                ? rule.minimumDurationTicks()
-                : levelTwoRule.minimumDurationTicks();
-        var durationStep = levelTwoRule == null
-                ? rule.durationStepTicks()
-                : levelTwoRule.durationStepTicks();
-        var maximumDuration = levelTwoRule == null
-                ? rule.maximumDurationTicks()
-                : levelTwoRule.maximumDurationTicks();
-        var duration = Math.min(
-                maximumDuration,
-                minimumDuration + (int) Math.floor(
-                        candidate.durationUnits() * durationStep
-                )
-        );
         return new ResolvedEffect(
                 rule.effect(),
                 Math.min(candidate.affinity() / rule.minimumAffinity(), 1.0),
                 candidate.levelTwo() ? 1 : 0,
-                duration
+                fundedDurationTicks(rule, candidate.durationUnits())
+        );
+    }
+
+    private static int fundedDurationTicks(EffectRule rule, double durationUnits) {
+        return (int) Math.min(
+                rule.maximumDurationTicks(),
+                Math.floor(durationUnits * rule.durationStepTicks())
         );
     }
 
@@ -135,11 +123,10 @@ public final class EffectSelector {
                 && second.compatibleEffects().contains(first.effect());
     }
 
-    private static double pairScore(Candidate first, Candidate second, EvaluationMetrics metrics) {
+    private static double pairScore(Candidate first, Candidate second) {
         var firstScore = first.affinity() / first.rule().minimumAffinity();
         var secondScore = second.affinity() / second.rule().minimumAffinity();
-        var durationScore = metrics.effectDurationTotal(first.rule().effect())
-                + metrics.effectDurationTotal(second.rule().effect());
+        var durationScore = first.durationUnits() + second.durationUnits();
         return 2.0 * Math.min(firstScore, secondScore) + Math.max(firstScore, secondScore) + durationScore;
     }
 

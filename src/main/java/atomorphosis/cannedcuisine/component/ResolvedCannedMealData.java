@@ -12,6 +12,7 @@ import atomorphosis.cannedcuisine.engine.model.IngredientId;
 import atomorphosis.cannedcuisine.engine.naming.MealNameSubject;
 import atomorphosis.cannedcuisine.engine.naming.MealNameSubjectType;
 import atomorphosis.cannedcuisine.engine.naming.MealNameTokens;
+import atomorphosis.cannedcuisine.engine.naming.InitialMealNames;
 import atomorphosis.cannedcuisine.engine.naming.NameTokenId;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -31,7 +32,6 @@ import java.util.Set;
 public record ResolvedCannedMealData(
         int dataVersion,
         CanonicalComposition composition,
-        int qualityScore,
         Set<MixtureFailureReason> failureReasons,
         double nutritionPoints,
         double saturationPoints,
@@ -42,7 +42,7 @@ public record ResolvedCannedMealData(
         Optional<Integer> effectColor,
         MealNameTokens name
 ) {
-    public static final int CURRENT_DATA_VERSION = 4;
+    public static final int CURRENT_DATA_VERSION = 5;
 
     private static final Codec<IngredientId> INGREDIENT_ID_CODEC = ResourceLocation.CODEC.xmap(
             id -> new IngredientId(id.getNamespace(), id.getPath()),
@@ -96,7 +96,9 @@ public record ResolvedCannedMealData(
             NAME_TOKEN_CODEC.optionalFieldOf("profile").forGetter(MealNameTokens::profile)
     ).apply(instance, MealNameTokens::new));
     private static final Codec<MixtureFailureReason> FAILURE_REASON_CODEC = Codec.STRING.comapFlatMap(
-            value -> decode(() -> MixtureFailureReason.valueOf(value.toUpperCase(Locale.ROOT))),
+            value -> decode(() -> value.equals("insufficient_culinary_quality")
+                    ? MixtureFailureReason.INSUFFICIENT_FOOD_VALUE
+                    : MixtureFailureReason.valueOf(value.toUpperCase(Locale.ROOT))),
             value -> value.name().toLowerCase(Locale.ROOT)
     );
     private static final Codec<Set<MixtureFailureReason>> FAILURE_REASONS_CODEC = FAILURE_REASON_CODEC.listOf()
@@ -122,7 +124,6 @@ public record ResolvedCannedMealData(
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("data_version").forGetter(Serialized::dataVersion),
             COMPOSITION_CODEC.fieldOf("composition").forGetter(Serialized::composition),
-            Codec.intRange(0, 100).fieldOf("quality").forGetter(Serialized::qualityScore),
             FAILURE_REASONS_CODEC.optionalFieldOf("failures", Set.of()).forGetter(Serialized::failureReasons),
             Codec.DOUBLE.fieldOf("nutrition").forGetter(Serialized::nutritionPoints),
             Codec.DOUBLE.fieldOf("saturation").forGetter(Serialized::saturationPoints),
@@ -156,9 +157,8 @@ public record ResolvedCannedMealData(
         effects = List.copyOf(effects);
         effectContributions = List.copyOf(effectContributions);
 
-        if (dataVersion < 1 || dataVersion > CURRENT_DATA_VERSION) {
-            throw new IllegalArgumentException("Data version must be in the supported range [1, "
-                    + CURRENT_DATA_VERSION + "]");
+        if (dataVersion != CURRENT_DATA_VERSION) {
+            throw new IllegalArgumentException("Runtime canned meal data must use version " + CURRENT_DATA_VERSION);
         }
         if (composition.totalUnits() < 1 || composition.totalUnits() > 6) {
             throw new IllegalArgumentException("Composition must contain between 1 and 6 units");
@@ -171,12 +171,6 @@ public record ResolvedCannedMealData(
             if (!distinctIngredients.add(ingredient.ingredient())) {
                 throw new IllegalArgumentException("Composition cannot contain duplicate ingredient entries");
             }
-        }
-        if (qualityScore < 0 || qualityScore > 100) {
-            throw new IllegalArgumentException("Quality score must be in the range [0, 100]");
-        }
-        if (failureReasons.isEmpty() != (qualityScore >= 20)) {
-            throw new IllegalArgumentException("Failure reasons and quality score disagree");
         }
         requireNonNegativeFinite("nutritionPoints", nutritionPoints);
         requireNonNegativeFinite("saturationPoints", saturationPoints);
@@ -217,15 +211,11 @@ public record ResolvedCannedMealData(
                 throw new IllegalArgumentException("Effect color must be a 24-bit RGB value");
             }
         });
-        if (dataVersion >= 2 && effects.isEmpty() != effectColor.isEmpty()) {
-            throw new IllegalArgumentException("Effect color must exist exactly when an effect exists");
-        }
     }
 
     public ResolvedCannedMealData(
             int dataVersion,
             CanonicalComposition composition,
-            int qualityScore,
             Set<MixtureFailureReason> failureReasons,
             double nutritionPoints,
             double saturationPoints,
@@ -235,7 +225,6 @@ public record ResolvedCannedMealData(
         this(
                 dataVersion,
                 composition,
-                qualityScore,
                 failureReasons,
                 nutritionPoints,
                 saturationPoints,
@@ -269,7 +258,6 @@ public record ResolvedCannedMealData(
         return new ResolvedCannedMealData(
                 CURRENT_DATA_VERSION,
                 composition,
-                evaluation.qualityScore(),
                 evaluation.failureAssessment().reasons(),
                 evaluation.nutritionPointsPerCan(),
                 evaluation.saturationPointsPerCan(),
@@ -318,7 +306,6 @@ public record ResolvedCannedMealData(
     private record Serialized(
             int dataVersion,
             CanonicalComposition composition,
-            int qualityScore,
             Set<MixtureFailureReason> failureReasons,
             double nutritionPoints,
             double saturationPoints,
@@ -331,7 +318,7 @@ public record ResolvedCannedMealData(
     ) {
         private static Serialized from(ResolvedCannedMealData data) {
             return new Serialized(
-                    data.dataVersion(), data.composition(), data.qualityScore(), data.failureReasons(),
+                    CURRENT_DATA_VERSION, data.composition(), data.failureReasons(),
                     data.nutritionPoints(), data.saturationPoints(), data.temporaryHealthPoints(),
                     data.effects(), data.effectContributions(),
                     data.labelColor(), data.effectColor(), data.name()
@@ -339,10 +326,28 @@ public record ResolvedCannedMealData(
         }
 
         private ResolvedCannedMealData toData() {
+            if (dataVersion > CURRENT_DATA_VERSION) {
+                throw new IllegalArgumentException("Unsupported canned meal data version " + dataVersion);
+            }
             return new ResolvedCannedMealData(
-                    dataVersion, composition, qualityScore, failureReasons, nutritionPoints, saturationPoints,
-                    temporaryHealthPoints, effects, effectContributions, labelColor, effectColor, name
+                    CURRENT_DATA_VERSION, composition, failureReasons, nutritionPoints, saturationPoints,
+                    temporaryHealthPoints, effects, effectContributions, labelColor, effectColor,
+                    normalizeLegacyName(name)
             );
         }
+    }
+
+    private static MealNameTokens normalizeLegacyName(MealNameTokens name) {
+        if (name.profile().isEmpty() || !name.profile().get().namespace().equals("canned_cuisine")) {
+            return name;
+        }
+        var profile = name.profile().get().path();
+        if (!profile.equals("failed") && !profile.equals("questionable") && !profile.equals("excellent")) {
+            return name;
+        }
+        var template = name.template().equals(InitialMealNames.PROFILE_SUBJECT_ARCHETYPE)
+                ? InitialMealNames.SUBJECT_ARCHETYPE
+                : InitialMealNames.ARCHETYPE;
+        return new MealNameTokens(name.version(), template, name.archetype(), name.subject(), Optional.empty());
     }
 }

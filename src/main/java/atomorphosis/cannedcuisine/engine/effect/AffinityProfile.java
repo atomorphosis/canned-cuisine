@@ -7,13 +7,15 @@ public record AffinityProfile(
         double strength,
         double durationUnits
 ) {
+    public static final double MAX_DURATION_UNITS = 60.0;
+
     public AffinityProfile {
         Objects.requireNonNull(effect, "effect");
         if (!Double.isFinite(strength) || strength <= 0.0 || strength > 6.0) {
             throw new IllegalArgumentException("Affinity strength must be finite and in the range (0, 6]");
         }
-        if (!Double.isFinite(durationUnits) || durationUnits < 0.0) {
-            throw new IllegalArgumentException("Duration units must be finite and non-negative");
+        if (!Double.isFinite(durationUnits) || durationUnits < 0.0 || durationUnits > MAX_DURATION_UNITS) {
+            throw new IllegalArgumentException("Duration units must be finite and in the range [0, 60]");
         }
     }
 }

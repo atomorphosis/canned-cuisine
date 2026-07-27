@@ -1,9 +1,9 @@
 {
   "parent": "canned_cuisine:not_a_potion",
   "criteria": {
-    "consume_exceptional_meal": {
+    "consume_advanced_meal": {
       "conditions": {
-        "minimum_quality": "exceptional",
+        "minimum_effects": 2,
         "minimum_effect_amplifier": 1
       },
       "trigger": "canned_cuisine:canned_meal_consumed"
@@ -24,7 +24,7 @@
   },
   "requirements": [
     [
-      "consume_exceptional_meal"
+      "consume_advanced_meal"
     ]
   ],
   "rewards": {

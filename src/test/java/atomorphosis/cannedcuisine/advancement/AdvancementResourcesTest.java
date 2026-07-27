@@ -69,7 +69,7 @@ class AdvancementResourcesTest {
         CannedMealTakenTrigger.TriggerInstance.CODEC.parse(JsonOps.INSTANCE, new JsonObject()).getOrThrow();
         CannedMealConsumedTrigger.TriggerInstance.CODEC.parse(JsonOps.INSTANCE, new JsonObject()).getOrThrow();
         assertTrue(consumptionConditions("technically_edible").get("failed").getAsBoolean());
-        assertEquals("exceptional", consumptionConditions("haute_tin_cuisine").get("minimum_quality").getAsString());
+        assertEquals(2, consumptionConditions("haute_tin_cuisine").get("minimum_effects").getAsInt());
         assertEquals(1, consumptionConditions("haute_tin_cuisine").get("minimum_effect_amplifier").getAsInt());
         assertEquals(1, consumptionConditions("not_a_potion").get("minimum_effects").getAsInt());
     }

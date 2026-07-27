@@ -55,15 +55,13 @@ public final class CannedMealFactory {
         var input = ((EvaluationInputResolution.Success) resolution).input();
         var evaluation = MealEvaluator.evaluate(input, archetypes, effectRules);
         var output = new ItemStack(ModItems.CANNED_MEAL.get(), 1);
-        output.set(
-                ModDataComponents.RESOLVED_CANNED_MEAL.get(),
-                ResolvedCannedMealData.from(
-                        composition,
-                        evaluation,
-                        EffectContributionResolver.resolve(input, evaluation)
-                )
+        var data = ResolvedCannedMealData.from(
+                composition,
+                evaluation,
+                EffectContributionResolver.resolve(input, evaluation)
         );
-        output.set(DataComponents.RARITY, CannedMealRarity.resolve(evaluation.qualityBand()));
+        output.set(ModDataComponents.RESOLVED_CANNED_MEAL.get(), data);
+        output.set(DataComponents.RARITY, CannedMealRarity.resolve(data));
         return new CannedMealCreationResult.Success(output, composition, evaluation);
     }
 }

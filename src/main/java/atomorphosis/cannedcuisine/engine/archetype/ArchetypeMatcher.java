@@ -38,7 +38,7 @@ public final class ArchetypeMatcher {
         Objects.requireNonNull(definition, "definition");
 
         if (metrics.totalUnits() == 0
-                || metrics.effectiveDiversity() + EPSILON < definition.minimumEffectiveDiversity()) {
+                || metrics.distinctIngredients() < definition.minimumDistinctIngredients()) {
             return Optional.empty();
         }
 

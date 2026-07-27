@@ -45,7 +45,11 @@ class DiscoveryLootResourcesTest {
     @Test
     void globalModifierListIncludesEveryCuratedGroup() throws Exception {
         JsonObject root = resource("/data/neoforge/loot_modifiers/global_loot_modifiers.json");
-        assertEquals(4, root.getAsJsonArray("entries").size());
+        var entries = root.getAsJsonArray("entries");
+        assertEquals(5, entries.size());
+        assertTrue(entries.asList().stream().anyMatch(entry ->
+                entry.getAsString().equals("canned_cuisine:add_rock_salt_from_ores")
+        ));
     }
 
     private static JsonObject resource(String path) throws Exception {

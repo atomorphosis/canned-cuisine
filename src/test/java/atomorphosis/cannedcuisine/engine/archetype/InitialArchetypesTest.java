@@ -43,6 +43,15 @@ class InitialArchetypesTest {
     }
 
     @Test
+    void stewCountsRepeatedVegetablesAsProportionButNotAsDistinctStructure() {
+        assertBestMatch(
+                InitialArchetypes.STEW,
+                ingredient("chicken", CulinaryCategory.PROTEIN),
+                ingredient("potato", 2, CulinaryCategory.VEGETABLE)
+        );
+    }
+
+    @Test
     void recognizesSoupFromVegetablesAndMushrooms() {
         assertBestMatch(
                 InitialArchetypes.MUSHROOM_SOUP,

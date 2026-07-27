@@ -5,5 +5,5 @@
     { "categories": ["sweetener"], "minimum_coverage": 0.10, "maximum_coverage": 0.34 },
     { "categories": ["protein", "vegetable", "grain", "fat", "mushroom"], "minimum_coverage": 0.0, "maximum_coverage": 0.20 }
   ],
-  "minimum_effective_diversity": 2.0
+  "minimum_distinct_ingredients": 2
 }

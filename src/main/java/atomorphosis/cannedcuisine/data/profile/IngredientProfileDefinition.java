@@ -32,7 +32,7 @@ public record IngredientProfileDefinition(
     private static final Codec<AffinityProfile> AFFINITY_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             EFFECT_CODEC.fieldOf("effect").forGetter(AffinityProfile::effect),
             Codec.doubleRange(Double.MIN_VALUE, 6.0).fieldOf("strength").forGetter(AffinityProfile::strength),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("duration_units").forGetter(AffinityProfile::durationUnits)
+            Codec.doubleRange(0.0, AffinityProfile.MAX_DURATION_UNITS).fieldOf("duration_units").forGetter(AffinityProfile::durationUnits)
     ).apply(instance, AffinityProfile::new));
     private static final Codec<Serialized> SERIALIZED_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("ingredient").forGetter(Serialized::ingredient),
@@ -41,8 +41,11 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(CATEGORY_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .fieldOf("categories")
                     .forGetter(Serialized::categories),
-            AFFINITY_CODEC.fieldOf("major_affinity").forGetter(Serialized::majorAffinity),
-            AFFINITY_CODEC.fieldOf("minor_affinity").forGetter(Serialized::minorAffinity),
+            AFFINITY_CODEC.optionalFieldOf("major_affinity").forGetter(Serialized::majorAffinity),
+            AFFINITY_CODEC.optionalFieldOf("minor_affinity").forGetter(Serialized::minorAffinity),
+            Codec.doubleRange(0.0, AffinityProfile.MAX_DURATION_UNITS)
+                    .optionalFieldOf("universal_duration_units", 0.0)
+                    .forGetter(Serialized::universalDurationUnits),
             Codec.doubleRange(0.0, 1.0).optionalFieldOf("toxicity", 0.0).forGetter(Serialized::toxicity),
             Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Serialized::rarity),
             Codec.intRange(0, 3).optionalFieldOf("catalytic_potency", 0).forGetter(Serialized::catalyticPotency)
@@ -60,8 +63,11 @@ public record IngredientProfileDefinition(
             Codec.unboundedMap(CATEGORY_CODEC, Codec.doubleRange(Double.MIN_VALUE, 1.0))
                     .fieldOf("categories")
                     .forGetter(Document::categories),
-            AFFINITY_CODEC.fieldOf("major_affinity").forGetter(Document::majorAffinity),
-            AFFINITY_CODEC.fieldOf("minor_affinity").forGetter(Document::minorAffinity),
+            AFFINITY_CODEC.optionalFieldOf("major_affinity").forGetter(Document::majorAffinity),
+            AFFINITY_CODEC.optionalFieldOf("minor_affinity").forGetter(Document::minorAffinity),
+            Codec.doubleRange(0.0, AffinityProfile.MAX_DURATION_UNITS)
+                    .optionalFieldOf("universal_duration_units", 0.0)
+                    .forGetter(Document::universalDurationUnits),
             Codec.doubleRange(0.0, 1.0).optionalFieldOf("toxicity", 0.0).forGetter(Document::toxicity),
             Codec.doubleRange(0.0, 1.0).optionalFieldOf("rarity", 0.0).forGetter(Document::rarity),
             Codec.intRange(0, 3).optionalFieldOf("catalytic_potency", 0).forGetter(Document::catalyticPotency)
@@ -94,8 +100,9 @@ public record IngredientProfileDefinition(
                     serialized.nutrition(),
                     serialized.saturation(),
                     serialized.categories(),
-                    Optional.of(serialized.majorAffinity()),
-                    Optional.of(serialized.minorAffinity()),
+                    serialized.majorAffinity(),
+                    serialized.minorAffinity(),
+                    serialized.universalDurationUnits(),
                     serialized.toxicity(),
                     serialized.rarity(),
                     serialized.catalyticPotency()
@@ -117,8 +124,9 @@ public record IngredientProfileDefinition(
                 profile.nutritionPoints(),
                 profile.saturationPoints(),
                 profile.categoryWeights(),
-                profile.majorAffinity().orElseThrow(),
-                profile.minorAffinity().orElseThrow(),
+                profile.majorAffinity(),
+                profile.minorAffinity(),
+                profile.universalDurationUnits(),
                 profile.toxicity(),
                 profile.rarity(),
                 profile.catalyticPotency()
@@ -141,8 +149,9 @@ public record IngredientProfileDefinition(
                     document.nutrition(),
                     document.saturation(),
                     document.categories(),
-                    Optional.of(document.majorAffinity()),
-                    Optional.of(document.minorAffinity()),
+                    document.majorAffinity(),
+                    document.minorAffinity(),
+                    document.universalDurationUnits(),
                     document.toxicity(),
                     document.rarity(),
                     document.catalyticPotency()
@@ -178,8 +187,9 @@ public record IngredientProfileDefinition(
                 profile.nutritionPoints(),
                 profile.saturationPoints(),
                 profile.categoryWeights(),
-                profile.majorAffinity().orElseThrow(),
-                profile.minorAffinity().orElseThrow(),
+                profile.majorAffinity(),
+                profile.minorAffinity(),
+                profile.universalDurationUnits(),
                 profile.toxicity(),
                 profile.rarity(),
                 profile.catalyticPotency()
@@ -191,8 +201,9 @@ public record IngredientProfileDefinition(
             double nutrition,
             double saturation,
             Map<CulinaryCategory, Double> categories,
-            AffinityProfile majorAffinity,
-            AffinityProfile minorAffinity,
+            Optional<AffinityProfile> majorAffinity,
+            Optional<AffinityProfile> minorAffinity,
+            double universalDurationUnits,
             double toxicity,
             double rarity,
             int catalyticPotency
@@ -205,8 +216,9 @@ public record IngredientProfileDefinition(
             double nutrition,
             double saturation,
             Map<CulinaryCategory, Double> categories,
-            AffinityProfile majorAffinity,
-            AffinityProfile minorAffinity,
+            Optional<AffinityProfile> majorAffinity,
+            Optional<AffinityProfile> minorAffinity,
+            double universalDurationUnits,
             double toxicity,
             double rarity,
             int catalyticPotency

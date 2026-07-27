@@ -12,11 +12,10 @@ import java.util.TreeMap;
 public record EvaluationMetrics(
         int totalUnits,
         int distinctIngredients,
-        int dominantIngredientUnits,
-        double effectiveDiversity,
         double totalNutritionPoints,
         double totalSaturationPoints,
         double totalToxicity,
+        double universalDurationUnits,
         Map<CulinaryCategory, Double> categoryTotals,
         Map<EffectId, Double> effectAffinityTotals,
         Map<EffectId, Double> effectDurationTotals,
@@ -25,8 +24,6 @@ public record EvaluationMetrics(
     public EvaluationMetrics(
             int totalUnits,
             int distinctIngredients,
-            int dominantIngredientUnits,
-            double effectiveDiversity,
             double totalNutritionPoints,
             double totalSaturationPoints,
             Map<CulinaryCategory, Double> categoryTotals,
@@ -34,9 +31,27 @@ public record EvaluationMetrics(
             Map<EffectId, Double> effectCatalystContributionTotals
     ) {
         this(
-                totalUnits, distinctIngredients, dominantIngredientUnits, effectiveDiversity,
-                totalNutritionPoints, totalSaturationPoints, 0.0, categoryTotals, effectAffinityTotals,
+                totalUnits, distinctIngredients,
+                totalNutritionPoints, totalSaturationPoints, 0.0, 0.0, categoryTotals, effectAffinityTotals,
                 Map.of(), effectCatalystContributionTotals
+        );
+    }
+
+    public EvaluationMetrics(
+            int totalUnits,
+            int distinctIngredients,
+            double totalNutritionPoints,
+            double totalSaturationPoints,
+            double totalToxicity,
+            Map<CulinaryCategory, Double> categoryTotals,
+            Map<EffectId, Double> effectAffinityTotals,
+            Map<EffectId, Double> effectDurationTotals,
+            Map<EffectId, Double> effectCatalystContributionTotals
+    ) {
+        this(
+                totalUnits, distinctIngredients,
+                totalNutritionPoints, totalSaturationPoints, totalToxicity, 0.0,
+                categoryTotals, effectAffinityTotals, effectDurationTotals, effectCatalystContributionTotals
         );
     }
 
@@ -47,16 +62,10 @@ public record EvaluationMetrics(
         if (distinctIngredients < 0 || distinctIngredients > totalUnits) {
             throw new IllegalArgumentException("Distinct ingredient count is invalid");
         }
-        if (dominantIngredientUnits < 0 || dominantIngredientUnits > totalUnits) {
-            throw new IllegalArgumentException("Dominant ingredient count is invalid");
-        }
-        if ((totalUnits == 0) != (dominantIngredientUnits == 0)) {
-            throw new IllegalArgumentException("Dominant ingredient count must match composition emptiness");
-        }
-        requireNonNegativeFinite("effectiveDiversity", effectiveDiversity);
         requireNonNegativeFinite("totalNutritionPoints", totalNutritionPoints);
         requireNonNegativeFinite("totalSaturationPoints", totalSaturationPoints);
         requireNonNegativeFinite("totalToxicity", totalToxicity);
+        requireNonNegativeFinite("universalDurationUnits", universalDurationUnits);
         Objects.requireNonNull(categoryTotals, "categoryTotals");
 
         var immutableTotals = new EnumMap<CulinaryCategory, Double>(CulinaryCategory.class);
@@ -94,10 +103,6 @@ public record EvaluationMetrics(
     public double categoryTotal(CulinaryCategory category) {
         Objects.requireNonNull(category, "category");
         return categoryTotals.getOrDefault(category, 0.0);
-    }
-
-    public double dominantIngredientShare() {
-        return totalUnits == 0 ? 0.0 : (double) dominantIngredientUnits / totalUnits;
     }
 
     public double effectAffinityTotal(EffectId effect) {

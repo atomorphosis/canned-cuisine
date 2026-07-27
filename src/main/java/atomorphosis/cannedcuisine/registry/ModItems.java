@@ -12,6 +12,7 @@ public final class ModItems {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CannedCuisine.MOD_ID);
 
     public static final DeferredItem<Item> EMPTY_CAN = ITEMS.registerSimpleItem("empty_can");
+    public static final DeferredItem<Item> ROCK_SALT = ITEMS.registerSimpleItem("rock_salt");
     public static final DeferredItem<BlockItem> PRESSURE_CANNER = ITEMS.registerSimpleBlockItem(ModBlocks.PRESSURE_CANNER);
     public static final DeferredItem<CannedMealItem> CANNED_MEAL = ITEMS.registerItem(
             "canned_meal",

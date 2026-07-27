@@ -7,8 +7,6 @@ import java.util.Set;
 public record EffectRule(
         EffectId effect,
         double minimumAffinity,
-        int minimumQualityScore,
-        int minimumDurationTicks,
         int durationStepTicks,
         int maximumDurationTicks,
         int priority,
@@ -24,10 +22,7 @@ public record EffectRule(
         if (!Double.isFinite(minimumAffinity) || minimumAffinity <= 0.0) {
             throw new IllegalArgumentException("Minimum affinity must be finite and positive");
         }
-        if (minimumQualityScore < 0 || minimumQualityScore > 100) {
-            throw new IllegalArgumentException("Minimum quality score must be in the range [0, 100]");
-        }
-        if (minimumDurationTicks < 1 || durationStepTicks < 1 || maximumDurationTicks < minimumDurationTicks) {
+        if (durationStepTicks < 1 || maximumDurationTicks < durationStepTicks) {
             throw new IllegalArgumentException("Effect duration bounds are invalid");
         }
         if (compatibleEffects.contains(effect)) {
